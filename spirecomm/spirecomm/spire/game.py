@@ -6,7 +6,8 @@ import spirecomm.spire.character
 import spirecomm.spire.map
 import spirecomm.spire.potion
 import spirecomm.spire.screen
-
+from spirecomm.spire.character import Intent, PlayerClass
+import copy
 
 class RoomPhase(Enum):
     COMBAT = 1,
@@ -66,6 +67,10 @@ class Game:
         self.play_available = False
         self.proceed_available = False
         self.cancel_available = False
+
+        # Evaluation
+
+        self.value = 0
 
     @classmethod
     def from_json(cls, json_state, available_commands):
@@ -139,3 +144,38 @@ class Game:
             if potion.potion_id != "Potion Slot":
                 potions.append(potion)
         return potions
+
+    def get_incoming_damage(self):
+        incoming_damage = 0
+        for monster in self.game.monsters:
+            if not monster.is_gone and not monster.half_dead:
+                if monster.move_adjusted_damage is not None:
+                    incoming_damage += monster.move_adjusted_damage * monster.move_hits
+                elif monster.intent == Intent.NONE:
+                    incoming_damage += 5 * self.game.act
+        return incoming_damage
+
+    def predict_state(self,action):
+        new_game = copy.copy(self)
+
+        # Prediction
+
+        # if new_game is at end of tree
+        #   self.evaluate_state()
+
+        return new_game 
+    
+    def evaluate_state(self):
+        value = 0
+
+        value = value - max(self.get_incoming_damage()-self.player.block,0)
+        value = value + self.player.current_hp
+        value = value - sum([i.current_hp for i in self.monsters])
+        
+        if(self.player.current_hp <= 0):
+            value = -999 # Might need to change to a lower number.
+
+        # We still need to add more evaluation here (potions, max hp, status effects, etc)
+
+        self.value = value
+        return self.value

@@ -7,9 +7,27 @@ import spirecomm.spire.card
 from spirecomm.spire.screen import RestOption
 from spirecomm.communication.action import *
 from spirecomm.ai.priorities import *
+import copy
 
+class Node:
+    def __init__(self,game,prob,deter):
+        self.game = game
+        self.probability = prob  
+        self.children = []
+        self.parent = None
+        self.hasChildren = False
+        self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
+        
 
-class SimpleAgent:
+    def expand(self):  
+
+        # Generate every possible next state
+        
+        # For each state, create a child and calculate its probability and value   
+
+        return
+
+class CoolRadicalAgent:
 
     def __init__(self, chosen_class=PlayerClass.THE_SILENT):
         self.game = Game()
@@ -21,6 +39,7 @@ class SimpleAgent:
         self.chosen_class = chosen_class
         self.priorities = Priority()
         self.change_class(chosen_class)
+        self.headNode = None
 
     def change_class(self, new_class):
         self.chosen_class = new_class
@@ -84,51 +103,33 @@ class SimpleAgent:
         return len(available_monsters) > 1
 
     def get_play_card_action(self):
-        # playable_cards = [card for card in self.game.hand if card.is_playable]
-        # zero_cost_cards = [card for card in playable_cards if card.cost == 0]
-        # zero_cost_attacks = [card for card in zero_cost_cards if card.type == spirecomm.spire.card.CardType.ATTACK]
-        # zero_cost_non_attacks = [card for card in zero_cost_cards if card.type != spirecomm.spire.card.CardType.ATTACK]
-        # nonzero_cost_cards = [card for card in playable_cards if card.cost != 0]
-        # aoe_cards = [card for card in playable_cards if self.priorities.is_card_aoe(card)]
-        # if self.game.player.block > self.get_incoming_damage() - (self.game.act + 4):
-        #     offensive_cards = [card for card in nonzero_cost_cards if not self.priorities.is_card_defensive(card)]
-        #     if len(offensive_cards) > 0:
-        #         nonzero_cost_cards = offensive_cards
-        #     else:
-        #         nonzero_cost_cards = [card for card in nonzero_cost_cards if not card.exhausts]
-        # if len(playable_cards) == 0:
-        #     return EndTurnAction()
-        # if len(zero_cost_non_attacks) > 0:
-        #     card_to_play = self.priorities.get_best_card_to_play(zero_cost_non_attacks)
-        # elif len(nonzero_cost_cards) > 0:
-        #     card_to_play = self.priorities.get_best_card_to_play(nonzero_cost_cards)
-        #     if len(aoe_cards) > 0 and self.many_monsters_alive() and card_to_play.type == spirecomm.spire.card.CardType.ATTACK:
-        #         card_to_play = self.priorities.get_best_card_to_play(aoe_cards)
-        # elif len(zero_cost_attacks) > 0:
-        #     card_to_play = self.priorities.get_best_card_to_play(zero_cost_attacks)
-        # else:
-        #     # This shouldn't happen!
-        #     return EndTurnAction()
-        # if card_to_play.has_target:
-        #     available_monsters = [monster for monster in self.game.monsters if monster.current_hp > 0 and not monster.half_dead and not monster.is_gone]
-        #     if len(available_monsters) == 0:
-        #         return EndTurnAction()
-        #     if card_to_play.type == spirecomm.spire.card.CardType.ATTACK:
-        #         target = self.get_low_hp_target()
-        #     else:
-        #         target = self.get_high_hp_target()
-        #     return PlayCardAction(card=card_to_play, target_monster=target)
-        # else:
-        #     return PlayCardAction(card=card_to_play)
-        return
+        
+        self.headNode = Node(copy.copy(self.game),1,0)
 
-    def use_next_potion(self):
-        for potion in self.game.get_real_potions():
-            if potion.can_use:
-                if potion.requires_target:
-                    return PotionAction(True, potion=potion, target_monster=self.get_low_hp_target())
-                else:
-                    return PotionAction(True, potion=potion)
+        activeNodes = [self.headNode]
+
+        # Only expands nodes that are either this turn or next turn.
+        while len(activeNodes) > 1:
+            current = activeNodes.pop(0)
+            if(current.game.turn <= self.game.turn + 1):
+                current.expand()
+
+
+
+
+        playable_cards = [card for card in self.game.hand if card.is_playable]
+
+    
+        for card_to_play in playable_cards:
+            for target in self.game.monsters:
+                self.headNode
+
+
+        # Construct/Expand tree
+
+        # Evaluate child nodes
+
+        return
 
     def handle_screen(self):
         if self.game.screen_type == ScreenType.EVENT:
