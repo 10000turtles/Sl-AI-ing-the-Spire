@@ -1,6 +1,7 @@
 import time
 import random
 
+
 from spirecomm.spire.game import Game
 from spirecomm.spire.character import Intent, PlayerClass
 import spirecomm.spire.card
@@ -10,25 +11,63 @@ from spirecomm.ai.priorities import *
 import copy
 
 class Node:
-    def __init__(self,game,prob,deter):
+    def __init__(self,game,prob,deter,head):
         self.game = game
         self.probability = prob  
         self.children = []
-        self.parent = None
+        self.total_leaves = 0
+
+        if(head == None):
+            self.head = self
+        else:
+            self.head = head
+
         self.hasChildren = False
         self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
-        
+        self.done = not game.in_combat
 
     def expand(self):  
 
-        # Generate every possible next state
-        
-        # For each state, create a child and calculate its probability and value   
+        playable_cards = [card for card in self.game.hand if card.is_playable]
 
+        playable_cards_no_repeats = []
+        for p_card in playable_cards:
+            append_card = True
+            for r_card in playable_cards_no_repeats:
+                if r_card.name == p_card.name and r_card.upgrades == p_card.upgrades:
+                    append_card = False
+
+            if(append_card):
+                playable_cards_no_repeats.append(p_card)
+
+        if len(playable_cards_no_repeats) > 0:
+            possible_options = []
+
+            for card_to_play in playable_cards_no_repeats:
+                if card_to_play.has_target:
+                    for target in self.game.monsters:
+                        possible_options.append((card_to_play,target))
+                else:
+                    possible_options.append((card_to_play,None))
+
+            for i in possible_options:
+                self.children.append(Node(self.game.predict_state(i[0],i[1]),self.probability,self.deterministic,self.head))
+                self.head.total_leaves = self.head.total_leaves + 1
+        else:
+            if not self.game.turn > self.head.game.turn: # Remove later. This will make sure there is no recursion into 2 turns deep
+                for state in self.game.predict_states_turn_end():
+                    self.children.append(Node(state,self.probability,self.deterministic,self.head))
+                    self.head.total_leaves = self.head.total_leaves + 1
+
+        for i in self.children:
+            if not i.game.in_combat:
+                i.done = True
+            if i.game.turn > self.head.game.turn + 1:
+                i.done = True
+        
         return
 
 class CoolRadicalAgent:
-
     def __init__(self, chosen_class=PlayerClass.THE_SILENT):
         self.game = Game()
         self.errors = 0
@@ -104,30 +143,21 @@ class CoolRadicalAgent:
 
     def get_play_card_action(self):
         
-        self.headNode = Node(copy.copy(self.game),1,0)
+        self.headNode = Node(copy.deepcopy(self.game),1,0,None)
 
         activeNodes = [self.headNode]
 
         # Only expands nodes that are either this turn or next turn.
-        while len(activeNodes) > 1:
+        while len(activeNodes) >= 1:
             current = activeNodes.pop(0)
-            if(current.game.turn <= self.game.turn + 1):
-                current.expand()
+            
+            current.expand()
 
+            for child in current.children:
+                if not child.done:
+                    activeNodes.append(child)
 
-
-
-        playable_cards = [card for card in self.game.hand if card.is_playable]
-
-    
-        for card_to_play in playable_cards:
-            for target in self.game.monsters:
-                self.headNode
-
-
-        # Construct/Expand tree
-
-        # Evaluate child nodes
+        print(self.headNode.total_leaves)
 
         return
 

@@ -155,16 +155,76 @@ class Game:
                     incoming_damage += 5 * self.game.act
         return incoming_damage
 
-    def predict_state(self,action):
-        new_game = copy.copy(self)
+    def update_monsters(self):
+        for target in self.monsters:
+            if(target.current_hp <= 0):
+                    self.monsters.remove(target)
 
-        # Prediction
+            if(len(self.monsters) == 0):
+                self.in_combat = False
 
-        # if new_game is at end of tree
-        #   self.evaluate_state()
+    def update_cards(self):
+        for card in self.hand:
+            if self.player.energy < card.cost:
+                card.is_playable = False
 
+    def update(self):
+        self.update_monsters()
+        self.update_cards()
+
+    def predict_state(self,card=None,target=None):
+        new_game = copy.deepcopy(self)
+
+        if(card.name == "Strike"):
+            new_game.hand.remove(card)
+            new_game.discard_pile.append(card)
+            new_game.player.energy = new_game.player.energy - 1
+
+            for monster in new_game.monsters:
+                if target.__eq__(monster):
+                    target = monster
+                    break
+
+            target.current_hp = target.current_hp - 6
+
+            new_game.update()
+
+        if(card.name == "Defend"):
+            new_game.hand.remove(card)
+            new_game.discard_pile.append(card)
+            new_game.player.energy = new_game.player.energy - 1
+            
+            new_game.player.block = new_game.player.block + 5
+
+            new_game.update()
+
+        if(card.name == "Bash"):   
+            new_game.hand.remove(card)
+            new_game.discard_pile.append(card)
+            new_game.player.energy = new_game.player.energy - 2
+
+            for monster in new_game.monsters:
+                if target.__eq__(monster):
+                    target = monster
+                    break
+
+            target.current_hp = target.current_hp - 8
+
+            new_game.update()
         return new_game 
-    
+
+    def predict_states_turn_end(self):
+        new_games = []
+        
+
+        # Construct Possible Card Draws
+
+        # Construct Possible Monster Intents
+
+        # Calculate Probabilities (And set non-deterministic)
+        return new_games
+
+
     def evaluate_state(self):
         value = 0
 

@@ -1,14 +1,16 @@
 import itertools
 import datetime
 import sys
+import json
 
 from spirecomm.communication.coordinator import Coordinator
-from spirecomm.ai.agent import SimpleAgent
+from spirecomm.ai.newAgent import CoolRadicalAgent
 from spirecomm.spire.character import PlayerClass
+from spirecomm.spire.game import Game
 
 if __name__ == "__main__":
         
-    agent = SimpleAgent()
+    agent = CoolRadicalAgent()
     coordinator = Coordinator()
 
     coordinator.signal_ready()
@@ -16,7 +18,12 @@ if __name__ == "__main__":
     coordinator.register_state_change_callback(agent.get_next_action_in_game)
     coordinator.register_out_of_game_callback(agent.get_next_action_out_of_game)
 
-    result = coordinator.play_one_game(PlayerClass.THE_SILENT)
+    # result = coordinator.play_one_game(PlayerClass.IRONCLAD)
+    f = open('jawWorm1hp.json')
+    communication_state = json.load(f)
+
+    agent.get_next_action_in_game(Game.from_json(communication_state.get("game_state"), communication_state.get("available_commands")))
+
 
 
  
