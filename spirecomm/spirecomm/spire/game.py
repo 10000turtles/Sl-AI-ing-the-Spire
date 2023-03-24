@@ -6,8 +6,10 @@ import spirecomm.spire.character
 import spirecomm.spire.map
 import spirecomm.spire.potion
 import spirecomm.spire.screen
-from spirecomm.spire.character import Intent, PlayerClass
+from spirecomm.spire.character import Intent, PlayerClass, Power
 import copy
+import itertools as it
+
 
 class RoomPhase(Enum):
     COMBAT = 1,
@@ -172,6 +174,37 @@ class Game:
         self.update_monsters()
         self.update_cards()
 
+    def execute_monster_attacks(self):
+
+        # update monsters and add block + power stuff to update_monsters
+        
+
+        for monster in self.monsters:
+            monster.block = 0
+
+            if monster.intent == Intent.ATTACK:
+                if self.player.block < monster.move_adjusted_damage:                
+                    self.player.current_hp = self.player.current_hp - (monster.move_adjusted_damage - self.player.block)
+                    self.player.block = 0
+                else:    
+                    self.player.block = self.player.block - monster.move_adjusted_damage
+
+            if monster.intent == Intent.ATTACK_DEFEND:
+                self.player.current_hp = self.player.current_hp - monster.move_adjusted_damage
+                if monster.name == "Jaw Worm":
+                    monster.block = monster.block + 5
+
+            if monster.intent == Intent.DEFEND_BUFF:
+                if monster.name == "Jaw Worm":
+                    try:
+                        index = [i.power_name for i in monster.powers].index("Strength")
+                        monster.powers[index].amount = monster.powers[index].amount + 3
+                            
+                    except ValueError:
+                        monster.powers.append(Power("Strength","Strength",3))
+
+
+
     def predict_state(self,card=None,target=None):
         new_game = copy.deepcopy(self)
 
@@ -214,12 +247,20 @@ class Game:
         return new_game 
 
     def predict_states_turn_end(self):
+
         new_games = []
+
+        new_game_template = copy.deepcopy(self)
+
+        new_game_template.execute_monster_attacks()
         
+        possible_hands = it.combinations(self.hand,5)
 
-        # Construct Possible Card Draws
+        possible_monster_intents = []
+        
+        for monster in self.monsters:
+            possible_monster_intents.append( monster.possible_intents(),0)
 
-        # Construct Possible Monster Intents
 
         # Calculate Probabilities (And set non-deterministic)
         return new_games

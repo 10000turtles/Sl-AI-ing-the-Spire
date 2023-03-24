@@ -25,6 +25,13 @@ class Intent(Enum):
     def is_attack(self):
         return self in [Intent.ATTACK, Intent.ATTACK_BUFF, Intent.ATTACK_DEBUFF, Intent.ATTACK_DEFEND]
 
+class Monster_Action:
+     
+    def __init__(self,intent,power,prob):
+        self.intent = intent
+        self.power = power
+        self.probability = prob
+
 
 class PlayerClass(Enum):
     IRONCLAD = 1
@@ -112,6 +119,13 @@ class Monster(Character):
         monster = cls(name, monster_id, max_hp, current_hp, block, intent, half_dead, is_gone, move_id, last_move_id, second_last_move_id, move_base_damage, move_adjusted_damage, move_hits)
         monster.powers = [Power.from_json(json_power) for json_power in json_object["powers"]]
         return monster
+
+    def possible_intents(self):
+        intents = []
+        # if self.name == "Jaw Worm":
+        #     if self.last_move_id
+            
+
 
     def __eq__(self, other):
         if self.name == other.name and self.current_hp == other.current_hp and self.max_hp == other.max_hp and self.block == other.block:

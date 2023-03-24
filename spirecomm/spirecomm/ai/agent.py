@@ -38,7 +38,7 @@ class SimpleAgent:
 
     def get_next_action_in_game(self, game_state):
         self.game = game_state
-        #time.sleep(0.07)
+        time.sleep(1)
         if self.game.choice_available:
             return self.handle_screen()
         if self.game.proceed_available:
@@ -135,7 +135,7 @@ class SimpleAgent:
 
     def handle_screen(self):
         if self.game.screen_type == ScreenType.EVENT:
-            if self.game.screen.event_id in ["Vampires", "Masked Bandits", "Knowing Skull", "Ghosts", "Liars Game", "Golden Idol", "Drug Dealer", "The Library"]:
+            if self.game.screen.event_id in ["Vampires", "Masked Bandits", "Knowing Skull", "Ghosts", "Liars Game", "Golden Idol", "Drug Dealer", "The Library","Neow Event"]:
                 return ChooseAction(len(self.game.screen.options) - 1)
             else:
                 return ChooseAction(0)

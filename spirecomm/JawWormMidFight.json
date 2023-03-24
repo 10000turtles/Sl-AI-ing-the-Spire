@@ -1,7 +1,5 @@
 {
     "available_commands": [
-        "play",
-        "end",
         "key",
         "click",
         "wait",
@@ -12,31 +10,19 @@
     "game_state": {
         "screen_type": "NONE",
         "screen_state": {},
-        "seed": -6317699410817418669,
+        "seed": -4193337395616913381,
         "combat_state": {
-            "draw_pile": [
+            "draw_pile": [],
+            "discard_pile": [
                 {
                     "exhausts": false,
-                    "is_playable": true,
-                    "cost": 1,
-                    "name": "Strike",
-                    "id": "Strike_R",
-                    "type": "ATTACK",
-                    "ethereal": false,
-                    "uuid": "2db1d065-e2f2-4d03-ada8-e932f124c5c4",
-                    "upgrades": 0,
-                    "rarity": "BASIC",
-                    "has_target": true
-                },
-                {
-                    "exhausts": false,
-                    "is_playable": true,
+                    "is_playable": false,
                     "cost": 2,
                     "name": "Bash",
                     "id": "Bash",
                     "type": "ATTACK",
                     "ethereal": false,
-                    "uuid": "2e72ca3e-3192-44f5-bd13-848cf17a8506",
+                    "uuid": "6df9920f-5778-450a-87c1-584064dae03e",
                     "upgrades": 0,
                     "rarity": "BASIC",
                     "has_target": true
@@ -49,20 +35,7 @@
                     "id": "Strike_R",
                     "type": "ATTACK",
                     "ethereal": false,
-                    "uuid": "0ae227d4-ed35-4d51-a2e8-82d465ab42b5",
-                    "upgrades": 0,
-                    "rarity": "BASIC",
-                    "has_target": true
-                },
-                {
-                    "exhausts": false,
-                    "is_playable": true,
-                    "cost": 1,
-                    "name": "Strike",
-                    "id": "Strike_R",
-                    "type": "ATTACK",
-                    "ethereal": false,
-                    "uuid": "0e7985d3-c42b-47f1-981f-9826fc104b45",
+                    "uuid": "7a127a29-4c62-4540-a555-55df2e1d51f7",
                     "upgrades": 0,
                     "rarity": "BASIC",
                     "has_target": true
@@ -75,34 +48,93 @@
                     "id": "Defend_R",
                     "type": "SKILL",
                     "ethereal": false,
-                    "uuid": "55ac99bb-85ec-4c52-a1e7-ea4d0393682d",
+                    "uuid": "e1c47f1f-1bdc-4cde-9bcf-1b9fb6f4e65d",
+                    "upgrades": 0,
+                    "rarity": "BASIC",
+                    "has_target": false
+                },
+                {
+                    "exhausts": false,
+                    "is_playable": true,
+                    "cost": 1,
+                    "name": "Defend",
+                    "id": "Defend_R",
+                    "type": "SKILL",
+                    "ethereal": false,
+                    "uuid": "814380fa-f517-4dea-b182-76b62c6f877c",
+                    "upgrades": 0,
+                    "rarity": "BASIC",
+                    "has_target": false
+                },
+                {
+                    "exhausts": false,
+                    "is_playable": true,
+                    "cost": 1,
+                    "name": "Defend",
+                    "id": "Defend_R",
+                    "type": "SKILL",
+                    "ethereal": false,
+                    "uuid": "c4c0ff3b-e484-419a-ab5e-ccf5023f83ce",
+                    "upgrades": 0,
+                    "rarity": "BASIC",
+                    "has_target": false
+                },
+                {
+                    "exhausts": false,
+                    "is_playable": true,
+                    "cost": 1,
+                    "name": "Strike",
+                    "id": "Strike_R",
+                    "type": "ATTACK",
+                    "ethereal": false,
+                    "uuid": "119fd0b5-5502-4a2b-8709-23079c479290",
+                    "upgrades": 0,
+                    "rarity": "BASIC",
+                    "has_target": true
+                },
+                {
+                    "exhausts": false,
+                    "is_playable": true,
+                    "cost": 1,
+                    "name": "Defend",
+                    "id": "Defend_R",
+                    "type": "SKILL",
+                    "ethereal": false,
+                    "uuid": "200bb00e-0d64-4a09-88bf-f26681633890",
                     "upgrades": 0,
                     "rarity": "BASIC",
                     "has_target": false
                 }
             ],
-            "discard_pile": [],
             "exhaust_pile": [],
             "cards_discarded_this_turn": 0,
-            "times_damaged": 0,
+            "times_damaged": 1,
             "monsters": [
                 {
                     "is_gone": false,
                     "move_hits": 1,
-                    "move_base_damage": 11,
+                    "move_base_damage": 7,
+                    "last_move_id": 1,
                     "half_dead": false,
-                    "move_adjusted_damage": -1,
-                    "max_hp": 40,
-                    "intent": "DEBUG",
-                    "move_id": 1,
+                    "move_adjusted_damage": 7,
+                    "max_hp": 42,
+                    "intent": "ATTACK_DEFEND",
+                    "move_id": 3,
                     "name": "Jaw Worm",
-                    "current_hp": 1,
+                    "current_hp": 16,
                     "block": 0,
                     "id": "JawWorm",
-                    "powers": []
+                    "powers": [
+                        {
+                            "amount": 1,
+                            "just_applied": false,
+                            "name": "Vulnerable",
+                            "id": "Vulnerable"
+                        }
+                    ]
                 }
             ],
-            "turn": 1,
+            "turn": 2,
             "limbo": [],
             "hand": [
                 {
@@ -113,36 +145,10 @@
                     "id": "Strike_R",
                     "type": "ATTACK",
                     "ethereal": false,
-                    "uuid": "7b845bbf-88bf-49c4-8bc1-019dd981b6f2",
+                    "uuid": "a256ccfa-0813-4532-a8b0-cfaee1d39fd7",
                     "upgrades": 0,
                     "rarity": "BASIC",
                     "has_target": true
-                },
-                {
-                    "exhausts": false,
-                    "is_playable": true,
-                    "cost": 1,
-                    "name": "Defend",
-                    "id": "Defend_R",
-                    "type": "SKILL",
-                    "ethereal": false,
-                    "uuid": "e7ec73ce-3133-449a-a7ae-4c9644351e14",
-                    "upgrades": 0,
-                    "rarity": "BASIC",
-                    "has_target": false
-                },
-                {
-                    "exhausts": false,
-                    "is_playable": true,
-                    "cost": 1,
-                    "name": "Defend",
-                    "id": "Defend_R",
-                    "type": "SKILL",
-                    "ethereal": false,
-                    "uuid": "d7a9db75-d7da-41cb-b3c4-9b2f3c6b2ed6",
-                    "upgrades": 0,
-                    "rarity": "BASIC",
-                    "has_target": false
                 },
                 {
                     "exhausts": false,
@@ -152,7 +158,7 @@
                     "id": "Strike_R",
                     "type": "ATTACK",
                     "ethereal": false,
-                    "uuid": "48920fd1-7fd8-44cc-9982-56f0c26e2751",
+                    "uuid": "925e65a8-d470-4ed0-b767-9651e896adba",
                     "upgrades": 0,
                     "rarity": "BASIC",
                     "has_target": true
@@ -161,23 +167,23 @@
                     "exhausts": false,
                     "is_playable": true,
                     "cost": 1,
-                    "name": "Defend",
-                    "id": "Defend_R",
-                    "type": "SKILL",
+                    "name": "Strike",
+                    "id": "Strike_R",
+                    "type": "ATTACK",
                     "ethereal": false,
-                    "uuid": "97d75325-e69f-472b-b468-a4f9888d3763",
+                    "uuid": "f4dc39a2-dc3d-44e9-a1af-d0c5dd476a9e",
                     "upgrades": 0,
                     "rarity": "BASIC",
-                    "has_target": false
+                    "has_target": true
                 }
             ],
             "player": {
                 "orbs": [],
-                "current_hp": 80,
-                "block": 0,
-                "max_hp": 80,
+                "current_hp": 77,
+                "block": 5,
+                "max_hp": 88,
                 "powers": [],
-                "energy": 3
+                "energy": 1
             }
         },
         "deck": [
@@ -189,7 +195,7 @@
                 "id": "Strike_R",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "48920fd1-7fd8-44cc-9982-56f0c26e2751",
+                "uuid": "a256ccfa-0813-4532-a8b0-cfaee1d39fd7",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -202,7 +208,7 @@
                 "id": "Strike_R",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "0ae227d4-ed35-4d51-a2e8-82d465ab42b5",
+                "uuid": "119fd0b5-5502-4a2b-8709-23079c479290",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -215,7 +221,7 @@
                 "id": "Strike_R",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "2db1d065-e2f2-4d03-ada8-e932f124c5c4",
+                "uuid": "925e65a8-d470-4ed0-b767-9651e896adba",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -228,7 +234,7 @@
                 "id": "Strike_R",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "7b845bbf-88bf-49c4-8bc1-019dd981b6f2",
+                "uuid": "f4dc39a2-dc3d-44e9-a1af-d0c5dd476a9e",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -241,7 +247,7 @@
                 "id": "Strike_R",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "0e7985d3-c42b-47f1-981f-9826fc104b45",
+                "uuid": "7a127a29-4c62-4540-a555-55df2e1d51f7",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -254,7 +260,7 @@
                 "id": "Defend_R",
                 "type": "SKILL",
                 "ethereal": false,
-                "uuid": "97d75325-e69f-472b-b468-a4f9888d3763",
+                "uuid": "814380fa-f517-4dea-b182-76b62c6f877c",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": false
@@ -267,7 +273,7 @@
                 "id": "Defend_R",
                 "type": "SKILL",
                 "ethereal": false,
-                "uuid": "e7ec73ce-3133-449a-a7ae-4c9644351e14",
+                "uuid": "c4c0ff3b-e484-419a-ab5e-ccf5023f83ce",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": false
@@ -280,7 +286,7 @@
                 "id": "Defend_R",
                 "type": "SKILL",
                 "ethereal": false,
-                "uuid": "d7a9db75-d7da-41cb-b3c4-9b2f3c6b2ed6",
+                "uuid": "200bb00e-0d64-4a09-88bf-f26681633890",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": false
@@ -293,20 +299,20 @@
                 "id": "Defend_R",
                 "type": "SKILL",
                 "ethereal": false,
-                "uuid": "55ac99bb-85ec-4c52-a1e7-ea4d0393682d",
+                "uuid": "e1c47f1f-1bdc-4cde-9bcf-1b9fb6f4e65d",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": false
             },
             {
                 "exhausts": false,
-                "is_playable": true,
+                "is_playable": false,
                 "cost": 2,
                 "name": "Bash",
                 "id": "Bash",
                 "type": "ATTACK",
                 "ethereal": false,
-                "uuid": "2e72ca3e-3192-44f5-bd13-848cf17a8506",
+                "uuid": "6df9920f-5778-450a-87c1-584064dae03e",
                 "upgrades": 0,
                 "rarity": "BASIC",
                 "has_target": true
@@ -317,21 +323,16 @@
                 "name": "Burning Blood",
                 "id": "Burning Blood",
                 "counter": -1
-            },
-            {
-                "name": "Neow\u0027s Lament",
-                "id": "NeowsBlessing",
-                "counter": 2
             }
         ],
-        "max_hp": 80,
+        "max_hp": 88,
         "act_boss": "Hexaghost",
         "gold": 99,
         "action_phase": "WAITING_ON_USER",
         "act": 1,
-        "screen_name": "NONE",
+        "screen_name": "SETTINGS",
         "room_phase": "COMBAT",
-        "is_screen_up": false,
+        "is_screen_up": true,
         "potions": [
             {
                 "requires_target": false,
@@ -355,7 +356,7 @@
                 "id": "Potion Slot"
             }
         ],
-        "current_hp": 80,
+        "current_hp": 77,
         "floor": 1,
         "ascension_level": 0,
         "class": "IRONCLAD",
@@ -366,134 +367,90 @@
                     {
                         "x": 0,
                         "y": 1
-                    }
-                ],
-                "x": 0,
-                "y": 0,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 1,
-                        "y": 1
-                    }
-                ],
-                "x": 2,
-                "y": 0,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 4,
-                        "y": 1
-                    }
-                ],
-                "x": 4,
-                "y": 0,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 1
-                    }
-                ],
-                "x": 5,
-                "y": 0,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 1,
-                        "y": 2
-                    }
-                ],
-                "x": 0,
-                "y": 1,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 2,
-                        "y": 2
-                    }
-                ],
-                "x": 1,
-                "y": 1,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 3,
-                        "y": 2
-                    }
-                ],
-                "x": 4,
-                "y": 1,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 2
-                    }
-                ],
-                "x": 5,
-                "y": 1,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 0,
-                        "y": 3
                     },
                     {
-                        "x": 2,
-                        "y": 3
+                        "x": 1,
+                        "y": 1
                     }
                 ],
-                "x": 1,
-                "y": 2,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 2,
-                        "y": 3
-                    }
-                ],
-                "x": 2,
-                "y": 2,
+                "x": 0,
+                "y": 0,
                 "parents": []
             },
             {
                 "symbol": "M",
                 "children": [
                     {
-                        "x": 4,
-                        "y": 3
+                        "x": 2,
+                        "y": 1
                     }
                 ],
                 "x": 3,
-                "y": 2,
+                "y": 0,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 3,
+                        "y": 1
+                    }
+                ],
+                "x": 4,
+                "y": 0,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 6,
+                        "y": 1
+                    }
+                ],
+                "x": 6,
+                "y": 0,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 0,
+                        "y": 2
+                    }
+                ],
+                "x": 0,
+                "y": 1,
+                "parents": []
+            },
+            {
+                "symbol": "?",
+                "children": [
+                    {
+                        "x": 0,
+                        "y": 2
+                    },
+                    {
+                        "x": 2,
+                        "y": 2
+                    }
+                ],
+                "x": 1,
+                "y": 1,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 2,
+                        "y": 2
+                    }
+                ],
+                "x": 2,
+                "y": 1,
                 "parents": []
             },
             {
@@ -501,10 +458,70 @@
                 "children": [
                     {
                         "x": 4,
+                        "y": 2
+                    }
+                ],
+                "x": 3,
+                "y": 1,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 5,
+                        "y": 2
+                    }
+                ],
+                "x": 6,
+                "y": 1,
+                "parents": []
+            },
+            {
+                "symbol": "?",
+                "children": [
+                    {
+                        "x": 1,
+                        "y": 3
+                    }
+                ],
+                "x": 0,
+                "y": 2,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 1,
                         "y": 3
                     },
                     {
-                        "x": 6,
+                        "x": 3,
+                        "y": 3
+                    }
+                ],
+                "x": 2,
+                "y": 2,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 5,
+                        "y": 3
+                    }
+                ],
+                "x": 4,
+                "y": 2,
+                "parents": []
+            },
+            {
+                "symbol": "?",
+                "children": [
+                    {
+                        "x": 5,
                         "y": 3
                     }
                 ],
@@ -518,49 +535,13 @@
                     {
                         "x": 0,
                         "y": 4
-                    }
-                ],
-                "x": 0,
-                "y": 3,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 2,
-                        "y": 4
-                    }
-                ],
-                "x": 2,
-                "y": 3,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 3,
-                        "y": 4
                     },
                     {
-                        "x": 4,
+                        "x": 1,
                         "y": 4
                     }
                 ],
-                "x": 4,
-                "y": 3,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 4
-                    }
-                ],
-                "x": 6,
+                "x": 1,
                 "y": 3,
                 "parents": []
             },
@@ -568,11 +549,51 @@
                 "symbol": "$",
                 "children": [
                     {
-                        "x": 1,
+                        "x": 2,
+                        "y": 4
+                    }
+                ],
+                "x": 3,
+                "y": 3,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 4,
+                        "y": 4
+                    },
+                    {
+                        "x": 5,
+                        "y": 4
+                    }
+                ],
+                "x": 5,
+                "y": 3,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 0,
                         "y": 5
                     }
                 ],
                 "x": 0,
+                "y": 4,
+                "parents": []
+            },
+            {
+                "symbol": "?",
+                "children": [
+                    {
+                        "x": 1,
+                        "y": 5
+                    }
+                ],
+                "x": 1,
                 "y": 4,
                 "parents": []
             },
@@ -596,7 +617,7 @@
                         "y": 5
                     }
                 ],
-                "x": 3,
+                "x": 4,
                 "y": 4,
                 "parents": []
             },
@@ -608,18 +629,6 @@
                         "y": 5
                     }
                 ],
-                "x": 4,
-                "y": 4,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 5
-                    }
-                ],
                 "x": 5,
                 "y": 4,
                 "parents": []
@@ -628,7 +637,23 @@
                 "symbol": "E",
                 "children": [
                     {
+                        "x": 0,
+                        "y": 6
+                    },
+                    {
                         "x": 1,
+                        "y": 6
+                    }
+                ],
+                "x": 0,
+                "y": 5,
+                "parents": []
+            },
+            {
+                "symbol": "R",
+                "children": [
+                    {
+                        "x": 2,
                         "y": 6
                     }
                 ],
@@ -640,11 +665,7 @@
                 "symbol": "E",
                 "children": [
                     {
-                        "x": 2,
-                        "y": 6
-                    },
-                    {
-                        "x": 4,
+                        "x": 3,
                         "y": 6
                     }
                 ],
@@ -656,6 +677,10 @@
                 "symbol": "R",
                 "children": [
                     {
+                        "x": 3,
+                        "y": 6
+                    },
+                    {
                         "x": 4,
                         "y": 6
                     }
@@ -668,19 +693,19 @@
                 "symbol": "R",
                 "children": [
                     {
-                        "x": 6,
-                        "y": 6
+                        "x": 0,
+                        "y": 7
                     }
                 ],
-                "x": 5,
-                "y": 5,
+                "x": 0,
+                "y": 6,
                 "parents": []
             },
             {
                 "symbol": "M",
                 "children": [
                     {
-                        "x": 0,
+                        "x": 1,
                         "y": 7
                     }
                 ],
@@ -689,7 +714,7 @@
                 "parents": []
             },
             {
-                "symbol": "R",
+                "symbol": "M",
                 "children": [
                     {
                         "x": 2,
@@ -698,6 +723,70 @@
                 ],
                 "x": 2,
                 "y": 6,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 2,
+                        "y": 7
+                    }
+                ],
+                "x": 3,
+                "y": 6,
+                "parents": []
+            },
+            {
+                "symbol": "?",
+                "children": [
+                    {
+                        "x": 3,
+                        "y": 7
+                    }
+                ],
+                "x": 4,
+                "y": 6,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
+                    {
+                        "x": 0,
+                        "y": 8
+                    }
+                ],
+                "x": 0,
+                "y": 7,
+                "parents": []
+            },
+            {
+                "symbol": "R",
+                "children": [
+                    {
+                        "x": 0,
+                        "y": 8
+                    }
+                ],
+                "x": 1,
+                "y": 7,
+                "parents": []
+            },
+            {
+                "symbol": "R",
+                "children": [
+                    {
+                        "x": 1,
+                        "y": 8
+                    },
+                    {
+                        "x": 2,
+                        "y": 8
+                    }
+                ],
+                "x": 2,
+                "y": 7,
                 "parents": []
             },
             {
@@ -705,58 +794,6 @@
                 "children": [
                     {
                         "x": 3,
-                        "y": 7
-                    },
-                    {
-                        "x": 4,
-                        "y": 7
-                    }
-                ],
-                "x": 4,
-                "y": 6,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 6,
-                        "y": 7
-                    }
-                ],
-                "x": 6,
-                "y": 6,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 1,
-                        "y": 8
-                    }
-                ],
-                "x": 0,
-                "y": 7,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 2,
-                        "y": 8
-                    }
-                ],
-                "x": 2,
-                "y": 7,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 4,
                         "y": 8
                     }
                 ],
@@ -765,34 +802,26 @@
                 "parents": []
             },
             {
-                "symbol": "M",
+                "symbol": "T",
                 "children": [
                     {
-                        "x": 4,
-                        "y": 8
-                    }
-                ],
-                "x": 4,
-                "y": 7,
-                "parents": []
-            },
-            {
-                "symbol": "R",
-                "children": [
+                        "x": 0,
+                        "y": 9
+                    },
                     {
-                        "x": 5,
-                        "y": 8
+                        "x": 1,
+                        "y": 9
                     }
                 ],
-                "x": 6,
-                "y": 7,
+                "x": 0,
+                "y": 8,
                 "parents": []
             },
             {
                 "symbol": "T",
                 "children": [
                     {
-                        "x": 0,
+                        "x": 1,
                         "y": 9
                     }
                 ],
@@ -804,7 +833,7 @@
                 "symbol": "T",
                 "children": [
                     {
-                        "x": 2,
+                        "x": 3,
                         "y": 9
                     }
                 ],
@@ -816,35 +845,19 @@
                 "symbol": "T",
                 "children": [
                     {
-                        "x": 4,
-                        "y": 9
-                    },
-                    {
-                        "x": 5,
+                        "x": 3,
                         "y": 9
                     }
                 ],
-                "x": 4,
+                "x": 3,
                 "y": 8,
                 "parents": []
             },
             {
-                "symbol": "T",
+                "symbol": "M",
                 "children": [
                     {
-                        "x": 5,
-                        "y": 9
-                    }
-                ],
-                "x": 5,
-                "y": 8,
-                "parents": []
-            },
-            {
-                "symbol": "E",
-                "children": [
-                    {
-                        "x": 1,
+                        "x": 0,
                         "y": 10
                     }
                 ],
@@ -853,26 +866,18 @@
                 "parents": []
             },
             {
-                "symbol": "M",
+                "symbol": "R",
                 "children": [
                     {
                         "x": 1,
                         "y": 10
-                    }
-                ],
-                "x": 2,
-                "y": 9,
-                "parents": []
-            },
-            {
-                "symbol": "$",
-                "children": [
+                    },
                     {
-                        "x": 4,
+                        "x": 2,
                         "y": 10
                     }
                 ],
-                "x": 4,
+                "x": 1,
                 "y": 9,
                 "parents": []
             },
@@ -880,15 +885,11 @@
                 "symbol": "M",
                 "children": [
                     {
-                        "x": 4,
-                        "y": 10
-                    },
-                    {
-                        "x": 6,
+                        "x": 3,
                         "y": 10
                     }
                 ],
-                "x": 5,
+                "x": 3,
                 "y": 9,
                 "parents": []
             },
@@ -898,7 +899,15 @@
                     {
                         "x": 0,
                         "y": 11
-                    },
+                    }
+                ],
+                "x": 0,
+                "y": 10,
+                "parents": []
+            },
+            {
+                "symbol": "M",
+                "children": [
                     {
                         "x": 1,
                         "y": 11
@@ -909,8 +918,24 @@
                 "parents": []
             },
             {
-                "symbol": "E",
+                "symbol": "$",
                 "children": [
+                    {
+                        "x": 2,
+                        "y": 11
+                    }
+                ],
+                "x": 2,
+                "y": 10,
+                "parents": []
+            },
+            {
+                "symbol": "R",
+                "children": [
+                    {
+                        "x": 2,
+                        "y": 11
+                    },
                     {
                         "x": 3,
                         "y": 11
@@ -920,27 +945,15 @@
                         "y": 11
                     }
                 ],
-                "x": 4,
+                "x": 3,
                 "y": 10,
                 "parents": []
             },
             {
-                "symbol": "R",
+                "symbol": "M",
                 "children": [
                     {
-                        "x": 6,
-                        "y": 11
-                    }
-                ],
-                "x": 6,
-                "y": 10,
-                "parents": []
-            },
-            {
-                "symbol": "?",
-                "children": [
-                    {
-                        "x": 1,
+                        "x": 0,
                         "y": 12
                     }
                 ],
@@ -949,10 +962,10 @@
                 "parents": []
             },
             {
-                "symbol": "R",
+                "symbol": "M",
                 "children": [
                     {
-                        "x": 1,
+                        "x": 2,
                         "y": 12
                     }
                 ],
@@ -964,11 +977,15 @@
                 "symbol": "?",
                 "children": [
                     {
+                        "x": 2,
+                        "y": 12
+                    },
+                    {
                         "x": 3,
                         "y": 12
                     }
                 ],
-                "x": 3,
+                "x": 2,
                 "y": 11,
                 "parents": []
             },
@@ -976,7 +993,19 @@
                 "symbol": "$",
                 "children": [
                     {
-                        "x": 5,
+                        "x": 3,
+                        "y": 12
+                    }
+                ],
+                "x": 3,
+                "y": 11,
+                "parents": []
+            },
+            {
+                "symbol": "E",
+                "children": [
+                    {
+                        "x": 3,
                         "y": 12
                     }
                 ],
@@ -988,32 +1017,32 @@
                 "symbol": "E",
                 "children": [
                     {
-                        "x": 6,
-                        "y": 12
-                    }
-                ],
-                "x": 6,
-                "y": 11,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 0,
-                        "y": 13
-                    },
-                    {
                         "x": 1,
                         "y": 13
                     }
                 ],
-                "x": 1,
+                "x": 0,
                 "y": 12,
                 "parents": []
             },
             {
                 "symbol": "?",
+                "children": [
+                    {
+                        "x": 2,
+                        "y": 13
+                    },
+                    {
+                        "x": 3,
+                        "y": 13
+                    }
+                ],
+                "x": 2,
+                "y": 12,
+                "parents": []
+            },
+            {
+                "symbol": "M",
                 "children": [
                     {
                         "x": 3,
@@ -1029,38 +1058,14 @@
                 "parents": []
             },
             {
-                "symbol": "M",
+                "symbol": "?",
                 "children": [
                     {
-                        "x": 5,
-                        "y": 13
-                    }
-                ],
-                "x": 5,
-                "y": 12,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 13
-                    }
-                ],
-                "x": 6,
-                "y": 12,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 0,
+                        "x": 2,
                         "y": 14
                     }
                 ],
-                "x": 0,
+                "x": 1,
                 "y": 13,
                 "parents": []
             },
@@ -1068,11 +1073,11 @@
                 "symbol": "?",
                 "children": [
                     {
-                        "x": 1,
+                        "x": 2,
                         "y": 14
                     }
                 ],
-                "x": 1,
+                "x": 2,
                 "y": 13,
                 "parents": []
             },
@@ -1082,6 +1087,14 @@
                     {
                         "x": 2,
                         "y": 14
+                    },
+                    {
+                        "x": 3,
+                        "y": 14
+                    },
+                    {
+                        "x": 4,
+                        "y": 14
                     }
                 ],
                 "x": 3,
@@ -1089,55 +1102,15 @@
                 "parents": []
             },
             {
-                "symbol": "M",
+                "symbol": "?",
                 "children": [
                     {
-                        "x": 3,
+                        "x": 4,
                         "y": 14
                     }
                 ],
                 "x": 4,
                 "y": 13,
-                "parents": []
-            },
-            {
-                "symbol": "M",
-                "children": [
-                    {
-                        "x": 5,
-                        "y": 14
-                    },
-                    {
-                        "x": 6,
-                        "y": 14
-                    }
-                ],
-                "x": 5,
-                "y": 13,
-                "parents": []
-            },
-            {
-                "symbol": "R",
-                "children": [
-                    {
-                        "x": 3,
-                        "y": 16
-                    }
-                ],
-                "x": 0,
-                "y": 14,
-                "parents": []
-            },
-            {
-                "symbol": "R",
-                "children": [
-                    {
-                        "x": 3,
-                        "y": 16
-                    }
-                ],
-                "x": 1,
-                "y": 14,
                 "parents": []
             },
             {
@@ -1172,19 +1145,7 @@
                         "y": 16
                     }
                 ],
-                "x": 5,
-                "y": 14,
-                "parents": []
-            },
-            {
-                "symbol": "R",
-                "children": [
-                    {
-                        "x": 3,
-                        "y": 16
-                    }
-                ],
-                "x": 6,
+                "x": 4,
                 "y": 14,
                 "parents": []
             }
