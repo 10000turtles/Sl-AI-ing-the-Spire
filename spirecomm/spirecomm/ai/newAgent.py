@@ -19,15 +19,18 @@ class Node:
 
         if(head == None):
             self.head = self
+            self.id = 0
         else:
             self.head = head
+            self.id = head.total_leaves
+
+        
 
         self.hasChildren = False
         self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
         self.done = not game.in_combat
 
     def expand(self):  
-
         playable_cards = [card for card in self.game.hand if card.is_playable]
 
         playable_cards_no_repeats = []
@@ -51,21 +54,36 @@ class Node:
                     possible_options.append((card_to_play,None))
 
             for i in possible_options:
-                self.children.append(Node(self.game.predict_state(i[0],i[1]),self.probability,self.deterministic,self.head))
                 self.head.total_leaves = self.head.total_leaves + 1
-        else:
-            if not self.game.turn > self.head.game.turn: # Remove later. This will make sure there is no recursion into 2 turns deep
-                for state in self.game.predict_states_turn_end():
-                    self.children.append(Node(state,self.probability,self.deterministic,self.head))
+                self.children.append(Node(self.game.predict_state(i[0],i[1]),self.probability,0,self.head))
+                
+        else:     
+            if self.game.turn <= self.head.game.turn: # Remove later. This will make sure there is no recursion into 2 turns deep
+                for state,prob in self.game.predict_states_turn_end():
                     self.head.total_leaves = self.head.total_leaves + 1
+                    self.children.append(Node(state,prob,1,self.head))
 
         for i in self.children:
             if not i.game.in_combat:
+                print("id: " + str(i.id) + " is not in combat")
                 i.done = True
-            if i.game.turn > self.head.game.turn + 1:
+            if i.game.turn > self.head.game.turn + 1: # This makes sure that the child nodes in the first recursion will be evaluated.
+                print("id: " + str(i.id) + " has too many turns")
                 i.done = True
         
         return
+
+    def __str__(self):
+        temp = ""
+        
+        temp = temp + "id: " + str(self.id) + "\n"
+        temp = temp +"hand: " + str([i.name for i in self.game.hand])+ "\n"
+        temp = temp +"children: " + str([i.id for i in self.children])+ "\n"
+
+        for i in self.children:
+            temp = temp + i.__str__()
+
+        return temp
 
 class CoolRadicalAgent:
     def __init__(self, chosen_class=PlayerClass.THE_SILENT):
@@ -158,6 +176,7 @@ class CoolRadicalAgent:
                     activeNodes.append(child)
 
         print(self.headNode.total_leaves)
+        print(self.headNode)
 
         return
 

@@ -6,9 +6,10 @@ import spirecomm.spire.character
 import spirecomm.spire.map
 import spirecomm.spire.potion
 import spirecomm.spire.screen
-from spirecomm.spire.character import Intent, PlayerClass, Power
+from spirecomm.spire.character import * #Intent, PlayerClass, Power,Monster_Action,Monster_Move
 import copy
 import itertools as it
+import math
 
 
 class RoomPhase(Enum):
@@ -167,6 +168,7 @@ class Game:
 
     def update_cards(self):
         for card in self.hand:
+            card.is_playable = True
             if self.player.energy < card.cost:
                 card.is_playable = False
 
@@ -177,7 +179,7 @@ class Game:
     def execute_monster_attacks(self):
 
         # update monsters and add block + power stuff to update_monsters
-        
+
 
         for monster in self.monsters:
             monster.block = 0
@@ -240,8 +242,9 @@ class Game:
                 if target.__eq__(monster):
                     target = monster
                     break
-
+                
             target.current_hp = target.current_hp - 8
+            
 
             new_game.update()
         return new_game 
@@ -251,17 +254,70 @@ class Game:
         new_games = []
 
         new_game_template = copy.deepcopy(self)
+        new_game_template.turn = new_game_template.turn + 1
+
+        new_game_template.discard_pile.append(new_game_template.hand)
+        new_game_template.hand = []
 
         new_game_template.execute_monster_attacks()
         
-        possible_hands = it.combinations(self.hand,5)
+        print("len of draw pile: " + str(len(new_game_template.draw_pile)))
 
         possible_monster_intents = []
         
         for monster in self.monsters:
-            possible_monster_intents.append( monster.possible_intents(),0)
+            possible_monster_intents.append(monster.possible_intents())
 
+        
 
+        for combo in it.product(*possible_monster_intents):
+            count = 0
+            if(len(new_game_template.draw_pile) >= 5):
+                possible_hands = it.combinations(new_game_template.draw_pile,5)
+            else:
+                new_game_template.hand.append(new_game_template.draw_pile)
+                new_game_template.draw_pile.append(new_game_template.discard_pile)
+
+                possible_hands = it.combinations(self.draw_pile,5-len(new_game_template.draw_pile))
+            
+            for hand in possible_hands:
+                hand = list(hand)
+                count = count + 1
+
+                temp_game = copy.deepcopy(new_game_template)
+                print("hand: " + str(hand))
+                if len(temp_game.hand) == 0:
+                    temp_game.hand = hand
+                else:
+                    temp_game.hand.append(hand)
+
+                # Add exhaust mechanics here
+                # Add "on draw" mechanics here
+                # Add max hand size here
+                # OMG wtf this is complex
+
+                for i in range(len(temp_game.monsters)):
+                    temp_game.monsters[i].second_last_move_id = temp_game.monsters[i].last_move_id
+                    temp_game.monsters[i].last_move_id = temp_game.monsters[i].move_id
+                    temp_game.monsters[i].move_id = combo[i].intent
+
+                    temp_game.monsters[i].move_base_damage = combo[i].power
+                    temp_game.monsters[i].move_adjusted_damage = temp_game.monsters[i].adjust_damage(combo[i].power,temp_game.player.powers)             
+
+                    intent_list = [Intent.ATTACK,Intent.ATTACK_DEFEND,Intent.DEFEND_BUFF]
+                    temp_game.monsters[i].intent = intent_list[combo[i].intent-1]
+
+                temp_game.player.energy = 3
+                temp_game.update()
+                
+                new_games.append((temp_game,math.prod( [i.probability for i in combo])))
+        
+        for i in range(len(new_games)):
+            new_games[i] = (new_games[i][0],new_games[i][1]*(1/count)) # Tuples dont support item assignment so I have to do it this way
+            print(new_games[i][0].hand)
+            print([k.name for k in new_games[i][0].hand])
+            print([k.intent for k in new_games[i][0].monsters])
+            print(new_games[i][1])
         # Calculate Probabilities (And set non-deterministic)
         return new_games
 

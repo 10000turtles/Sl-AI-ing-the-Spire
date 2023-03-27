@@ -2,6 +2,12 @@ from enum import Enum
 
 from spirecomm.spire.power import Power
 
+from enum import IntEnum
+
+class Monster_Move(IntEnum):
+    JAW_WORM_CHOMP = 1
+    JAW_WORM_THRASH = 2
+    JAW_WORM_BELLOW = 3
 
 class Intent(Enum):
     ATTACK = 1
@@ -122,10 +128,27 @@ class Monster(Character):
 
     def possible_intents(self):
         intents = []
-        # if self.name == "Jaw Worm":
-        #     if self.last_move_id
-            
-
+        if self.name == "Jaw Worm":
+            if self.last_move_id == Monster_Move.JAW_WORM_BELLOW:
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/11))
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,6/11))
+            elif self.last_move_id == Monster_Move.JAW_WORM_THRASH and self.second_last_move_id == Monster_Move.JAW_WORM_THRASH:
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/14))
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,9/14))
+            elif self.last_move_id == Monster_Move.JAW_WORM_CHOMP:
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,3/5))
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,2/5))
+            else:
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,9/20))
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,6/20))
+                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/20))
+        return intents
+    def adjust_damage(self,base_power,player_powers):
+        try:
+            index = [i.power_name for i in self.powers].index("Strength")
+            return base_power + self.powers[index].amount
+        except ValueError:
+            return base_power
 
     def __eq__(self, other):
         if self.name == other.name and self.current_hp == other.current_hp and self.max_hp == other.max_hp and self.block == other.block:
@@ -135,3 +158,4 @@ class Monster(Character):
                         return False
                 return True
         return False
+ 
