@@ -1,0 +1,13 @@
+add nondeterministic node for cards played (draw cards, shuffle deck, etc)
+
+add Move class / apply where necessary (damage/block/powers/misc)
+define Move class for enemies / cards
+add more Cards
+
+add total node capacity
+add child per node capacity
+
+add more pruning algorithms
+
+re-organize github repo
+add type restrictions into methods, figure out way around circular definitions

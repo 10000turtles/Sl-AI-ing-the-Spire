@@ -159,3 +159,16 @@ class Monster(Character):
                 return True
         return False
  
+
+class Move:
+
+    def __init__(self, damage, block, num_hits, powers):
+        self.damage = damage
+        self.block = block
+
+        self.num_hits = num_hits
+        self.power = powers # list of tuples in the format of (power, amount)
+    
+    def executeMove(self, gameState, actor: Character, target: Character):
+        pass
+
