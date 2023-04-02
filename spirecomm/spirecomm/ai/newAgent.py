@@ -12,28 +12,25 @@ import copy
 
 
 class Node:
-  def __init__(self, game, prob, deter, head):
+  global_nodes = 0
+
+  def __init__(self, game, prob, deter):
     self.game = game
     self.probability = prob
     self.children = []
     self.total_nodes = 0
 
-    if (head == None):
-      self.head = self
-      self.id = 0
-    else:
-      self.head = head
-      self.id = 0
+    self.id = Node.global_nodes
+    Node.global_nodes = Node.global_nodes + 1
 
     self.hasChildren = False
     self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
     self.done = not game.in_combat
     self.static_value = game.evaluate_state()
     self.deep_evaluation = 0
+    self.removed = False
 
   def expand(self):
-
-    extra_turns_to_calculate = 2
 
     playable_cards = [card for card in self.game.hand if card.is_playable]
 
@@ -59,20 +56,15 @@ class Node:
           possible_options.append((card_to_play, None))
 
       for i in possible_options:
-
-        self.head.total_nodes = self.head.total_nodes + 1
-        self.children.append(Node(self.game.predict_state(i[0], i[1]), self.probability, 0, self.head))
+        self.children.append(Node(self.game.predict_state(i[0], i[1]), self.probability, 0))
 
     else:
-      if self.game.turn <= self.head.game.turn + extra_turns_to_calculate - 1:  # Remove later. This will make sure there is no recursion into 2 turns deep
-        for state, prob in self.game.predict_states_turn_end():
-          self.head.total_nodes = self.head.total_nodes + 1
-          self.children.append(Node(state, prob, 1, self.head))
+      for state, prob in self.game.predict_states_turn_end():
+        self.head.total_nodes = self.head.total_nodes + 1
+        self.children.append(Node(state, prob, 1))
 
     for i in self.children:
       if not i.game.in_combat:
-        i.done = True
-      if i.game.turn > self.head.game.turn + extra_turns_to_calculate:  # This makes sure that the child nodes in the first recursion will be evaluated.
         i.done = True
 
     return
@@ -118,9 +110,10 @@ class Node:
     if self.deterministic == 0:
       for child in self.children:
         if (child.deep_evaluation < self.deep_evaluation):
+          child.removed = True
           self.children.remove(child)
-        else:
-          child.heavy_prune()
+
+        child.heavy_prune()
 
     if self.deterministic == 1:
       for child in self.children:
@@ -128,6 +121,8 @@ class Node:
 
     if self.id == 0:
       self.total_nodes = self.count_tree_nodes()
+
+    return
 
   def __str__(self):
     temp = ""
@@ -218,26 +213,37 @@ class CoolRadicalAgent:
     return len(available_monsters) > 1
 
   def get_play_card_action(self):
+    GLOBAL_ID = 0
 
-    self.headNode = Node(copy.deepcopy(self.game), 1, 0, None)
+    self.headNode = Node(copy.deepcopy(self.game), 1, 0)
 
     activeNodes = [self.headNode]
 
     # Only expands nodes that are either this turn or next turn.
-    while len(activeNodes) >= 1:
+    while self.headNode.total_nodes < 4000:  # len(activeNodes) >= 1:
       current = activeNodes.pop(0)
 
       current.expand()
 
       for child in current.children:
+        self.headNode.total_nodes = self.headNode.total_nodes + 1
         if not child.done:
           activeNodes.append(child)
 
-    print(self.headNode.get_deep_evaluation())
-
-    print(self.headNode.total_nodes)
     self.headNode.heavy_prune()
-    print(self.headNode.total_nodes)
+
+    while self.headNode.total_nodes < 4000:  # len(activeNodes) >= 1:
+      current = activeNodes.pop(0)
+      if (current.removed):
+        continue
+
+      current.expand()
+
+      for child in current.children:
+        self.headNode.total_nodes = self.headNode.total_nodes + 1
+        if not child.done:
+          activeNodes.append(child)
+    
     return
 
   def handle_screen(self):
