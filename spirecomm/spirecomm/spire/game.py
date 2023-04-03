@@ -198,29 +198,30 @@ class Game:
 
         for monster in self.monsters:
             monster.block = 0
+            monster.move.execute_move(self,monster,self.player)
 
-            if monster.intent == Intent.ATTACK:
-                if self.player.block < monster.move_adjusted_damage:
-                    self.player.current_hp = self.player.current_hp - \
-                        (monster.move_adjusted_damage - self.player.block)
-                    self.player.block = 0
-                else:
-                    self.player.block = self.player.block - monster.move_adjusted_damage
+            # if monster.intent == Intent.ATTACK:
+            #     if self.player.block < monster.move_adjusted_damage:
+            #         self.player.current_hp = self.player.current_hp - \
+            #             (monster.move_adjusted_damage - self.player.block)
+            #         self.player.block = 0
+            #     else:
+            #         self.player.block = self.player.block - monster.move_adjusted_damage
 
-            if monster.intent == Intent.ATTACK_DEFEND:
-                self.player.current_hp = self.player.current_hp - monster.move_adjusted_damage
-                if monster.name == "Jaw Worm":
-                    monster.block = monster.block + 5
+            # if monster.intent == Intent.ATTACK_DEFEND:
+            #     self.player.current_hp = self.player.current_hp - monster.move_adjusted_damage
+            #     if monster.name == "Jaw Worm":
+            #         monster.block = monster.block + 5
 
-            if monster.intent == Intent.DEFEND_BUFF:
-                if monster.name == "Jaw Worm":
-                    try:
-                        index = [i.power_name for i in monster.powers].index(
-                            "Strength")
-                        monster.powers[index].amount = monster.powers[index].amount + 3
+            # if monster.intent == Intent.DEFEND_BUFF:
+            #     if monster.name == "Jaw Worm":
+            #         try:
+            #             index = [i.power_name for i in monster.powers].index(
+            #                 "Strength")
+            #             monster.powers[index].amount = monster.powers[index].amount + 3
 
-                    except ValueError:
-                        monster.powers.append(Power("Strength", "Strength", 3))
+            #         except ValueError:
+            #             monster.powers.append(Power("Strength", "Strength", 3))
 
     def predict_state(self, card=None, target=None):
         new_game = copy.deepcopy(self)
@@ -320,9 +321,9 @@ class Game:
                     temp_game.monsters[i].move_adjusted_damage = temp_game.monsters[i].adjust_damage(
                         combo[i].power, temp_game.player.powers)
 
-                    intent_list = [Intent.ATTACK,
-                                   Intent.ATTACK_DEFEND, Intent.DEFEND_BUFF]
-                    temp_game.monsters[i].intent = intent_list[combo[i].intent-1]
+                    # intent_list = [Intent.ATTACK,
+                    #                Intent.ATTACK_DEFEND, Intent.DEFEND_BUFF]
+                    # temp_game.monsters[i].intent = intent_list[combo[i].intent-1]
 
                 temp_game.player.energy = 3
                 temp_game.update()
