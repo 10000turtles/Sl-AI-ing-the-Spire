@@ -4,10 +4,12 @@ from spirecomm.spire.power import Power
 
 from enum import IntEnum
 
+
 class Monster_Move(IntEnum):
     JAW_WORM_CHOMP = 1
     JAW_WORM_THRASH = 2
     JAW_WORM_BELLOW = 3
+
 
 class Intent(Enum):
     ATTACK = 1
@@ -31,9 +33,10 @@ class Intent(Enum):
     def is_attack(self):
         return self in [Intent.ATTACK, Intent.ATTACK_BUFF, Intent.ATTACK_DEBUFF, Intent.ATTACK_DEFEND]
 
+
 class Monster_Action:
-     
-    def __init__(self,intent,power,prob):
+
+    def __init__(self, intent, power, prob):
         self.intent = intent
         self.power = power
         self.probability = prob
@@ -73,6 +76,13 @@ class Character:
         self.block = block
         self.powers = []
 
+    def adjust_damage(self, base_power, target_powers):
+        try:
+            index = [i.power_name for i in self.powers].index("Strength")
+            return base_power + self.powers[index].amount
+        except ValueError:
+            return base_power
+
 
 class Player(Character):
 
@@ -83,8 +93,10 @@ class Player(Character):
 
     @classmethod
     def from_json(cls, json_object):
-        player = cls(json_object["max_hp"], json_object["current_hp"], json_object["block"], json_object["energy"])
-        player.powers = [Power.from_json(json_power) for json_power in json_object["powers"]]
+        player = cls(json_object["max_hp"], json_object["current_hp"],
+                     json_object["block"], json_object["energy"])
+        player.powers = [Power.from_json(json_power)
+                         for json_power in json_object["powers"]]
         player.orbs = [Orb.from_json(orb) for orb in json_object["orbs"]]
         return player
 
@@ -105,6 +117,7 @@ class Monster(Character):
         self.move_adjusted_damage = move_adjusted_damage
         self.move_hits = move_hits
         self.monster_index = 0
+        self.move = Move.monster_move_data[(self.name,self.intent)]
 
     @classmethod
     def from_json(cls, json_object):
@@ -122,33 +135,46 @@ class Monster(Character):
         move_base_damage = json_object.get("move_base_damage", 0)
         move_adjusted_damage = json_object.get("move_adjusted_damage", 0)
         move_hits = json_object.get("move_hits", 0)
-        monster = cls(name, monster_id, max_hp, current_hp, block, intent, half_dead, is_gone, move_id, last_move_id, second_last_move_id, move_base_damage, move_adjusted_damage, move_hits)
-        monster.powers = [Power.from_json(json_power) for json_power in json_object["powers"]]
+        monster = cls(name, monster_id, max_hp, current_hp, block, intent, half_dead, is_gone, move_id,
+                      last_move_id, second_last_move_id, move_base_damage, move_adjusted_damage, move_hits)
+        monster.powers = [Power.from_json(json_power)
+                          for json_power in json_object["powers"]]
         return monster
 
     def possible_intents(self):
+        
         intents = []
+        
         if self.name == "Jaw Worm":
             if self.last_move_id == Monster_Move.JAW_WORM_BELLOW:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/11))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,6/11))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_CHOMP, 11, 5/11))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_THRASH, 7, 6/11))
+
             elif self.last_move_id == Monster_Move.JAW_WORM_THRASH and self.second_last_move_id == Monster_Move.JAW_WORM_THRASH:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/14))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,9/14))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_CHOMP, 11, 5/14))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_BELLOW, 3, 9/14))
+
             elif self.last_move_id == Monster_Move.JAW_WORM_CHOMP:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,3/5))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,2/5))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_BELLOW, 3, 3/5))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_THRASH, 7, 2/5))
+
             else:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW,3,9/20))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH,7,6/20))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP,11,5/20))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_BELLOW, 3, 9/20))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_THRASH, 7, 6/20))
+                intents.append(Monster_Action(
+                    Monster_Move.JAW_WORM_CHOMP, 11, 5/20))
+        
         return intents
-    def adjust_damage(self,base_power,player_powers):
-        try:
-            index = [i.power_name for i in self.powers].index("Strength")
-            return base_power + self.powers[index].amount
-        except ValueError:
-            return base_power
+
+    
 
     def __eq__(self, other):
         if self.name == other.name and self.current_hp == other.current_hp and self.max_hp == other.max_hp and self.block == other.block:
@@ -158,17 +184,23 @@ class Monster(Character):
                         return False
                 return True
         return False
- 
+
 
 class Move:
+    
+    monster_move_data = {
+        ("Jaw Worm",Monster_Move.JAW_WORM_BELLOW) : (0,6,1,[("Strength",3)],[]),
+        ("Jaw Worm",Monster_Move.JAW_WORM_CHOMP) : (11,0,1,[],[]),
+        ("Jaw Worm",Monster_Move.JAW_WORM_BELLOW) : (0,6,1,[],[])
+    }
 
-    def __init__(self, damage, block, num_hits, powers):
+    def __init__(self, damage, block, num_hits, powers, cards):
         self.damage = damage
         self.block = block
 
         self.num_hits = num_hits
-        self.power = powers # list of tuples in the format of (power, amount)
+        self.power = powers  # list of tuples in the format of (power, amount)
+        self.cards = cards # list of tuples in the format of (card, place) where place is 0: deck, 1:hand, 2: discard
     
-    def executeMove(self, gameState, actor: Character, target: Character):
+    def execute_move(self, gameState, actor: Character, target: Character):
         pass
-
