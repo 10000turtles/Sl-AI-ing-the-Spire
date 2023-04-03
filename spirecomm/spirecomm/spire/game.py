@@ -11,6 +11,7 @@ from spirecomm.spire.character import *
 import copy
 import itertools as it
 import math
+import random
 
 
 class RoomPhase(Enum):
@@ -200,68 +201,24 @@ class Game:
             monster.block = 0
             monster.move.execute_move(self,monster,self.player)
 
-            # if monster.intent == Intent.ATTACK:
-            #     if self.player.block < monster.move_adjusted_damage:
-            #         self.player.current_hp = self.player.current_hp - \
-            #             (monster.move_adjusted_damage - self.player.block)
-            #         self.player.block = 0
-            #     else:
-            #         self.player.block = self.player.block - monster.move_adjusted_damage
-
-            # if monster.intent == Intent.ATTACK_DEFEND:
-            #     self.player.current_hp = self.player.current_hp - monster.move_adjusted_damage
-            #     if monster.name == "Jaw Worm":
-            #         monster.block = monster.block + 5
-
-            # if monster.intent == Intent.DEFEND_BUFF:
-            #     if monster.name == "Jaw Worm":
-            #         try:
-            #             index = [i.power_name for i in monster.powers].index(
-            #                 "Strength")
-            #             monster.powers[index].amount = monster.powers[index].amount + 3
-
-            #         except ValueError:
-            #             monster.powers.append(Power("Strength", "Strength", 3))
 
     def predict_state(self, card=None, target=None):
         new_game = copy.deepcopy(self)
 
-        if (card.name == "Strike"):
-            new_game.hand.remove(card)
-            new_game.discard_pile.append(card)
-            new_game.player.energy = new_game.player.energy - 1
+        new_game.hand.remove(card)
+        new_game.discard_pile.append(card)
 
+        if(not target == None):
             for monster in new_game.monsters:
                 if target.__eq__(monster):
                     target = monster
                     break
 
-            target.current_hp = target.current_hp - 6
+        player_move = Move(*Move.monster_move_data[(card.name,0)])
+        player_move.execute_move(new_game,new_game.player,target)
+        new_game.player.energy -= card.cost
+        new_game.update()
 
-            new_game.update()
-
-        if (card.name == "Defend"):
-            new_game.hand.remove(card)
-            new_game.discard_pile.append(card)
-            new_game.player.energy = new_game.player.energy - 1
-
-            new_game.player.block = new_game.player.block + 5
-
-            new_game.update()
-
-        if (card.name == "Bash"):
-            new_game.hand.remove(card)
-            new_game.discard_pile.append(card)
-            new_game.player.energy = new_game.player.energy - 2
-
-            for monster in new_game.monsters:
-                if target.__eq__(monster):
-                    target = monster
-                    break
-
-            target.current_hp = target.current_hp - 8
-
-            new_game.update()
         return new_game
 
     def predict_states_turn_end(self):
@@ -271,12 +228,12 @@ class Game:
         new_game_template = copy.deepcopy(self)
         new_game_template.turn = new_game_template.turn + 1
 
-        new_game_template.discard_pile.append(new_game_template.hand)
+        new_game_template.discard_pile.extend(new_game_template.hand)
         new_game_template.hand = []
 
         new_game_template.execute_monster_attacks()
 
-        # print("len of draw pile: " + str(len(new_game_template.draw_pile)))
+        new_game_template.player.block = 0
 
         possible_monster_intents = []
 
@@ -285,27 +242,30 @@ class Game:
 
         for combo in it.product(*possible_monster_intents):
             count = 0
-            if (len(new_game_template.draw_pile) >= 5):
+            temp_game = copy.deepcopy(new_game_template)
+            if (len(temp_game.draw_pile) >= 5):
                 possible_hands = it.combinations(
-                    new_game_template.draw_pile, 5)
+                    temp_game.draw_pile, 5)
             else:
-                new_game_template.hand.append(new_game_template.draw_pile)
-                new_game_template.draw_pile.append(
-                    new_game_template.discard_pile)
-
+                temp_game.hand.extend(temp_game.draw_pile)
+                temp_game.draw_pile.extend(temp_game.discard_pile)
+                temp_game.discard_pile = []
+                
                 possible_hands = it.combinations(
-                    self.draw_pile, 5-len(new_game_template.draw_pile))
+                    temp_game.draw_pile, 5-len(temp_game.hand))
+                
+                
 
             for hand in possible_hands:
                 hand = list(hand)
                 count = count + 1
 
-                temp_game = copy.deepcopy(new_game_template)
+                # temp_game = copy.deepcopy(new_game_template)
                 # print("hand: " + str(hand))
                 if len(temp_game.hand) == 0:
                     temp_game.hand = hand
                 else:
-                    temp_game.hand.append(hand)
+                    temp_game.hand.extend(hand)
 
                 # Add exhaust mechanics here
                 # Add "on draw" mechanics here
@@ -331,6 +291,11 @@ class Game:
                 new_games.append(
                     (temp_game, math.prod([i.probability for i in combo])))
 
+        max_game_sample = 50
+        if len(new_games)>max_game_sample:
+            count = max_game_sample
+            new_games = random.sample(new_games,max_game_sample) #pick 10 random ones to test.
+
         for i in range(len(new_games)):
             # Tuples dont support item assignment so I have to do it this way
             new_games[i] = (new_games[i][0], new_games[i][1]*(1/count))
@@ -341,9 +306,10 @@ class Game:
     def evaluate_state(self):
         value = 0
 
-        value = value - 2*max(self.get_incoming_damage()-self.player.block, 0)
-        value = value + 2*self.player.current_hp
+        # value = value - 2*max(self.get_incoming_damage()-self.player.block, 0)
+        value = value + 3*self.player.current_hp
         value = value - sum([i.current_hp for i in self.monsters])
+        value = value + (0 if not self.in_combat else 0)
 
         if (self.player.current_hp <= 0):
             value = -999  # Might need to change to a lower number.

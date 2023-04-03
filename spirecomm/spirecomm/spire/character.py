@@ -7,8 +7,9 @@ from enum import IntEnum
 
 class Monster_Move(IntEnum):
     JAW_WORM_CHOMP = 1
-    JAW_WORM_THRASH = 2
-    JAW_WORM_BELLOW = 3
+    JAW_WORM_BELLOW = 2
+    JAW_WORM_THRASH = 3
+    
 
 
 class Intent(Enum):
@@ -85,9 +86,10 @@ class Character:
 
 
 class Player(Character):
-
+    
     def __init__(self, max_hp, current_hp=None, block=0, energy=0):
         super().__init__(max_hp, current_hp, block)
+        self.name = "Ironclad"
         self.energy = energy
         self.orbs = []
 
@@ -117,7 +119,7 @@ class Monster(Character):
         self.move_adjusted_damage = move_adjusted_damage
         self.move_hits = move_hits
         self.monster_index = 0
-        self.move = Move.monster_move_data[(self.name,self.intent)]
+        self.move = Move(*Move.monster_move_data[(self.name,self.move_id)])
 
     @classmethod
     def from_json(cls, json_object):
@@ -177,6 +179,8 @@ class Monster(Character):
     
 
     def __eq__(self, other):
+        if(other == None):
+            return False
         if self.name == other.name and self.current_hp == other.current_hp and self.max_hp == other.max_hp and self.block == other.block:
             if len(self.powers) == len(other.powers):
                 for i in range(len(self.powers)):
@@ -189,18 +193,55 @@ class Monster(Character):
 class Move:
     
     monster_move_data = {
-        ("Jaw Worm",Monster_Move.JAW_WORM_BELLOW) : (0,6,1,[("Strength",3)],[]),
-        ("Jaw Worm",Monster_Move.JAW_WORM_CHOMP) : (11,0,1,[],[]),
-        ("Jaw Worm",Monster_Move.JAW_WORM_BELLOW) : (0,6,1,[],[])
+        ("Jaw Worm",Monster_Move.JAW_WORM_BELLOW) : (0,6,0,[("Strength",3)],[],[]),
+        ("Jaw Worm",Monster_Move.JAW_WORM_CHOMP) : (11,0,1,[],[],[]),
+        ("Jaw Worm",Monster_Move.JAW_WORM_THRASH) : (7,5,1,[],[],[]),
+        
+        
+
+        ("Strike",0) : (6,0,1,[],[],[]),
+        ("Defend",0) : (0,5,1,[],[],[]),
+        ("Bash",0) : (8,0,1,[],[],[])
     }
 
-    def __init__(self, damage, block, num_hits, powers, cards):
+    def __init__(self, damage, block, num_hits, s_powers, t_powers, cards):
         self.damage = damage
         self.block = block
 
         self.num_hits = num_hits
-        self.power = powers  # list of tuples in the format of (power, amount)
+        self.self_powers = s_powers 
+        self.target_powers = t_powers # list of tuples in the format of (power, amount)
         self.cards = cards # list of tuples in the format of (card, place) where place is 0: deck, 1:hand, 2: discard
     
     def execute_move(self, gameState, actor: Character, target: Character):
-        pass
+        
+        if(not target == None):
+            for i in range(self.num_hits):
+                if target.block < actor.adjust_damage(self.damage,target.powers):
+                    target.current_hp = target.current_hp - (actor.adjust_damage(self.damage,target.powers) - target.block)
+                    target.block = 0
+                else:
+                    target.block = target.block - actor.adjust_damage(self.damage,target.powers)
+
+            for power in self.self_powers:
+                try:
+                    index = [i.power_name for i in actor.powers].index(
+                        power[0])
+                    actor.powers[index].amount = actor.powers[index].amount + power[1]
+
+                except ValueError:
+                    actor.powers.append(Power(power[0],power[0], power[1]))
+
+
+            for power in self.target_powers:
+                try:
+                    index = [i.power_name for i in target.powers].index(
+                        power[0])
+                    target.powers[index].amount = target.powers[index].amount + power[1]
+
+                except ValueError:
+                    target.powers.append(Power(power[0],power[0], power[1]))
+
+        actor.block = actor.block + self.block
+
+
