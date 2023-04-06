@@ -1,14 +1,7 @@
 from enum import Enum
+import random
 
 from spirecomm.spire.power import Power
-
-from enum import IntEnum
-
-
-class Monster_Move(IntEnum):
-    JAW_WORM_CHOMP = 1
-    JAW_WORM_BELLOW = 2
-    JAW_WORM_THRASH = 3
 
 
 class Intent(Enum):
@@ -36,24 +29,24 @@ class Intent(Enum):
 
 class Monster_Action:
 
-    # format: monster: {movename1: (move_id, prob), movename2: (move_id, prob)}
-    monster_moves = {
+    # format: monster: {movename1: move_id1, movename2: move_id2}
+    id_map = {
         "Jaw Worm": {
-            "Chomp": (1, 5/20), "Bellow": (2, 9/20), "Thrash": (3, 6/20)
+            "Chomp": 1, "Bellow": 2, "Thrash": 3
         }, "Red Louse": {
-            "Bite": (1, []), "Grow": (2, [])
+            "Bite": 1, "Grow": 2
         }, "Green Louse": {
-            "Bite": (1, []), "Spit Web": (2, [])
+            "Bite": 1, "Spit Web": 2
         }, "Cultist": {
-            "Incantation": (1, []), "Dark Strike": (2, [])
+            "Incantation": 1, "Dark Strike": 2
         }, "Acid Slime (M)": {
-            "Corrosive Spit": (1, []), "Lick": (2, []), "Tackle": (3, [])
+            "Corrosive Spit": 1, "Lick": 2, "Tackle": 3
         }, "Spike Slime (M)": {
-            "Flame Tackle": (1, []), "Lick": (2, [])
+            "Flame Tackle": 1, "Lick": 2
         }, "Acid Slime (S)": {
-            "Lick": (1, []), "Tackle": (2, [])
+            "Lick": 1, "Tackle": 2
         }, "Spike Slime (S)": {
-            "Tackle": (1, [])
+            "Tackle": 1
         }
     }
 
@@ -170,34 +163,51 @@ class Monster(Character):
     def possible_intents(self):
 
         intents = []
-
-        # if jaw worm
-        #   if last used bellow then 
-        #       chomp 5/11, trash 6/11
-        #   if last used trash and second last used trash
-        #       chomp 5/14 bellow 9/14
-        #   if last used chomp
-        #       bellow 3/5, trash 2/5
-        #   else 
-        #       bellow 9/20, trash 6/20, chomp 5/20
         if self.name == "Jaw Worm":
-            if self.last_move_id == Monster_Move.JAW_WORM_BELLOW:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP, 11, 5/11))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH, 7, 6/11))
+            chomp = Monster_Action.id_map[self.name]["Chomp"]
+            bellow = Monster_Action.id_map[self.name]["Bellow"]
+            thrash = Monster_Action.id_map[self.name]["Trash"]
 
-            elif self.last_move_id == Monster_Move.JAW_WORM_THRASH \
-                and self.second_last_move_id == Monster_Move.JAW_WORM_THRASH:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP, 11, 5/14))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW, 3, 9/14))
+            if self.last_move_id == bellow:
+                intents.append(Monster_Action(chomp, 11, 5/11))
+                intents.append(Monster_Action(thrash, 7, 6/11))
 
-            elif self.last_move_id == Monster_Move.JAW_WORM_CHOMP:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW, 3, 3/5))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH, 7, 2/5))
+            elif self.last_move_id == thrash and self.second_last_move_id == thrash:
+                intents.append(Monster_Action(chomp, 11, 5/14))
+                intents.append(Monster_Action(bellow, 3, 9/14))
+
+            elif self.last_move_id == chomp:
+                intents.append(Monster_Action(bellow, 3, 3/5))
+                intents.append(Monster_Action(thrash, 7, 2/5))
 
             else:
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_BELLOW, 3, 9/20))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_THRASH, 7, 6/20))
-                intents.append(Monster_Action(Monster_Move.JAW_WORM_CHOMP, 11, 5/20))
+                intents.append(Monster_Action(bellow, 3, 9/20))
+                intents.append(Monster_Action(thrash, 7, 6/20))
+                intents.append(Monster_Action(chomp, 11, 5/20))
+        elif self.name == "Red Louse":
+            d = random.randrange(5,7)
+            bite = Monster_Action.id_map[self.name]["Bite"]
+            grow = Monster_Action.id_map[self.name]["Grow"]
+            if self.last_move_id == self.second_last_move_id:
+                if self.last_move_id == bite:
+                    intents.append(Monster_Action(grow, 0, 1))
+                elif self.last_move_id == grow:
+                    intents.append(Monster_Action(bite, d, 1))
+            else:
+                intents.append(Monster_Action(bite, d, 3/4))
+                intents.append(Monster_Action(grow, 0, 1/4))
+        elif self.name == "Green Louse":
+            d = random.randrange(5,7)
+            bite = Monster_Action.id_map[self.name]["Bite"]
+            spit_web = Monster_Action.id_map[self.name]["Spit Web"]
+            if self.last_move_id == self.second_last_move_id:
+                if self.last_move_id == bite:
+                    intents.append(Monster_Action(spit_web, 0, 1))
+                elif self.last_move_id == spit_web:
+                    intents.append(Monster_Action(bite, d, 1))
+            else:
+                intents.append(Monster_Action(bite, d, 3/4))
+                intents.append(Monster_Action(spit_web, 0, 1/4))
 
         return intents
 
@@ -215,11 +225,34 @@ class Monster(Character):
 
 class Move:
 
-    # data format: (monster name, moveid) : (damage, block, strength, powers, powers to inflict, cards added to deck)
+    # data format: (monster name, moveid) : (damage, block, strength, self powers, target powers, cards added to deck)
     monster_move_data = {
-        ("Jaw Worm", Monster_Move.JAW_WORM_BELLOW): (0, 6, 0, [("Strength", 3)], [], []),
-        ("Jaw Worm", Monster_Move.JAW_WORM_CHOMP): (11, 0, 1, [], [], []),
-        ("Jaw Worm", Monster_Move.JAW_WORM_THRASH): (7, 5, 1, [], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (0, 6, 0, [("Strength", 3)], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (11, 0, 1, [], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Thrash"]): (7, 5, 1, [], [], []),
+
+        ("Red Louse", Monster_Action.id_map["Red Louse"]["Bite"]): ('d', 0, 0, [], [], []),
+        ("Red Louse", Monster_Action.id_map["Red Louse"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
+
+        ("Green Louse", Monster_Action.id_map["Green Louse"]["Bite"]): ('d', 0, 0, [], [], []),
+        ("Green Louse", Monster_Action.id_map["Green Louse"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], []),
+
+        ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], []),
+        ("Cultist", Monster_Action.id_map["Cultist"]["Dark Strike"]): (6, 0, 0, [], [], []),
+
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 0, [], [], [("Slimed", 1)]),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 0, [], [], []),
+
+        ("Spiked Slime (M)", Monster_Action.id_map["Spiked Slime (M)"]["Flame Tackle"]): (8, 0, 0, [], [], [("Slimed", 1)]),
+        ("Spiked Slime (M)", Monster_Action.id_map["Spiked Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], []),
+
+        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
+        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Tackle"]): (3, 0, 0, [], [], []),
+
+        ("Spiked Slime (S)", Monster_Action.id_map["Spiked Slime (S)"]["Tackle"]): (5, 0, 0, [], [], []),
+
+
 
 
         # Ironclad Cards
