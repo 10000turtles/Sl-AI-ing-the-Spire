@@ -166,7 +166,7 @@ class Coordinator:
             if self.last_error is None:
                 self.in_game = communication_state.get("in_game")
                 if self.in_game:
-                    self.last_game_state = Game.from_json(communication_state.get("game_state"), communication_state.get("available_commands"))
+                    self.last_game_state = Game.from_json(communication_state.get("game_state"), communication_state.get("available_commands"),communication_state)
             if perform_callbacks:
                 if self.last_error is not None:
                     self.action_queue.clear()

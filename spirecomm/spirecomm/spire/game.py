@@ -23,7 +23,7 @@ class RoomPhase(Enum):
 
 
 class Game:
-
+    global_json_counter = 0
     def __init__(self):
 
         # General state
@@ -79,7 +79,7 @@ class Game:
         self.value = 0
 
     @classmethod
-    def from_json(cls, json_state, available_commands):
+    def from_json(cls, json_state, available_commands,raw_data):
         game = cls()
         game.current_action = json_state.get("current_action", None)
         game.current_hp = json_state.get("current_hp")
@@ -150,9 +150,16 @@ class Game:
         game.proceed_available = "proceed" in available_commands or "confirm" in available_commands
         game.cancel_available = "cancel" in available_commands or "leave" in available_commands \
                                 or "return" in available_commands or "skip" in available_commands
-
-        with open(f"/mnt/c/Users/TheFifthTurtle/Documents/GitHub/Sl-AI-ing-the-Spire/spirecomm/json_fight_data/floor{str(game.floor)}turn{str(game.turn)}.json", 'w') as f:
-            json.dump(json_state,f) 
+ 
+        try:
+            
+            with open(f"/mnt/c/Users/TheFifthTurtle/Documents/GitHub/Sl-AI-ing-the-Spire/spirecomm/json_fight_data/floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
+                Game.global_json_counter = Game.global_json_counter + 1
+                json.dump(raw_data,f) 
+        except:
+            with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
+                Game.global_json_counter = Game.global_json_counter + 1
+                json.dump(raw_data,f) 
 
         return game
 
@@ -241,7 +248,7 @@ class Game:
         possible_monster_intents = []
 
         for monster in self.monsters:
-            possible_monster_intents.append(monster.possible_intents())
+            possible_monster_intents.append(monster.possible_intents(new_game_template))
 
         for combo in it.product(*possible_monster_intents):
             count = 0
@@ -259,6 +266,7 @@ class Game:
 
             for hand in possible_hands:
                 hand = list(hand)
+                original_hand = copy.deepcopy(temp_game.hand)
                 count = count + 1
 
                 # temp_game = copy.deepcopy(new_game_template)
@@ -273,14 +281,16 @@ class Game:
                 # Add max hand size here
                 # OMG wtf this is complex
 
+                
+
                 for i in range(len(temp_game.monsters)):
                     temp_game.monsters[i].second_last_move_id = temp_game.monsters[i].last_move_id
                     temp_game.monsters[i].last_move_id = temp_game.monsters[i].move_id
                     temp_game.monsters[i].move_id = combo[i].intent
 
-                    temp_game.monsters[i].move_base_damage = combo[i].power
-                    temp_game.monsters[i].move_adjusted_damage = temp_game.monsters[i].adjust_damage(
-                        combo[i].power, temp_game.player.powers)
+                    # temp_game.monsters[i].move_base_damage = combo[i].power
+                    # temp_game.monsters[i].move_adjusted_damage = temp_game.monsters[i].adjust_damage(
+                    #     combo[i].power, temp_game.player.powers)
 
                     # intent_list = [Intent.ATTACK,
                     #                Intent.ATTACK_DEFEND, Intent.DEFEND_BUFF]
@@ -292,7 +302,9 @@ class Game:
                 new_games.append(
                     (temp_game, math.prod([i.probability for i in combo])))
 
-        max_game_sample = 50
+                temp_game.hand = original_hand
+
+        max_game_sample = 70000
         if len(new_games) > max_game_sample:
             count = max_game_sample
             # pick 10 random ones to test.
@@ -306,17 +318,16 @@ class Game:
         return new_games
 
     def evaluate_state(self):
+        
         value = 0
 
         # value = value - 2*max(self.get_incoming_damage()-self.player.block, 0)
         value = value + 3*self.player.current_hp
         value = value - sum([i.current_hp for i in self.monsters])
-        value = value + (0 if not self.in_combat else 0)
 
         if (self.player.current_hp <= 0):
             value = -999  # Might need to change to a lower number.
 
         # We still need to add more evaluation here (potions, max hp, status effects, etc)
-
         self.value = value
         return self.value

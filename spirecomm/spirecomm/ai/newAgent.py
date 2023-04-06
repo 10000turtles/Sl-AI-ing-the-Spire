@@ -16,6 +16,7 @@ class Node:
 
     def __init__(self, game, prob, deter, card, target):
         self.game = game
+        self.game.update()
         self.probability = prob
         self.children = []
         self.total_nodes = 0
@@ -47,13 +48,16 @@ class Node:
             if (append_card):
                 playable_cards_no_repeats.append(p_card)
 
+
         if len(playable_cards_no_repeats) > 0:
             self.hasChildren = True
             possible_options = []
 
             for card_to_play in playable_cards_no_repeats:
                 if card_to_play.has_target:
+
                     for target in self.game.monsters:
+
                         possible_options.append((card_to_play, target))
                 else:
                     possible_options.append((card_to_play, None))
@@ -183,27 +187,37 @@ class CoolRadicalAgent:
 
     def get_next_action_in_game(self, game_state,debug_mode = False):
         self.game = game_state
+        
+        if(debug_mode):
+            print(self.game.play_available)
+
+        time.sleep(0.07)
+        if self.game.choice_available:
+            
+            return self.handle_screen()
+        if self.game.proceed_available:
+            
+            return ProceedAction()
+        if self.game.play_available:
+
+            return self.get_play_card_action(debug_mode)
+        if self.game.cancel_available:
+
+            return CancelAction()
+        
         self.game.play_available = False
 
         for i in game_state.hand:
             if i.is_playable:
                 self.game.play_available = True
                 break
-        
-        if(debug_mode):
-            print(self.game.play_available)
 
-        # time.sleep(0.07)
-        if self.game.choice_available:
-            return self.handle_screen()
-        if self.game.proceed_available:
-            return ProceedAction()
         if self.game.play_available:
             return self.get_play_card_action(debug_mode)
+        
         if self.game.end_available:
             return EndTurnAction()
-        if self.game.cancel_available:
-            return CancelAction()
+        
 
     def get_next_action_out_of_game(self):
         return StartGameAction(self.chosen_class)
@@ -261,7 +275,7 @@ class CoolRadicalAgent:
 
         self.headNode.get_deep_evaluation()
         if(debug_mode):
-            print(self.headNode.__str__())
+            # print(self.headNode.__str__())
             print([(i.deep_evaluation,i.game.player.block,i.game.monsters[0].current_hp,i.deterministic) for i in self.headNode.children])
             print([[(j.deep_evaluation,j.hasChildren,j.game.player.block) for j in i.children] for i in self.headNode.children])
             print([i.card_to_play.name for i in self.headNode.children ])
@@ -289,7 +303,6 @@ class CoolRadicalAgent:
         #         self.headNode.total_nodes = self.headNode.total_nodes + 1
         #         if not child.done:
         #             activeNodes.append(child)
-
 
     def handle_screen(self):
         if self.game.screen_type == ScreenType.EVENT:

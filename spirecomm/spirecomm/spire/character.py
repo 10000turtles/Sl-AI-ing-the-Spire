@@ -33,16 +33,16 @@ class Monster_Action:
     id_map = {
         "Jaw Worm": {
             "Chomp": 1, "Bellow": 2, "Thrash": 3
-        }, "Red Louse": {
-            "Bite": 1, "Grow": 2
-        }, "Green Louse": {
-            "Bite": 1, "Spit Web": 2
+        }, "FuzzyLouseNormal": {
+            "Bite": 3, "Grow": 4
+        }, "FuzzyLouseDefensive": {
+            "Bite": 3, "Spit Web": 4
         }, "Cultist": {
-            "Incantation": 1, "Dark Strike": 2
+            "Incantation": 3, "Dark Strike": 1
         }, "Acid Slime (M)": {
-            "Corrosive Spit": 1, "Lick": 2, "Tackle": 3
+            "Corrosive Spit": 1, "Lick": 4, "Tackle": 2
         }, "Spike Slime (M)": {
-            "Flame Tackle": 1, "Lick": 2
+            "Flame Tackle": 1, "Lick": 4
         }, "Acid Slime (S)": {
             "Lick": 1, "Tackle": 2
         }, "Spike Slime (S)": {
@@ -52,12 +52,9 @@ class Monster_Action:
 
     def __init__(self, intent, power, probability):
 
-        self.intent = None
-        self.power = None
-        self.probability = None
-
-        
-
+        self.intent = intent
+        self.power = power
+        self.probability = probability
 
 
 class PlayerClass(Enum):
@@ -136,7 +133,10 @@ class Monster(Character):
         self.move_adjusted_damage = move_adjusted_damage
         self.move_hits = move_hits
         self.monster_index = 0
-        self.move = Move(*Move.monster_move_data[(self.name, self.move_id)])
+        if(self.name == "Louse"):
+            self.move = Move(*Move.monster_move_data[(self.monster_id, self.move_id)])
+        else:
+            self.move = Move(*Move.monster_move_data[(self.name, self.move_id)])
 
     @classmethod
     def from_json(cls, json_object):
@@ -160,13 +160,13 @@ class Monster(Character):
                           for json_power in json_object["powers"]]
         return monster
 
-    def possible_intents(self):
+    def possible_intents(self, game_state):
 
         intents = []
         if self.name == "Jaw Worm":
             chomp = Monster_Action.id_map[self.name]["Chomp"]
             bellow = Monster_Action.id_map[self.name]["Bellow"]
-            thrash = Monster_Action.id_map[self.name]["Trash"]
+            thrash = Monster_Action.id_map[self.name]["Thrash"]
 
             if self.last_move_id == bellow:
                 intents.append(Monster_Action(chomp, 11, 5/11))
@@ -184,35 +184,100 @@ class Monster(Character):
                 intents.append(Monster_Action(bellow, 3, 9/20))
                 intents.append(Monster_Action(thrash, 7, 6/20))
                 intents.append(Monster_Action(chomp, 11, 5/20))
-        elif self.name == "Red Louse":
-            d = random.randrange(5,7)
-            bite = Monster_Action.id_map[self.name]["Bite"]
-            grow = Monster_Action.id_map[self.name]["Grow"]
-            if self.last_move_id == self.second_last_move_id:
-                if self.last_move_id == bite:
-                    intents.append(Monster_Action(grow, 0, 1))
-                elif self.last_move_id == grow:
-                    intents.append(Monster_Action(bite, d, 1))
+
+        elif self.name == "Cultist":
+            incantation = Monster_Action.id_map[self.name]["Incantation"]
+            dark_strike = Monster_Action.id_map[self.name]["Dark Strike"]
+
+            if game_state.turn == 1:
+                intents.append(Monster_Action(incantation, 3, 1))
+            else:
+                intents.append(Monster_Action(dark_strike, 6, 1))
+
+        elif self.monster_id == "FuzzyLouseNormal":
+            # This needs to be gotten from the original json data and then saved over time
+            d = random.randrange(5, 7)
+
+            bite = Monster_Action.id_map[self.monster_id]["Bite"]
+            grow = Monster_Action.id_map[self.monster_id]["Grow"]
+
+            if self.last_move_id == self.second_last_move_id and self.second_last_move_id == bite:
+                intents.append(Monster_Action(grow, 0, 1))
+
+            elif self.last_move_id == self.second_last_move_id and self.second_last_move_id == grow:
+                intents.append(Monster_Action(bite, d, 1))
+
             else:
                 intents.append(Monster_Action(bite, d, 3/4))
                 intents.append(Monster_Action(grow, 0, 1/4))
-        elif self.name == "Green Louse":
-            d = random.randrange(5,7)
-            bite = Monster_Action.id_map[self.name]["Bite"]
-            spit_web = Monster_Action.id_map[self.name]["Spit Web"]
-            if self.last_move_id == self.second_last_move_id:
-                if self.last_move_id == bite:
-                    intents.append(Monster_Action(spit_web, 0, 1))
-                elif self.last_move_id == spit_web:
-                    intents.append(Monster_Action(bite, d, 1))
+
+        elif self.monster_id == "FuzzyLouseDefensive":
+            d = random.randrange(5, 7)
+
+            bite = Monster_Action.id_map[self.monster_id]["Bite"]
+            spit_web = Monster_Action.id_map[self.monster_id]["Spit Web"]
+
+            if self.last_move_id == self.second_last_move_id and self.second_last_move_id == bite:
+                intents.append(Monster_Action(spit_web, 0, 1))
+
+            elif self.last_move_id == self.second_last_move_id and self.second_last_move_id == spit_web:
+                intents.append(Monster_Action(bite, d, 1))
+
             else:
                 intents.append(Monster_Action(bite, d, 3/4))
                 intents.append(Monster_Action(spit_web, 0, 1/4))
 
+        elif self.name == "Spike Slime (M)":
+            flame_tackle = Monster_Action.id_map[self.name]["Flame Tackle"]
+            lick = Monster_Action.id_map[self.name]["Lick"]
+            if self.last_move_id == flame_tackle and self.second_last_move_id == flame_tackle:
+                intents.append(Monster_Action(lick, 11, 1))
+
+            elif self.last_move_id == lick and self.second_last_move_id == lick:
+                intents.append(Monster_Action(flame_tackle, 7, 1))
+
+            else:
+                intents.append(Monster_Action(flame_tackle, 7, 7/10))
+                intents.append(Monster_Action(lick, 11, 3/10))
+        elif self.name == "Spike Slime (S)":
+            tackle = Monster_Action.id_map[self.name]["Tackle"]
+            intents.append(Monster_Action(tackle, 3, 1))
+
+        elif self.name == "Acid Slime (M)":
+            corrosive_spit = Monster_Action.id_map[self.name]["Corrosive Spit"]
+            lick = Monster_Action.id_map[self.name]["Lick"]
+            tackle = Monster_Action.id_map[self.name]["Tackle"]
+
+            if self.last_move_id == tackle:
+                intents.append(Monster_Action(lick, 11, 1/2))
+                intents.append(Monster_Action(corrosive_spit, 7, 1/2))
+
+            elif self.last_move_id == corrosive_spit and self.second_last_move_id == corrosive_spit:
+                intents.append(Monster_Action(tackle, 11, 4/7))
+                intents.append(Monster_Action(lick, 3, 3/7))
+
+            elif self.last_move_id == lick and self.second_last_move_id == lick:
+                intents.append(Monster_Action(corrosive_spit, 3, 3/7))
+                intents.append(Monster_Action(tackle, 7, 4/7))
+
+            else:
+                intents.append(Monster_Action(tackle, 3, 4/10))
+                intents.append(Monster_Action(corrosive_spit, 7, 3/10))
+                intents.append(Monster_Action(lick, 11, 3/10))
+
+        elif self.name == "Acid Slime (S)":
+            lick = Monster_Action.id_map[self.name]["Lick"]
+            tackle = Monster_Action.id_map[self.name]["Tackle"]
+
+            if self.last_move_id == lick:
+                intents.append(Monster_Action(tackle, 3, 1))
+            elif self.last_move_id == tackle:
+                intents.append(Monster_Action(lick, 3, 1))
+
         return intents
 
     def __eq__(self, other):
-        if(other == None):
+        if (other == None):
             return False
         if self.name == other.name and self.current_hp == other.current_hp and self.max_hp == other.max_hp and self.block == other.block:
             if len(self.powers) == len(other.powers):
@@ -227,15 +292,15 @@ class Move:
 
     # data format: (monster name, moveid) : (damage, block, strength, self powers, target powers, cards added to deck)
     monster_move_data = {
-        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (0, 6, 0, [("Strength", 3)], [], []),
-        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (11, 0, 1, [], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (11, 0, 1, [], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (0, 6, 0, [("Strength", 3)], [], []),
         ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Thrash"]): (7, 5, 1, [], [], []),
 
-        ("Red Louse", Monster_Action.id_map["Red Louse"]["Bite"]): ('d', 0, 0, [], [], []),
-        ("Red Louse", Monster_Action.id_map["Red Louse"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
+        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Bite"]): ('d', 0, 0, [], [], []),
+        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
 
-        ("Green Louse", Monster_Action.id_map["Green Louse"]["Bite"]): ('d', 0, 0, [], [], []),
-        ("Green Louse", Monster_Action.id_map["Green Louse"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], []),
+        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Bite"]): ('d', 0, 0, [], [], []),
+        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], []),
 
         ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], []),
         ("Cultist", Monster_Action.id_map["Cultist"]["Dark Strike"]): (6, 0, 0, [], [], []),
@@ -244,13 +309,13 @@ class Move:
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 0, [], [], []),
 
-        ("Spiked Slime (M)", Monster_Action.id_map["Spiked Slime (M)"]["Flame Tackle"]): (8, 0, 0, [], [], [("Slimed", 1)]),
-        ("Spiked Slime (M)", Monster_Action.id_map["Spiked Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], []),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 0, [], [], [("Slimed", 1)]),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], []),
 
         ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
         ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Tackle"]): (3, 0, 0, [], [], []),
 
-        ("Spiked Slime (S)", Monster_Action.id_map["Spiked Slime (S)"]["Tackle"]): (5, 0, 0, [], [], []),
+        ("Spike Slime (S)", Monster_Action.id_map["Spike Slime (S)"]["Tackle"]): (5, 0, 0, [], [], []),
 
 
 
@@ -258,7 +323,7 @@ class Move:
         # Ironclad Cards
         ("Strike", 0): (6, 0, 1, [], [], []),
         ("Defend", 0): (0, 5, 0, [], [], []),
-        ("Bash", 0): (8, 0, 1, [], [], []),
+        ("Bash", 0): (8, 0, 1, [], [("Vulnerable", 2)], []),
         ("Anger", 0): (6, 0, 1, [], [], [("Anger", 2)]),
         # ("Armaments",0) : (0,0,0,[],[],[])
         # ("Body Slam",0) : (0,0,0,[],[],[])
