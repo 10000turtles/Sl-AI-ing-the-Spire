@@ -245,7 +245,7 @@ class CoolRadicalAgent:
         Node.global_nodes = 0
 
         self.headNode = Node(copy.deepcopy(self.game), 1, 0,None,None)
-        turn_stop = self.headNode.game.turn +2
+        turn_stop = self.headNode.game.turn +1
 
         activeNodes = [self.headNode]
 

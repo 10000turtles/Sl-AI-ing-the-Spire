@@ -12,6 +12,7 @@ import copy
 import itertools as it
 import math
 import random
+import json
 
 
 class RoomPhase(Enum):
@@ -150,6 +151,9 @@ class Game:
         game.cancel_available = "cancel" in available_commands or "leave" in available_commands \
                                 or "return" in available_commands or "skip" in available_commands
 
+        with open(f"/mnt/c/Users/TheFifthTurtle/Documents/GitHub/Sl-AI-ing-the-Spire/spirecomm/json_fight_data/floor{str(game.floor)}turn{str(game.turn)}.json", 'w') as f:
+            json.dump(json_state,f) 
+
         return game
 
     def are_potions_full(self):
@@ -199,8 +203,7 @@ class Game:
 
         for monster in self.monsters:
             monster.block = 0
-            monster.move.execute_move(self,monster,self.player)
-
+            monster.move.execute_move(self, monster, self.player)
 
     def predict_state(self, card=None, target=None):
         new_game = copy.deepcopy(self)
@@ -208,14 +211,14 @@ class Game:
         new_game.hand.remove(card)
         new_game.discard_pile.append(card)
 
-        if(not target == None):
+        if (not target == None):
             for monster in new_game.monsters:
                 if target.__eq__(monster):
                     target = monster
                     break
 
-        player_move = Move(*Move.monster_move_data[(card.name,0)])
-        player_move.execute_move(new_game,new_game.player,target)
+        player_move = Move(*Move.monster_move_data[(card.name, 0)])
+        player_move.execute_move(new_game, new_game.player, target)
         new_game.player.energy -= card.cost
         new_game.update()
 
@@ -250,11 +253,9 @@ class Game:
                 temp_game.hand.extend(temp_game.draw_pile)
                 temp_game.draw_pile.extend(temp_game.discard_pile)
                 temp_game.discard_pile = []
-                
+
                 possible_hands = it.combinations(
                     temp_game.draw_pile, 5-len(temp_game.hand))
-                
-                
 
             for hand in possible_hands:
                 hand = list(hand)
@@ -292,9 +293,10 @@ class Game:
                     (temp_game, math.prod([i.probability for i in combo])))
 
         max_game_sample = 50
-        if len(new_games)>max_game_sample:
+        if len(new_games) > max_game_sample:
             count = max_game_sample
-            new_games = random.sample(new_games,max_game_sample) #pick 10 random ones to test.
+            # pick 10 random ones to test.
+            new_games = random.sample(new_games, max_game_sample)
 
         for i in range(len(new_games)):
             # Tuples dont support item assignment so I have to do it this way

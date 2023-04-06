@@ -29,7 +29,7 @@ from spirecomm.spire.game import Game
 
 if __name__ == "__main__":
 
-    agent = CoolRadicalAgent()
+    agent = SimpleAgent()
     coordinator = Coordinator()
 
     coordinator.signal_ready()
