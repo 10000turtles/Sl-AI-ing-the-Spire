@@ -9,6 +9,7 @@ from spirecomm.spire.screen import RestOption
 from spirecomm.communication.action import *
 from spirecomm.ai.priorities import *
 import copy
+import itertools as it
 
 
 class Node:
@@ -34,7 +35,7 @@ class Node:
         self.card_to_play = card
         self.card_target = target
 
-    def expand(self,turn_stop):
+    def expand(self, turn_stop):
 
         playable_cards = [card for card in self.game.hand if card.is_playable]
 
@@ -47,7 +48,6 @@ class Node:
 
             if (append_card):
                 playable_cards_no_repeats.append(p_card)
-
 
         if len(playable_cards_no_repeats) > 0:
             self.hasChildren = True
@@ -73,7 +73,8 @@ class Node:
                 self.hasChildren = True
                 self.deterministic = 1
                 for state, prob in self.game.predict_states_turn_end():
-                    self.children.append(Node(state, self.probability*prob, 0,None,None))
+                    self.children.append(
+                        Node(state, self.probability*prob, 0, None, None))
 
         for i in self.children:
             if not i.game.in_combat:
@@ -82,6 +83,16 @@ class Node:
             #     i.done = True
 
         return
+
+    def expand_on_draw(self, cards):
+        self.hasChildren = True
+        self.deterministic = 1
+        for state, prob in self.game.predict_card_draw():
+            self.children.append(Node(state, self.probability*prob, 0, None, None))
+
+        for i in self.children:
+            if not i.game.in_combat:
+                i.done = True
 
     def get_deep_evaluation(self):
         if self.deterministic == 0:
@@ -149,7 +160,8 @@ class Node:
         temp = temp + "children: " + str([i.id for i in self.children]) + "\n"
         temp = temp + "health: " + str(self.game.player.current_hp) + "\n"
         if len(self.game.monsters) > 0:
-            temp = temp + "monster: " + str(self.game.monsters[0].current_hp) + "\n"
+            temp = temp + "monster: " + \
+                str(self.game.monsters[0].current_hp) + "\n"
         temp = temp + "value: " + str(self.deep_evaluation) + "\n\n"
 
         for i in self.children:
@@ -185,26 +197,24 @@ class CoolRadicalAgent:
     def handle_error(self, error):
         raise Exception(error)
 
-    def get_next_action_in_game(self, game_state,debug_mode = False):
+    def get_next_action_in_game(self, game_state, debug_mode=False):
         self.game = game_state
-        
-        if(debug_mode):
+
+        if (debug_mode):
             print(self.game.play_available)
 
-        time.sleep(0.07)
         if self.game.choice_available:
-            
             return self.handle_screen()
-        if self.game.proceed_available:
-            
-            return ProceedAction()
-        if self.game.play_available:
-
-            return self.get_play_card_action(debug_mode)
-        if self.game.cancel_available:
-
-            return CancelAction()
         
+        if self.game.proceed_available:
+            return ProceedAction()
+        
+        if self.game.play_available:
+            return self.get_play_card_action(debug_mode)
+        
+        if self.game.cancel_available:
+            return CancelAction()
+
         self.game.play_available = False
 
         for i in game_state.hand:
@@ -214,10 +224,9 @@ class CoolRadicalAgent:
 
         if self.game.play_available:
             return self.get_play_card_action(debug_mode)
-        
+
         if self.game.end_available:
             return EndTurnAction()
-        
 
     def get_next_action_out_of_game(self):
         return StartGameAction(self.chosen_class)
@@ -255,16 +264,16 @@ class CoolRadicalAgent:
                               0 and not monster.half_dead and not monster.is_gone]
         return len(available_monsters) > 1
 
-    def get_play_card_action(self,debug_mode = False):
+    def get_play_card_action(self, debug_mode=False):
         Node.global_nodes = 0
 
-        self.headNode = Node(copy.deepcopy(self.game), 1, 0,None,None)
-        turn_stop = self.headNode.game.turn +1
+        self.headNode = Node(copy.deepcopy(self.game), 1, 0, None, None)
+        turn_stop = self.headNode.game.turn + 1
 
         activeNodes = [self.headNode]
 
         # Only expands nodes that are either this turn or next turn.
-        while  len(activeNodes) >= 1:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
+        while len(activeNodes) >= 1:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
             current = activeNodes.pop(0)
 
             current.expand(turn_stop)
@@ -274,19 +283,22 @@ class CoolRadicalAgent:
                     activeNodes.append(child)
 
         self.headNode.get_deep_evaluation()
-        if(debug_mode):
+        if (debug_mode):
             # print(self.headNode.__str__())
-            print([(i.deep_evaluation,i.game.player.block,i.game.monsters[0].current_hp,i.deterministic) for i in self.headNode.children])
-            print([[(j.deep_evaluation,j.hasChildren,j.game.player.block) for j in i.children] for i in self.headNode.children])
-            print([i.card_to_play.name for i in self.headNode.children ])
-            print([i.deep_evaluation for i in self.headNode.children ])
+            print([(i.deep_evaluation, i.game.player.block, i.game.monsters[0].current_hp,
+                  i.deterministic) for i in self.headNode.children])
+            print([[(j.deep_evaluation, j.hasChildren, j.game.player.block)
+                  for j in i.children] for i in self.headNode.children])
+            print([i.card_to_play.name for i in self.headNode.children])
+            print([i.deep_evaluation for i in self.headNode.children])
             print(Node.global_nodes)
-        best_child = max(self.headNode.children, key=lambda p: p.deep_evaluation)
+        best_child = max(self.headNode.children,
+                         key=lambda p: p.deep_evaluation)
 
         # print("Best Card to Play: " + best_child.card_to_play.name)
         if best_child.card_to_play.has_target:
 
-            return PlayCardAction(card = best_child.card_to_play,target_monster = best_child.card_target)
+            return PlayCardAction(card=best_child.card_to_play, target_monster=best_child.card_target)
         else:
 
             return PlayCardAction(card=best_child.card_to_play)
@@ -308,10 +320,10 @@ class CoolRadicalAgent:
         if self.game.screen_type == ScreenType.EVENT:
             if self.game.screen.event_id in ["Vampires", "Masked Bandits", "Knowing Skull", "Ghosts", "Liars Game", "Golden Idol", "Drug Dealer", "The Library"]:
                 return ChooseAction(len(self.game.screen.options) - 1)
-            
+
             elif self.game.screen.event_id == "Neow Event" and len(self.game.screen.options) == 1:
                 return ChooseAction(0)
-            elif self.game.screen.event_id == "Neow Event" :
+            elif self.game.screen.event_id == "Neow Event":
                 return ChooseAction(1)
             else:
                 return ChooseAction(0)

@@ -17,10 +17,10 @@ if __name__ == "__main__":
 
     agent = CoolRadicalAgent()
     coordinator = Coordinator()
-    files = glob.glob('json_fight_data/*')
+    # files = glob.glob('json_fight_data\\*.json')
    
-    for f in files:
-        os.remove(f)
+    # for f in files:
+    #     os.remove(f)
 
     coordinator.signal_ready()
     coordinator.register_command_error_callback(agent.handle_error)
