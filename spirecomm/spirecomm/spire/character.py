@@ -44,7 +44,7 @@ class Monster_Action:
         "Acid Slime (S)": {"Lick": 1, "Tackle": 2},
         "Spike Slime (S)": {"Tackle": -1},
         "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
-        "Fungi Beast" : {"Bite": -1, "Grow": -1},
+        "Fungi Beast": {"Bite": -1, "Grow": -1},
         "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
         "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slame": -1, "Split": -1}
     }
@@ -317,7 +317,7 @@ class Monster(Character):
             pass
 
         elif self.name == "Lagavulin":
-            pass 
+            pass
 
         elif self.name == "Looter":
             mug = Monster_Action.id_map[self.name]["Mug"]
@@ -325,15 +325,18 @@ class Monster(Character):
             lunge = Monster_Action.id_map[self.name]["Lunge"]
             lunge_damage = Move.monster_move_data[(self.name, "Lunge")][0]
             smoke_bomb = Monster_Action.id_map[self.name]["Smoke Bomb"]
-            smoke_bomb_damage = Move.monster_move_data[(self.name, "Smoke Bomb")][0]
-            
+            smoke_bomb_damage = Move.monster_move_data[(
+                self.name, "Smoke Bomb")][0]
+
             if game_state.turn == 1 or game_state.turn == 2:
                 intents.append(Monster_Action(mug, mug_damage, 1))
             elif self.turn == 3:
-                intents.append(Monster_Action(smoke_bomb, smoke_bomb_damage, 1/2))
+                intents.append(Monster_Action(
+                    smoke_bomb, smoke_bomb_damage, 1/2))
                 intents.append(Monster_Action(lunge, lunge_damage, 1/2))
             else:
-                intents.append(Monster_Action(smoke_bomb, smoke_bomb_damage, 1))
+                intents.append(Monster_Action(
+                    smoke_bomb, smoke_bomb_damage, 1))
 
         elif self.name == "Fungi Beast":
             bite = Monster_Action.id_map[self.name]["Bite"]
@@ -348,14 +351,14 @@ class Monster(Character):
             else:
                 intents.append(Monster_Action(bite, bite_damage, 3/5))
                 intents.append(Monster_Action(grow, grow_damage, 2/5))
-        
+
         elif self.name == "Hexaghost":
             order = (game_state.turn-3) % 7
-            
+
             activate = Monster_Action.id_map[self.name]["Activate"]
             divider = Monster_Action.id_map[self.name]["Divider"]
             divider_damage = Move.monster_move_data[(self.name, "Divider")][0]
-            
+
             sear = Monster_Action.id_map[self.name]["Sear"]
             sear_damage = Move.monster_move_data[(self.name, "Sear")][0]
             tackle = Monster_Action.id_map[self.name]["Tackle"]
@@ -377,13 +380,14 @@ class Monster(Character):
                 intents.append(Monster_Action(inflame, inflame_damage, 1))
             elif order == 6:
                 # TODO: IMPLEMENT ALL UPGRADES OF BURNS
-                intents.append(Monster_Action(inferno, inferno_damage, 1)) 
-        
+                intents.append(Monster_Action(inferno, inferno_damage, 1))
+
         elif self.name == "Slime Boss":
             order = (game_state.turn - 1) % 3
 
             goop_spray = Monster_Action.id_map[self.name]["Goop Spray"]
-            goop_spray_damage = Move.monster_move_data[(self.name, "Goop Spray")][0]
+            goop_spray_damage = Move.monster_move_data[(
+                self.name, "Goop Spray")][0]
             preparing = Monster_Action.id_map[self.name]["Preparing"]
             slam = Monster_Action.id_map[self.name]["Slam"]
             slam_damage = Move.monster_move_data[(self.name, "Slam")][0]
@@ -416,54 +420,56 @@ class Move:
 
     # data format: (monster name, moveid) : (damage, block, # hits, self powers, target powers, cards added to deck)
     monster_move_data = {
-        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (11, 0, 1, [], [], []),
-        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (0, 6, 0, [("Strength", 3)], [], []),
-        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Thrash"]): (7, 5, 1, [], [], []),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (11, 0, 1, [], [], [], False, 0, False),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (0, 6, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Thrash"]): (7, 5, 1, [], [], [], False, 0, False),
 
-        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Bite"]): ('d', 0, 1, [], [], []),
-        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
+        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Bite"]): ('d', 0, 1, [], [], [], False, 0, False),
+        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
 
-        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Bite"]): ('d', 0, 1, [], [], []),
-        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], []),
+        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Bite"]): ('d', 0, 1, [], [], [], False, 0, False),
+        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
 
-        ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], []),
-        ("Cultist", Monster_Action.id_map["Cultist"]["Dark Strike"]): (6, 0, 1, [], [], []),
+        ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], [], False, 0, False),
+        ("Cultist", Monster_Action.id_map["Cultist"]["Dark Strike"]): (6, 0, 1, [], [], [], False, 0, False),
 
-        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2)]),
-        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Lick"]): (0, 0, 0, [], [("Weak", 2)], []),
-        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Tackle"]): (16, 0, 1, [], [], []),
-        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], []),
-        
-        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2)]),
-        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Lick"]): (0, 0, 0, [], [("Frail", 2)], []),
-        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], []),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Lick"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Tackle"]): (16, 0, 1, [], [], [], False, 0, False),
+        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
+
+        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
+        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Lick"]): (0, 0, 0, [], [("Frail", 2)], [], False, 0, False),
+        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
 
 
-        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 1)]),
-        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
-        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 1, [], [], []),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 1)], False, 0, False),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 1, [], [], [], False, 0, False),
 
-        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 1)]),
-        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], []),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 1)], False, 0, False),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], [], False, 0, False),
 
-        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], []),
-        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Tackle"]): (3, 0, 1, [], [], []),
+        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
+        ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Tackle"]): (3, 0, 1, [], [], [], False, 0, False),
 
-        ("Spike Slime (S)", Monster_Action.id_map["Spike Slime (S)"]["Tackle"]): (5, 0, 1, [], [], []),
-        
+        ("Spike Slime (S)", Monster_Action.id_map["Spike Slime (S)"]["Tackle"]): (5, 0, 1, [], [], [], False, 0, False),
+
         ("Looter", Monster_Action.id_map["Looter"]["Mug"]): (10, 0, 1, [], [], []),
         ("Looter", Monster_Action.id_map["Looter"]["Lunge"]): (12, 0, 1, [], [], []),
         ("Looter", Monster_Action.id_map["Looter"]["Smoke Bomb"]): (0, 6, 0, [], [], []),
-        ("Looter", Monster_Action.id_map["Looter"]["Escape"]): (0, 0, 0, [], [], []), # TODO: IMPLEMENT EXIT COMBAT
+        # TODO: IMPLEMENT EXIT COMBAT
+        ("Looter", Monster_Action.id_map["Looter"]["Escape"]): (0, 0, 0, [], [], []),
 
         ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Bite"]): (6, 0, 1, [], [], []),
         ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
 
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], []),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], []),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)]), # TODO: UPGRADE BURNS
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)]), 
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], []), 
+        # TODO: UPGRADE BURNS
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)]),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)]),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], []),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inflame"]): (0, 12, 0, [("Strength", 2)], [], []),
 
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)]),
@@ -472,92 +478,92 @@ class Move:
         # ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []), # TODO: ADD SPLIT
 
         # Ironclad Cards
-        ("Strike", 0): (6, 0, 1, [], [], [],False,0,False),
-        ("Defend", 0): (0, 5, 0, [], [], [],False,0,False),
-        ("Bash", 0): (8, 0, 1, [], [], [],False,0,False),
-        ("Anger", 0): (6, 0, 1, [], [], [("Anger", 2)],False,0,False),
+        ("Strike", 0): (6, 0, 1, [], [], [], False, 0, False),
+        ("Defend", 0): (0, 5, 0, [], [], [], False, 0, False),
+        ("Bash", 0): (8, 0, 1, [], [], [], False, 0, False),
+        ("Anger", 0): (6, 0, 1, [], [], [("Anger", 2)], False, 0, False),
         # ("Armaments",0) : (0,0,0,[],[],[],True,0,False)
         # ("Body Slam",0) : (0,0,0,[],[],[],False,0,False)
         # ("Clash",0) : (0,0,0,[],[],[],False,0,False)
         # ("Cleave",0) : (0,0,0,[],[],[],False,0,True)
-        ("Clothesline", 0): (12, 0, 1, [], [("Weakness", 2)], [],False,0,False),
-        ("Flex", 0): (0, 0, 0, [("Strength", 2), ("Strength Down", 2)], [], [],False,0,False),
+        ("Clothesline", 0): (12, 0, 1, [], [("Weakness", 2)], [], False, 0, False),
+        ("Flex", 0): (0, 0, 0, [("Strength", 2), ("Strength Down", 2)], [], [], False, 0, False),
         # ("Havoc",0): (0,0,0,[],[],[],True,0,False),
         # ("Headbutt",0): (9,0,1,[],[],[],False,0,False),
         # ("Heavy Blade",0): (14,0,1,[],[],[],False,0,False),
-        ("Iron Wave", 0): (5, 5, 1, [], [], [],False,0,False),
+        ("Iron Wave", 0): (5, 5, 1, [], [], [], False, 0, False),
         # ("Perfected Strike",0): (6,0,1,[],[],[],False,0,False,0,False),
         # ("Pommel Strike",0): (9,0,1,[],[],[],False,1,False),
         # ("Shrug It Off",0): (0,8,0,[],[],[],False,1,False),
         # ("Sword Boomerang",0): (3,0,3,[],[],[],False,0,False),
         # ("Thunderclap",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
         # ("True Grit",0): (0,7,0,[],[],[],False,0,False),
-        ("Twin Strike", 0): (5, 0, 2, [], [], [],False,0,False),
+        ("Twin Strike", 0): (5, 0, 2, [], [], [], False, 0, False),
         # ("Warcry",0): (0,0,0,[],[],[],True,0,False),
-        ("Wild Strike", 0): (12, 0, 1, [], [], [("Wound", 0)],False,0,False),
+        ("Wild Strike", 0): (12, 0, 1, [], [], [("Wound", 0)], False, 0, False),
         # ("Battle Trance",0):(0,0,0,[("No Draw",1)],[],[],False,3,False),
         # ("Blood for Blood",0):(18,0,1,[],[],[],False,0,False),
         # ("Bloodletting",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact",0):(0,0,0,[],[],[],False,2,False),
         # ("Carnage",0) : (20,0,1,[],[],[],False,0,False),
-        ("Combust", 0): (0, 0, 0, [("Combust", 5)], [], [],False,0,False),
-        ("Dark Embrace", 0): (0, 0, 0, [("Dark Embrace", 1)], [], [],False,0,False),
-        ("Disarm", 0): (0, 0, 0, [], [("Strength", -2)], [],False,0,False),
+        ("Combust", 0): (0, 0, 0, [("Combust", 5)], [], [], False, 0, False),
+        ("Dark Embrace", 0): (0, 0, 0, [("Dark Embrace", 1)], [], [], False, 0, False),
+        ("Disarm", 0): (0, 0, 0, [], [("Strength", -2)], [], False, 0, False),
         # ("Dropkick",0):(5,0,1,[],[],[],False,0,False),
         # ("Dual Wield",0):(0,0,0,[],[],[],False,0,False),
         # ("Entrench",0) : (0,0,0,[],[],[],False,0,False),
-        ("Evolve", 0): (0, 0, 0, [("Evolve", 1)], [], [],False,0,False),
-        ("Feel No Pain", 0): (0, 0, 0, [("Feel No Pain", 3)], [], [],False,0,False),
-        ("Fire Breathing", 0): (0, 0, 0, [("Fire Breathing", 6)], [], [],False,0,False),
-        ("Flame Barrier", 0): (0, 12, 0, [("Flame Barrier", 4)], [], [],False,0,False),
-        ("Ghostly Armor", 0): (0, 10, 0, [], [], [],False,0,False),
+        ("Evolve", 0): (0, 0, 0, [("Evolve", 1)], [], [], False, 0, False),
+        ("Feel No Pain", 0): (0, 0, 0, [("Feel No Pain", 3)], [], [], False, 0, False),
+        ("Fire Breathing", 0): (0, 0, 0, [("Fire Breathing", 6)], [], [], False, 0, False),
+        ("Flame Barrier", 0): (0, 12, 0, [("Flame Barrier", 4)], [], [], False, 0, False),
+        ("Ghostly Armor", 0): (0, 10, 0, [], [], [], False, 0, False),
         # ("Hemokinesis", 0): (15, 0, 1, [], [], [],False,0,False),
         # ("Infernal Blade",0): (0,0,0,[],[],[],True,0,False),
-        ("Inflame", 0): (0, 0, 0, [("Strength", 2)], [], [],False,0,False),
+        ("Inflame", 0): (0, 0, 0, [("Strength", 2)], [], [], False, 0, False),
         # ("Intimidate",0):(0,0,0,[],[("Weakness",1)],[],True,0,True)
-        ("Metallicize", 0): (0, 0, 0, [("Metalicize", 3)], [], [],False,0,False),
-        ("Power Through", 0): (0, 15, 0, [], [], [("Wound", 1), ("Wound", 1)],False,0,False),
-        ("Pummel", 0): (2, 0, 4, [], [], [],False,0,False),
-        ("Rage", 0): (0, 0, 0, [("Rage", 3)], [], [],False,0,False),
+        ("Metallicize", 0): (0, 0, 0, [("Metalicize", 3)], [], [], False, 0, False),
+        ("Power Through", 0): (0, 15, 0, [], [], [("Wound", 1), ("Wound", 1)], False, 0, False),
+        ("Pummel", 0): (2, 0, 4, [], [], [], False, 0, False),
+        ("Rage", 0): (0, 0, 0, [("Rage", 3)], [], [], False, 0, False),
         # ("Rampage") : (8,0,1,[],[],[],False,0,False)
         ("Reckless Charge", 0): (7, 0, 1, [], [], [("Dazed", 0)]),
         ("Rupture", 0): (0, 0, 0, [("Rupture", 1)], [], []),
         # ("Searing Blow",0) : (12,0,0,[],[],[],False,0,False),
         # ("Second Wind",0) : (0,5,0,[],[],[],False,0,False),
         # ("Searing Red",0) : (0,0,0,[],[],[],True,0,False),
-        ("Sentinel", 0): (0, 5, 0, [], [], [],False,0,False),
+        ("Sentinel", 0): (0, 5, 0, [], [], [], False, 0, False),
         # ("Sever Soul",0) : (16,0,1,[],[],[],False,0,False),
         # ("Shockwave",0) : (0,0,0,[],[("Weakness",3),("Vulnerable",3)],[],False,0,True),
         # ("Spot Weakness",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
-        ("Uppercut", 0): (13, 0, 1, [], [("Weakness", 1), ("Vulnerable", 1)], [],False,0,False),
+        ("Uppercut", 0): (13, 0, 1, [], [("Weakness", 1), ("Vulnerable", 1)], [], False, 0, False),
         # ("Whirlwind",0) : (5,0,X,[],[],[],False,0,True),
-        ("Barricade", 0): (0, 0, 0, [("Barricade", 1)], [], [],False,0,False),
-        ("Berserk", 0): (0, 0, 0, [("Vulnerable", 2), ("Berserk", 1)], [], [],False,0,False),
-        ("Bludgeon", 0): (32, 0, 1, [], [], [],False,0,False),
-        ("Brutality", 0): (0, 0, 0, [("Brutality", 1)], [], [],False,0,False),
-        ("Corruption", 0): (0, 0, 0, [("Corruption", 1)], [], [],False,0,False),
-        ("Demon Form", 0): (0, 0, 0, [("Demon Form", 2)], [], [],False,0,False),
-        ("Double Tap", 0): (0, 0, 0, [("Double Tap", 1)], [], [],False,0,False),
+        ("Barricade", 0): (0, 0, 0, [("Barricade", 1)], [], [], False, 0, False),
+        ("Berserk", 0): (0, 0, 0, [("Vulnerable", 2), ("Berserk", 1)], [], [], False, 0, False),
+        ("Bludgeon", 0): (32, 0, 1, [], [], [], False, 0, False),
+        ("Brutality", 0): (0, 0, 0, [("Brutality", 1)], [], [], False, 0, False),
+        ("Corruption", 0): (0, 0, 0, [("Corruption", 1)], [], [], False, 0, False),
+        ("Demon Form", 0): (0, 0, 0, [("Demon Form", 2)], [], [], False, 0, False),
+        ("Double Tap", 0): (0, 0, 0, [("Double Tap", 1)], [], [], False, 0, False),
         # ("Exhume",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
         # ("Impervious",0): (0,30,0,[],[],[],True,0,False),
-        ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [],True,0,False),
+        ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         # ("Limit Break",0): (0,0,0,[],[],[],True,0,False),
         # ("Offering",0): (0,0,0,[],[],[],True,3,False),
         # ("Reaper",0): (4,0,0,[],[],[],True,0,True),
 
-        ("Strike+", 0): (9, 0, 1, [], [], [],False,0,False),
-        ("Defend+", 0): (0, 8, 0, [], [], [],False,0,False),
-        ("Bash+", 0): (10, 0, 1, [], [("Vulnerable", 3)], [],False,0,False),
-        ("Anger+", 0): (8, 0, 1, [], [], [("Anger", 2)],False,0,False),
+        ("Strike+", 0): (9, 0, 1, [], [], [], False, 0, False),
+        ("Defend+", 0): (0, 8, 0, [], [], [], False, 0, False),
+        ("Bash+", 0): (10, 0, 1, [], [("Vulnerable", 3)], [], False, 0, False),
+        ("Anger+", 0): (8, 0, 1, [], [], [("Anger", 2)], False, 0, False),
         # ("Armaments+",0) : (0,0,0,[],[],[],False,0,True)
         # ("Body Slam+",0) : (0,0,0,[],[],[],False,0,False)
         # ("Clash+",0) : (0,0,0,[],[],[],False,0,False)
         # ("Cleave+",0) : (0,0,0,[],[],[],False,0,True)
-        ("Clothesline+", 0): (14, 0, 1, [], [("Weakness", 3)], [],False,0,False),
-        ("Flex+", 0): (0, 0, 0, [("Strength", 4), ("Strength Down", 4)], [], [],False,0,False),
+        ("Clothesline+", 0): (14, 0, 1, [], [("Weakness", 3)], [], False, 0, False),
+        ("Flex+", 0): (0, 0, 0, [("Strength", 4), ("Strength Down", 4)], [], [], False, 0, False),
         # ("Havoc+",0): (0,0,0,[],[],[],False,0,False),
         # ("Headbutt+",0): (9,0,1,[],[],[],False,0,False),
         # ("Heavy Blade+",0): (14,0,1,[],[],[],False,0,False),
@@ -568,76 +574,76 @@ class Move:
         # ("Sword Boomerang+",0): (3,0,3,[],[],[],False,0,False),
         # ("Thunderclap+",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
         # ("True Grit+",0): (0,7,0,[],[],[],False,0,False),
-        ("Twin Strike+", 0): (7, 0, 2, [], [], [],False,0,False),
+        ("Twin Strike+", 0): (7, 0, 2, [], [], [], False, 0, False),
         # ("Warcry+",0): (0,0,0,[],[],[],True,0,False),
-        ("Wild Strike+", 0): (17, 0, 1, [], [], [("Wound", 0)],False,0,False),
+        ("Wild Strike+", 0): (17, 0, 1, [], [], [("Wound", 0)], False, 0, False),
         # ("Battle Trance+",0):(0,0,0,[("No Draw",1)],[],[],False,4,False),
         # ("Blood for Blood+",0):(22,0,1,[],[],[],False,0,False),
         # ("Bloodletting+",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact+",0):(0,0,0,[],[],[],False,3,False),
         # ("Carnage+",0) : (28,0,1,[],[],[],False,0,False),
-        ("Combust+", 0): (0, 0, 0, [("Combust", 7)], [], [],False,0,False),
-        ("Dark Embrace+", 0): (0, 0, 0, [("Dark Embrace", 2)], [], [],False,0,False),
-        ("Disarm+", 0): (0, 0, 0, [], [("Strength", -3)], [],False,0,False),
+        ("Combust+", 0): (0, 0, 0, [("Combust", 7)], [], [], False, 0, False),
+        ("Dark Embrace+", 0): (0, 0, 0, [("Dark Embrace", 2)], [], [], False, 0, False),
+        ("Disarm+", 0): (0, 0, 0, [], [("Strength", -3)], [], False, 0, False),
         # ("Dropkick+",0):(8,0,1,[],[],[],False,0,False,False,0,False),
         # ("Dual Wield+",0):(0,0,0,[],[],[],False,0,False),
         # ("Entrench+",0) : (0,0,0,[],[],[],False,0,False),
-        ("Evolve+", 0): (0, 0, 0, [("Evolve", 2)], [], [],False,0,False),
-        ("Feel No Pain+", 0): (0, 0, 0, [("Feel No Pain", 4)], [], [],False,0,False),
-        ("Fire Breathing+", 0): (0, 0, 0, [("Fire Breathing", 10)], [], [],False,0,False),
-        ("Flame Barrier+", 0): (0, 16, 0, [("Flame Barrier", 6)], [], [],False,0,False),
-        ("Ghostly Armor+", 0): (0, 13, 0, [], [], [],False,0,False),
+        ("Evolve+", 0): (0, 0, 0, [("Evolve", 2)], [], [], False, 0, False),
+        ("Feel No Pain+", 0): (0, 0, 0, [("Feel No Pain", 4)], [], [], False, 0, False),
+        ("Fire Breathing+", 0): (0, 0, 0, [("Fire Breathing", 10)], [], [], False, 0, False),
+        ("Flame Barrier+", 0): (0, 16, 0, [("Flame Barrier", 6)], [], [], False, 0, False),
+        ("Ghostly Armor+", 0): (0, 13, 0, [], [], [], False, 0, False),
         # ("Hemokinesis+", 0): (20, 0, 1, [], [], [],False,0,False),
         # ("Infernal Blade+",0): (0,0,0,[],[],[],True,0,False),
-        ("Inflame+", 0): (0, 0, 0, [("Strength", 3)], [], [],False,0,False),
+        ("Inflame+", 0): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
         # ("Intimidate+",0):(0,0,0,[],[("Weakness",2)],[],True,0,True)
-        ("Metallicize+", 0): (0, 0, 0, [("Metalicize", 4)], [], [],False,0,False),
-        ("Power Through+", 0): (0, 20, 0, [], [], [("Wound", 1), ("Wound", 1)],False,0,False),
-        ("Pummel+", 0): (2, 0, 5, [], [], [],False,0,False),
-        ("Rage+", 0): (0, 0, 0, [("Rage", 5)], [], [],False,0,False),
+        ("Metallicize+", 0): (0, 0, 0, [("Metalicize", 4)], [], [], False, 0, False),
+        ("Power Through+", 0): (0, 20, 0, [], [], [("Wound", 1), ("Wound", 1)], False, 0, False),
+        ("Pummel+", 0): (2, 0, 5, [], [], [], False, 0, False),
+        ("Rage+", 0): (0, 0, 0, [("Rage", 5)], [], [], False, 0, False),
         # ("Rampage+") : (8,0,1,[],[],[],False,0,False)
-        ("Reckless Charge+", 0): (10, 0, 1, [], [], [("Dazed", 0)],False,0,False),
-        ("Rupture+", 0): (0, 0, 0, [("Rupture", 2)], [], [],False,0,False),
+        ("Reckless Charge+", 0): (10, 0, 1, [], [], [("Dazed", 0)], False, 0, False),
+        ("Rupture+", 0): (0, 0, 0, [("Rupture", 2)], [], [], False, 0, False),
         # ("Searing Blow+",0) : (12,0,0,[],[],[],False,0,False),
         # ("Second Wind+",0) : (0,5,0,[],[],[],False,0,False),
         # ("Searing Red+",0) : (0,0,0,[],[],[],True,0,False),
-        ("Sentinel+", 0): (0, 8, 0, [], [], [],False,0,False),
+        ("Sentinel+", 0): (0, 8, 0, [], [], [], False, 0, False),
         # ("Sever Soul+",0) : (16,0,1,[],[],[],False,0,False),
         # ("Shockwave+",0) : (0,0,0,[],[("Weakness",5),("Vulnerable",5)],[],False,0,True),
         # ("Spot Weakness+",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
-        ("Uppercut+", 0): (13, 0, 1, [], [("Weakness", 2), ("Vulnerable", 2)], [],False,0,False),
+        ("Uppercut+", 0): (13, 0, 1, [], [("Weakness", 2), ("Vulnerable", 2)], [], False, 0, False),
         # ("Whirlwind+",0) : (7,0,X,[],[],[],False,0,True),
-        ("Barricade+", 0): (0, 0, 0, [("Barricade", 1)], [], [],False,0,False),
-        ("Berserk+", 0): (0, 0, 0, [("Vulnerable", 1), ("Berserk", 1)], [], [],False,0,False),
-        ("Bludgeon+", 0): (42, 0, 1, [], [], [],False,0,False),
-        ("Brutality+", 0): (0, 0, 0, [("Brutality", 1)], [], [],False,0,False),
-        ("Corruption+", 0): (0, 0, 0, [("Corruption", 1)], [], [],False,0,False),
-        ("Demon Form+", 0): (0, 0, 0, [("Demon Form", 3)], [], [],False,0,False),
-        ("Double Tap+", 0): (0, 0, 0, [("Double Tap", 2)], [], [],False,0,False),
+        ("Barricade+", 0): (0, 0, 0, [("Barricade", 1)], [], [], False, 0, False),
+        ("Berserk+", 0): (0, 0, 0, [("Vulnerable", 1), ("Berserk", 1)], [], [], False, 0, False),
+        ("Bludgeon+", 0): (42, 0, 1, [], [], [], False, 0, False),
+        ("Brutality+", 0): (0, 0, 0, [("Brutality", 1)], [], [], False, 0, False),
+        ("Corruption+", 0): (0, 0, 0, [("Corruption", 1)], [], [], False, 0, False),
+        ("Demon Form+", 0): (0, 0, 0, [("Demon Form", 3)], [], [], False, 0, False),
+        ("Double Tap+", 0): (0, 0, 0, [("Double Tap", 2)], [], [], False, 0, False),
         # ("Exhume+",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed+",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate+",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
         # ("Impervious+",0): (0,30,0,[],[],[],True,0,False),
-        ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [],False,0,False)
+        ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False)
         # ("Limit Break+",0): (0,0,0,[],[],[],False,0,False),
         # ("Offering+",0): (0,0,0,[],[],[],False,5,False),
         # ("Reaper+",0): (4,0,0,[],[],[],True,0,True)
     }
 
     added_card_data = {
-        "Slime" : (-1, "Slime", "Status", "Common", 0, False,1,-1,"","",True,False),
-        "Wound" : (-1, "Wound", "Status", "Common", 0, False,1,-1,"","",False,False),
-        "Dazed" : (-1, "Dazed", "Status", "Common", 0, False,1,-1,"","",False,True),
-        "Burn" : (-1, "Burn", "Status", "Common", 0, False,1,-1,"","",False,False),
-        "Burn+" : (-1, "Burn+", "Status", "Common", 0, False,1,-1,"","",False,False),
+        "Slime": (-1, "Slime", "Status", "Common", 0, False, 1, -1, "", "", True, False),
+        "Wound": (-1, "Wound", "Status", "Common", 0, False, 1, -1, "", "", False, False),
+        "Dazed": (-1, "Dazed", "Status", "Common", 0, False, 1, -1, "", "", False, True),
+        "Burn": (-1, "Burn", "Status", "Common", 0, False, 1, -1, "", "", False, False),
+        "Burn+": (-1, "Burn+", "Status", "Common", 0, False, 1, -1, "", "", False, False),
 
-        "Anger" : (-1, "Anger", "Attack", "Common", 0, True,1,-1,"","",True,False),
-        "Anger+" : (-1, "Anger+", "Attack", "Common", 0, True,1,-1,"","",True,False),
-        
+        "Anger": (-1, "Anger", "Attack", "Common", 0, True, 1, -1, "", "", True, False),
+        "Anger+": (-1, "Anger+", "Attack", "Common", 0, True, 1, -1, "", "", True, False),
+
     }
 
-    def __init__(self, damage, block, num_hits, s_powers, t_powers, cards, exhaust, draw_cards,aoe):
+    def __init__(self, damage, block, num_hits, s_powers, t_powers, cards, exhaust, draw_cards, aoe):
         self.damage = damage
         self.block = block
 
@@ -670,14 +676,14 @@ class Move:
 
                 except ValueError:
                     target.powers.append(Power(power[0], power[0], power[1]))
-            
 
         if (self.aoe):
             for target in game_state.monsters:
                 for i in range(self.num_hits):
                     if target.block < actor.adjust_damage(self.damage, target.powers):
                         target.current_hp = target.current_hp - \
-                            (actor.adjust_damage(self.damage, target.powers) - target.block)
+                            (actor.adjust_damage(self.damage,
+                             target.powers) - target.block)
                         target.block = 0
                     else:
                         target.block = target.block - \
@@ -690,7 +696,8 @@ class Move:
                         target.powers[index].amount = target.powers[index].amount + power[1]
 
                     except ValueError:
-                        target.powers.append(Power(power[0], power[0], power[1]))
+                        target.powers.append(
+                            Power(power[0], power[0], power[1]))
 
         for power in self.self_powers:
             try:
@@ -703,14 +710,14 @@ class Move:
 
         for card in self.cards:
             if card[1] == 0:
-                game_state.draw_pile.append(Card(*Move.added_card_data(card[0])))
+                game_state.draw_pile.append(
+                    Card(*Move.added_card_data(card[0])))
 
             if card[1] == 1:
                 game_state.hand.append(Card(*Move.added_card_data(card[0])))
 
             if card[1] == 2:
-                game_state.discard_pile.append(Card(*Move.added_card_data(card[0])))
-
-        
+                game_state.discard_pile.append(
+                    Card(*Move.added_card_data(card[0])))
 
         actor.block = actor.block + self.block
