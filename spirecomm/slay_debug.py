@@ -10,6 +10,8 @@ from spirecomm.spire.character import PlayerClass
 from spirecomm.spire.game import Game
 import os
 import glob
+import time
+
 
 if __name__ == "__main__":
 
@@ -36,6 +38,9 @@ if __name__ == "__main__":
     # f = open('json_fight_data/floor_1_turn_2_action_0.json')
 
     communication_state = json.load(f)
+    start_time = time.time()
 
-    agent.get_next_action_in_game(Game.from_json(communication_state.get(
-        "game_state"), communication_state.get("available_commands"),communication_state), True)
+
+    agent.get_next_action_in_game(Game.from_json(communication_state.get("game_state"), communication_state.get("available_commands"),communication_state), True)
+
+    print("--- %s seconds ---" % (time.time() - start_time))

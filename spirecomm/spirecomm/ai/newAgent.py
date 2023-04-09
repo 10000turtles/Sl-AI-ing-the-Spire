@@ -10,14 +10,14 @@ from spirecomm.communication.action import *
 from spirecomm.ai.priorities import *
 import copy
 import itertools as it
-
+import threading
 
 class Node:
     global_nodes = 0
 
-    def __init__(self, game, prob, deter, card, target):
+    def __init__(self, prob, deter, card, target,game = None):
         self.game = game
-        self.game.update()
+        
         self.probability = prob
         self.children = []
         self.total_nodes = 0
@@ -25,16 +25,27 @@ class Node:
         self.id = Node.global_nodes
         Node.global_nodes = Node.global_nodes + 1
 
-        self.hasChildren = False
+        self.has_children = False
         self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
-        self.done = not game.in_combat
-        self.static_value = game.evaluate_state()
+
+        if not game is None:
+            self.game.update()
+            self.done = not game.in_combat
+            self.static_value = game.evaluate_state()
+
         self.deep_evaluation = -69
         self.removed = False
+
+        self.draw_card_node = False
 
         self.card_to_play = card
         self.card_target = target
 
+    def update_with_game(self,game):
+        self.game = game
+        self.done = not game.in_combat
+        self.static_value = game.evaluate_state()
+    
     def expand(self, turn_stop):
 
         playable_cards = [card for card in self.game.hand if card.is_playable]
@@ -50,45 +61,51 @@ class Node:
                 playable_cards_no_repeats.append(p_card)
 
         if len(playable_cards_no_repeats) > 0:
-            self.hasChildren = True
+            self.has_children = True
             possible_options = []
 
             for card_to_play in playable_cards_no_repeats:
                 if card_to_play.has_target:
-
                     for target in self.game.monsters:
-
                         possible_options.append((card_to_play, target))
+
                 else:
                     possible_options.append((card_to_play, None))
 
             for i in possible_options:
-                self.children.append(
-                    Node(self.game.predict_state(i[0], i[1]), self.probability, 0, i[0], i[1]))
+                # I like jerry :D
+                # jerry is my child 
+                jerry = Node(self.probability, 0, i[0], i[1])
+                self.children.append(jerry)
+                jerry.update_with_game(self.game.predict_state(i[0], i[1], jerry))
 
         else:
             if turn_stop == self.game.turn:
                 self.done = True
             else:
-                self.hasChildren = True
+                self.has_children = True
                 self.deterministic = 1
                 for state, prob in self.game.predict_states_turn_end():
-                    self.children.append(
-                        Node(state, self.probability*prob, 0, None, None))
+                    self.children.append(Node(self.probability*prob, 0, None, None,state))
+ 
 
         for i in self.children:
             if not i.game.in_combat:
                 i.done = True
-            # if turn_stop == i.game.turn:
-            #     i.done = True
 
         return
 
-    def expand_on_draw(self, cards):
-        self.hasChildren = True
+    def expand_on_draw(self, cards, game_state):
+        self.update_with_game(game_state)
+        
+        if cards == 0:
+            return
+        
+        self.has_children = True
         self.deterministic = 1
-        for state, prob in self.game.predict_card_draw():
-            self.children.append(Node(state, self.probability*prob, 0, None, None))
+        
+        for state, prob in self.game.predict_card_draw(cards):
+            self.children.append(Node(self.probability*prob, 0, None, None,state))
 
         for i in self.children:
             if not i.game.in_combat:
@@ -98,7 +115,7 @@ class Node:
         if self.deterministic == 0:
             max = -99999999
 
-            if (not self.hasChildren):
+            if (not self.has_children):
                 self.deep_evaluation = self.probability*self.static_value
                 return self.probability*self.static_value
 
@@ -110,7 +127,7 @@ class Node:
             self.deep_evaluation = max
             return max
         if self.deterministic == 1:
-            if (not self.hasChildren):
+            if (not self.has_children):
                 self.deep_evaluation = self.probability*self.static_value
                 return self.probability*self.static_value
 
@@ -267,27 +284,57 @@ class CoolRadicalAgent:
     def get_play_card_action(self, debug_mode=False):
         Node.global_nodes = 0
 
-        self.headNode = Node(copy.deepcopy(self.game), 1, 0, None, None)
-        turn_stop = self.headNode.game.turn + 1
+        self.headNode = Node( 1, 0, None, None,copy.deepcopy(self.game))
+        turn_stop = self.headNode.game.turn
 
         activeNodes = [self.headNode]
 
+
+        max_threads = 8
+
         # Only expands nodes that are either this turn or next turn.
         while len(activeNodes) >= 1:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
+            # if len(activeNodes) > 1:
+            #     current_nodes = []
+            #     count = 0
+            #     while len(activeNodes) > 0 and count < max_threads:
+            #         count = count + 1
+            #         current_nodes.append(activeNodes.pop(0))
+
+            #     threads = []
+
+            #     for node in current_nodes:
+            #         new_thread = threading.Thread(target = node.expand,args=(turn_stop,))
+            #         new_thread.start()
+            #         threads.append(new_thread)
+
+            #     for t in threads:
+            #         t.join()
+            #     for curr in current_nodes:
+            #         for child in curr.children:
+            #             self.headNode.total_nodes = self.headNode.total_nodes + 1
+            #             if not child.done and not child.has_children:
+            #                 activeNodes.append(child)
+            #             if not child.done and child.has_children: # This happens on card draw
+            #                 activeNodes.extend(child.children)
+                
+            # else:     
             current = activeNodes.pop(0)
 
             current.expand(turn_stop)
             for child in current.children:
                 self.headNode.total_nodes = self.headNode.total_nodes + 1
-                if not child.done:
+                if not child.done and not child.has_children:
                     activeNodes.append(child)
+                if not child.done and child.has_children: # This happens on card draw
+                    activeNodes.extend(child.children)
 
         self.headNode.get_deep_evaluation()
         if (debug_mode):
             # print(self.headNode.__str__())
             print([(i.deep_evaluation, i.game.player.block, i.game.monsters[0].current_hp,
                   i.deterministic) for i in self.headNode.children])
-            print([[(j.deep_evaluation, j.hasChildren, j.game.player.block)
+            print([[(j.deep_evaluation, j.has_children, j.game.player.block)
                   for j in i.children] for i in self.headNode.children])
             print([i.card_to_play.name for i in self.headNode.children])
             print([i.deep_evaluation for i in self.headNode.children])

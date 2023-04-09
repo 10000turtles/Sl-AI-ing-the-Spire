@@ -212,11 +212,8 @@ class Game:
             monster.block = 0
             monster.move.execute_move(self, monster, self.player)
 
-    def predict_state(self, card=None, target=None):
+    def predict_state(self, card, target, node):
         new_game = copy.deepcopy(self)
-
-        new_game.hand.remove(card)
-        new_game.discard_pile.append(card)
 
         if (not target == None):
             for monster in new_game.monsters:
@@ -225,11 +222,11 @@ class Game:
                     break
 
         player_move = Move(*Move.monster_move_data[(card.name, 0)])
-        player_move.execute_move(new_game, new_game.player, target)
         new_game.player.energy -= card.cost
+        player_move.execute_move(new_game, new_game.player, target, node, card)
         new_game.update()
 
-        return new_game
+        return new_game 
 
     def predict_states_turn_end(self):
 
@@ -267,6 +264,7 @@ class Game:
 
             for hand in possible_hands:
                 hand = list(hand)
+                
                 original_hand = copy.deepcopy(temp_game.hand)
                 count = count + 1
 
@@ -328,6 +326,9 @@ class Game:
             hand = list(hand)
 
             temp_game.hand.extend(hand)
+
+            for i in hand:
+                temp_game.draw_pile.remove(i)
 
             new_games.append((temp_game,1))
 

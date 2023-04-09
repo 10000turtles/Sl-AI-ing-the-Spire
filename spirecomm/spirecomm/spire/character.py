@@ -46,7 +46,7 @@ class Monster_Action:
         "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
         "Fungi Beast": {"Bite": -1, "Grow": -1},
         "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
-        "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slame": -1, "Split": -1}
+        "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slam": -1, "Split": -1}
     }
 
     def __init__(self, intent, power, probability):
@@ -485,7 +485,7 @@ class Move:
         # ("Armaments",0) : (0,0,0,[],[],[],True,0,False)
         # ("Body Slam",0) : (0,0,0,[],[],[],False,0,False)
         # ("Clash",0) : (0,0,0,[],[],[],False,0,False)
-        # ("Cleave",0) : (0,0,0,[],[],[],False,0,True)
+        ("Cleave",0) : (0,0,0,[],[],[],False,0,True),
         ("Clothesline", 0): (12, 0, 1, [], [("Weakness", 2)], [], False, 0, False),
         ("Flex", 0): (0, 0, 0, [("Strength", 2), ("Strength Down", 2)], [], [], False, 0, False),
         # ("Havoc",0): (0,0,0,[],[],[],True,0,False),
@@ -493,15 +493,15 @@ class Move:
         # ("Heavy Blade",0): (14,0,1,[],[],[],False,0,False),
         ("Iron Wave", 0): (5, 5, 1, [], [], [], False, 0, False),
         # ("Perfected Strike",0): (6,0,1,[],[],[],False,0,False,0,False),
-        # ("Pommel Strike",0): (9,0,1,[],[],[],False,1,False),
-        # ("Shrug It Off",0): (0,8,0,[],[],[],False,1,False),
+        ("Pommel Strike",0): (9,0,1,[],[],[],False,1,False),
+        ("Shrug It Off",0): (0,8,0,[],[],[],False,1,False),
         # ("Sword Boomerang",0): (3,0,3,[],[],[],False,0,False),
-        # ("Thunderclap",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
+        ("Thunderclap",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
         # ("True Grit",0): (0,7,0,[],[],[],False,0,False),
         ("Twin Strike", 0): (5, 0, 2, [], [], [], False, 0, False),
         # ("Warcry",0): (0,0,0,[],[],[],True,0,False),
         ("Wild Strike", 0): (12, 0, 1, [], [], [("Wound", 0)], False, 0, False),
-        # ("Battle Trance",0):(0,0,0,[("No Draw",1)],[],[],False,3,False),
+        ("Battle Trance",0):(0,0,0,[("No Draw",1)],[],[],False,3,False),
         # ("Blood for Blood",0):(18,0,1,[],[],[],False,0,False),
         # ("Bloodletting",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact",0):(0,0,0,[],[],[],False,2,False),
@@ -558,10 +558,10 @@ class Move:
         ("Defend+", 0): (0, 8, 0, [], [], [], False, 0, False),
         ("Bash+", 0): (10, 0, 1, [], [("Vulnerable", 3)], [], False, 0, False),
         ("Anger+", 0): (8, 0, 1, [], [], [("Anger", 2)], False, 0, False),
-        # ("Armaments+",0) : (0,0,0,[],[],[],False,0,True)
-        # ("Body Slam+",0) : (0,0,0,[],[],[],False,0,False)
-        # ("Clash+",0) : (0,0,0,[],[],[],False,0,False)
-        # ("Cleave+",0) : (0,0,0,[],[],[],False,0,True)
+        # ("Armaments+",0) : (0,0,0,[],[],[],False,0,True),
+        # ("Body Slam+",0) : (0,0,0,[],[],[],False,0,False),
+        # ("Clash+",0) : (0,0,0,[],[],[],False,0,False),
+        ("Cleave+",0) : (0,0,0,[],[],[],False,0,True),
         ("Clothesline+", 0): (14, 0, 1, [], [("Weakness", 3)], [], False, 0, False),
         ("Flex+", 0): (0, 0, 0, [("Strength", 4), ("Strength Down", 4)], [], [], False, 0, False),
         # ("Havoc+",0): (0,0,0,[],[],[],False,0,False),
@@ -569,8 +569,8 @@ class Move:
         # ("Heavy Blade+",0): (14,0,1,[],[],[],False,0,False),
         ("Iron Wave+", 0): (7, 7, 1, [], [], []),
         # ("Perfected Strike+",0): (6,0,1,[],[],[],False,0,False),
-        # ("Pommel Strike+",0): (9,0,1,[],[],[],False,2,False),
-        # ("Shrug It Off+",0): (0,11,0,[],[],[],False,1,False),
+        ("Pommel Strike+",0): (9,0,1,[],[],[],False,2,False),
+        ("Shrug It Off+",0): (0,11,0,[],[],[],False,1,False),
         # ("Sword Boomerang+",0): (3,0,3,[],[],[],False,0,False),
         # ("Thunderclap+",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
         # ("True Grit+",0): (0,7,0,[],[],[],False,0,False),
@@ -657,7 +657,7 @@ class Move:
         self.draw_cards = draw_cards
         self.aoe = aoe
 
-    def execute_move(self, game_state, actor: Character, target: Character):
+    def execute_move(self, game_state, actor: Character, target: Character, node = None, card_to_play = None):
         if (not target == None):
             for i in range(self.num_hits):
                 if target.block < actor.adjust_damage(self.damage, target.powers):
@@ -721,3 +721,17 @@ class Move:
                     Card(*Move.added_card_data(card[0])))
 
         actor.block = actor.block + self.block
+
+        if not card_to_play is None:
+            game_state.hand.remove(card_to_play)
+
+            if self.is_exhaust:
+                game_state.exhaust_pile.append(card_to_play)
+            else:
+                game_state.discard_pile.append(card_to_play)
+
+        if not node is None:
+            
+            node.expand_on_draw(self.draw_cards,game_state)
+
+
