@@ -46,7 +46,10 @@ class Monster_Action:
         "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
         "Fungi Beast": {"Bite": -1, "Grow": -1},
         "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
-        "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slam": -1, "Split": -1}
+        "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slam": -1, "Split": -1},
+        "Gremlin Nob": {"Bellow": -1, "Rush": -1, "Skull Bash": -1},
+        "Sentry": {"Beam": -1, "Bolt": -1},
+        "Lagavulin": {"Attack": -1, "Siphon Soul": -1}
     }
 
     def __init__(self, intent, power, probability):
@@ -311,13 +314,51 @@ class Monster(Character):
                 intents.append(Monster_Action(lick, 3, 1))
 
         elif self.name == "Gremlin Nob":
-            pass
+            bellow = Monster_Action.id_map[self.name]["Bellow"]
+            bellow_damage = Move.monster_move_data[(self.name, "Bellow")][0]
+            rush = Monster_Action.id_map[self.name]["Rush"]
+            rush_damage = Move.monster_move_data[(self.name, "Rush")][0]
+            skull_bash = Monster_Action.id_map[self.name]["Skull Bash"]
+            skull_bash_damage = Move.monster_move_data[(self.name, "Skull Bash")][0]
+
+            if game_state.turn == 1:
+                intents.append(Monster_Action(bellow, bellow_damage, 1))
+            elif self.second_last_move_id == rush and self.last_move_id == rush:
+                intents.append(Monster_Action(rush, rush_damage, 1))
+            else:
+                intents.append(Monster_Action(rush, rush_damage, 2/3))
+                intents.append(Monster_Action(skull_bash, skull_bash_damage, 1/3))
 
         elif self.name == "Sentry":
-            pass
+            beam = Monster_Action.id_map[self.name]["Beam"]
+            beam_damage = Move.monster_move_data[(self.name, "Beam")][0]
+            bolt = Monster_Action.id_map[self.name]["Bolt"]
+            bolt_damage = Move.monster_move_data[(self.name, "Bolt")][0]
+            
+            if self.last_move_id == beam:
+                intents.append(Monster_Action(bolt, bolt_damage, 1))
+            elif self.last_move_id == bolt:
+                intents.append(Monster_Action(beam, beam_damage, 1))
+            else:
+                sentry_num = game_state.monsters.index(self)
+
+                if sentry_num == 0 or sentry_num == 2:
+                    intents.append(Monster_Action(bolt, bolt_damage, 1))
+                else:
+                    intents.append(Monster_Action(beam, beam_damage, 1))
 
         elif self.name == "Lagavulin":
-            pass
+            attack = Monster_Action.id_map[self.name]["Attack"]
+            attack_damage = Move.monster_move_data[(self.name, "Attack")][0]
+            siphon_soul = Monster_Action.id_map[self.name]["Siphon Soul"]
+            siphon_soul_damage = Move.monster_move_data[(self.name, "Siphon Soul")][0]
+
+            if self.second_last_move_id == attack and self.last_move_id == attack:
+                intents.append(Monster_Action(siphon_soul, siphon_soul_damage, 1))
+            elif game_state.turn > 4 and self.current_hp == self.max_hp:
+                intents.append(Monster_Action(None, 0, 1))
+            else:
+                intents.append(Monster_Action(attack, attack_damage, 1))
 
         elif self.name == "Looter":
             mug = Monster_Action.id_map[self.name]["Mug"]
@@ -418,7 +459,7 @@ class Monster(Character):
 
 class Move:
 
-    # data format: (monster name, moveid) : (damage, block, # hits, self powers, target powers, cards added to deck)
+    # data format: (monster name, moveid) : (damage, block, # hits, self powers, target powers, cards added to deck), exhaust, draw cards, aoe
     monster_move_data = {
         ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Chomp"]): (11, 0, 1, [], [], [], False, 0, False),
         ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (0, 6, 0, [("Strength", 3)], [], [], False, 0, False),
@@ -455,27 +496,36 @@ class Move:
 
         ("Spike Slime (S)", Monster_Action.id_map["Spike Slime (S)"]["Tackle"]): (5, 0, 1, [], [], [], False, 0, False),
 
-        ("Looter", Monster_Action.id_map["Looter"]["Mug"]): (10, 0, 1, [], [], []),
-        ("Looter", Monster_Action.id_map["Looter"]["Lunge"]): (12, 0, 1, [], [], []),
-        ("Looter", Monster_Action.id_map["Looter"]["Smoke Bomb"]): (0, 6, 0, [], [], []),
+        ("Looter", Monster_Action.id_map["Looter"]["Mug"]): (10, 0, 1, [], [], [], False, 0, False),
+        ("Looter", Monster_Action.id_map["Looter"]["Lunge"]): (12, 0, 1, [], [], [], False, 0, False),
+        ("Looter", Monster_Action.id_map["Looter"]["Smoke Bomb"]): (0, 6, 0, [], [], [], False, 0, False),
         # TODO: IMPLEMENT EXIT COMBAT
-        ("Looter", Monster_Action.id_map["Looter"]["Escape"]): (0, 0, 0, [], [], []),
+        ("Looter", Monster_Action.id_map["Looter"]["Escape"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Bite"]): (6, 0, 1, [], [], []),
-        ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], []),
+        ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Bite"]): (6, 0, 1, [], [], [], False, 0, False),
+        ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
 
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], []),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], []),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], [], False, 0, False),
         # TODO: UPGRADE BURNS
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)]),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)]),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], []),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inflame"]): (0, 12, 0, [("Strength", 2)], [], []),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], [], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inflame"]): (0, 12, 0, [("Strength", 2)], [], [], False, 0, False),
 
-        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)]),
-        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], []),
-        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], []),
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)], False, 0, False),
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
         # ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []), # TODO: ADD SPLIT
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 0, [], [], [], False, 0, False),
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Skull Bash"]): (6, 0, 0, [], [("Vulnerable", 2)], [], False, 0, False),
+
+        ("Sentry", Monster_Action.id_map["Sentry"]["Beam"]): (9, 0, 0, [], [], [], False, 0, False),
+        ("Sentry", Monster_Action.id_map["Sentry"]["Bolt"]): (0, 0, 0, [], [], [("Dazed", 2)], False, 0, False),
+
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Attack"]): (18, 0, 0, [], [], [], False, 0, False),
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Siphon Soul"]): (18, 0, 0, [], [("Dexterity", -1), ("Strength", -1)], [], False, 0, False),
 
         # Ironclad Cards
         ("Strike", 0): (6, 0, 1, [], [], [], False, 0, False),
