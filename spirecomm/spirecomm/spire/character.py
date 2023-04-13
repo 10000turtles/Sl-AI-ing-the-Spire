@@ -99,7 +99,7 @@ class Character:
             return base_power + self.powers[index].amount
         except ValueError:
             return base_power
-        
+
     # def is_attacked(self):
 
 
@@ -111,17 +111,17 @@ class Character:
                 return
         except ValueError:
             pass
-        
+
         took_hp_damage = False
         hp_damage_taken = 0
 
         if can_be_blocked:
             if self.block < damage:
                 self.current_hp = self.current_hp - (damage - self.block)
-                hp_damage_taken = hp_damage_taken + (damage - self.block) 
+                hp_damage_taken = hp_damage_taken + (damage - self.block)
                 self.block = 0
                 took_hp_damage = True
-                
+
             else:
                 self.block = self.block - damage
 
@@ -170,7 +170,7 @@ class Character:
 
                 self.block = self.block + self.powers[index].amount
                 self.powers[index].amount = self.powers[index].amount + 1
-                
+
             except ValueError:
                 pass
 
@@ -178,7 +178,7 @@ class Character:
                 index = [i.power_name for i in self.powers].index("Mode Shift")
 
                 self.powers[index].amount = self.powers[index].amount - hp_damage_taken
-                
+
             except ValueError:
                 pass
 
@@ -416,7 +416,7 @@ class Monster(Character):
             beam_damage = Move.monster_move_data[(self.name, "Beam")][0]
             bolt = Monster_Action.id_map[self.name]["Bolt"]
             bolt_damage = Move.monster_move_data[(self.name, "Bolt")][0]
-            
+
             if self.last_move_id == beam:
                 intents.append(Monster_Action(bolt, bolt_damage, 1))
             elif self.last_move_id == bolt:
@@ -683,7 +683,7 @@ class Move:
         # ("Feed",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
-        # ("Impervious",0): (0,30,0,[],[],[],True,0,False),
+        ("Impervious",0): (0,30,0,[],[],[],True,0,False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         # ("Limit Break",0): (0,0,0,[],[],[],True,0,False),
         # ("Offering",0): (0,0,0,[],[],[],True,3,False),
@@ -759,7 +759,7 @@ class Move:
         # ("Feed+",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate+",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
-        # ("Impervious+",0): (0,30,0,[],[],[],True,0,False),
+        ("Impervious+",0): (0,40,0,[],[],[],True,0,False),
         ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False)
         # ("Limit Break+",0): (0,0,0,[],[],[],False,0,False),
         # ("Offering+",0): (0,0,0,[],[],[],False,5,False),
@@ -793,13 +793,13 @@ class Move:
         self.aoe = aoe
 
     def execute_move(self, game_state, actor: Character, target: Character, node = None, card_to_play = None):
-        
-        
+
+
         if (not target == None):
             for i in range(self.num_hits):
                 target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
 
-                
+
             for power in self.target_powers:
                 try:
                     index = [i.power_name for i in target.powers].index(
@@ -813,7 +813,7 @@ class Move:
             for target in game_state.monsters:
                 for i in range(self.num_hits):
                     target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
-                    
+
 
                 for power in self.target_powers:
                     try:
@@ -855,7 +855,7 @@ class Move:
                 game_state.discard_pile.append(card_to_play)
 
         if not node is None:
-            
+
             node.expand_on_draw(self.draw_cards,game_state)
 
         if not card_to_play is None:
@@ -868,7 +868,7 @@ class Move:
             if card_to_play.name == "Headbutt" or card_to_play.name == "Headbutt+":
                 pass
             if card_to_play.name == "Heavy Blade" or card_to_play.name == "Heavy Blade+":
-                pass   
+                pass
             if card_to_play.name == "Perfected Strike" or card_to_play.name == "Perfected Strike+":
                 pass
             if card_to_play.name == "Sword Boomerang" or card_to_play.name == "Sword Boomerang+":
@@ -897,5 +897,27 @@ class Move:
                 pass
             if card_to_play.name == "Searing Blow" or card_to_play.name == "Searing Blow+":
                 pass
-            
+            if card_to_play.name == "Second Wind" or card_to_play.name == "Second Wind+":
+                pass
+            if card_to_play.name == "Searing Red" or card_to_play.name == "Searing Red+":
+                pass
+            if card_to_play.name == "Sever Soul" or card_to_play.name == "Sever Soul+":
+                pass
+            if card_to_play.name == "Shockwave" or card_to_play.name == "Shockwave+":
+                pass
+            if card_to_play.name == "Spot Weakness" or card_to_play.name == "Spot Weakness+":
+                pass
+            if card_to_play.name == "Whirlwind" or card_to_play.name == "Whirlwind+":
+                pass
+            if card_to_play.name == "Exhume" or card_to_play.name == "Exhume+":
+                pass
+            if card_to_play.name == "Feed" or card_to_play.name == "Feed+":
+                pass
+            if card_to_play.name == "Fiend Fire" or card_to_play.name == "Fiend Fire+":
+                pass
+            if card_to_play.name == "Immolate" or card_to_play.name == "Immolate+":
+                pass
+
+
+
 
