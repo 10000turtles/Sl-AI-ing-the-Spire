@@ -157,7 +157,7 @@ class Game:
         #     Game.global_json_counter = Game.global_json_counter + 1
         #     json.dump(raw_data, f)
         # except:
-        #   with open(f"json_fight_data\\floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
+        #   with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
         #     Game.global_json_counter = Game.global_json_counter + 1
         #     json.dump(raw_data, f)
 

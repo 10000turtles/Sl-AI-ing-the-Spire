@@ -25,6 +25,7 @@ class Node:
         self.id = Node.global_nodes
         Node.global_nodes = Node.global_nodes + 1
 
+
         self.has_children = False
         self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
 
@@ -188,7 +189,7 @@ class Node:
 
 
 class CoolRadicalAgent:
-    def __init__(self, chosen_class=PlayerClass.THE_SILENT):
+    def __init__(self, chosen_class=PlayerClass.IRONCLAD):
         self.game = Game()
         self.errors = 0
         self.choose_good_card = False
@@ -285,7 +286,7 @@ class CoolRadicalAgent:
         Node.global_nodes = 0
 
         self.headNode = Node( 1, 0, None, None,copy.deepcopy(self.game))
-        turn_stop = self.headNode.game.turn
+        turn_stop = self.headNode.game.turn + 1
 
         activeNodes = [self.headNode]
 
@@ -293,7 +294,7 @@ class CoolRadicalAgent:
         max_threads = 8
 
         # Only expands nodes that are either this turn or next turn.
-        while len(activeNodes) >= 1:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
+        while len(activeNodes) >= 1 and Node.global_nodes < 20000:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
             # if len(activeNodes) > 1:
             #     current_nodes = []
             #     count = 0
@@ -467,8 +468,10 @@ class CoolRadicalAgent:
                 card, self.count_copies_in_deck(card))]
         else:
             pickable_cards = reward_cards
+        
         if len(pickable_cards) > 0:
             potential_pick = self.priorities.get_best_card(pickable_cards)
+
             return CardRewardAction(potential_pick)
         elif self.game.screen.can_bowl:
             return CardRewardAction(bowl=True)

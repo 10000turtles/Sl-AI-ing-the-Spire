@@ -779,8 +779,8 @@ class IroncladPriority(Priority):
         "Uppercut": 1,
         "J.A.X.": 1,
         "PanicButton": 1,
-        "Flash of Steel": 99,
-        "Flex": 1,
+        "Twin Strike": 2,
+        "Pommel Strike": 3,
     }
 
     BOSS_RELIC_PRIORITY_LIST = [

@@ -42,7 +42,7 @@ class Monster_Action:
         "Spike Slime (M)": {"Flame Tackle": 1, "Lick": 4},
         "Spike Slime (L)": {"Flame Tackle": 1, "Lick": 4, "Split": -1},
         "Acid Slime (S)": {"Lick": 1, "Tackle": 2},
-        "Spike Slime (S)": {"Tackle": -1},
+        "Spike Slime (S)": {"Tackle": 1},
         "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
         "Fungi Beast": {"Bite": -1, "Grow": -1},
         "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
@@ -99,6 +99,88 @@ class Character:
             return base_power + self.powers[index].amount
         except ValueError:
             return base_power
+        
+    # def is_attacked(self):
+
+
+    def recieve_damage(self, game_state, damage, can_be_blocked):
+        try:
+            index = [i.power_name for i in self.powers].index("Buffer")
+            if (self.powers[index].amount > 0):
+                self.powers[index].amount = self.powers[index].amount - 1
+                return
+        except ValueError:
+            pass
+        
+        took_hp_damage = False
+        hp_damage_taken = 0
+
+        if can_be_blocked:
+            if self.block < damage:
+                self.current_hp = self.current_hp - (damage - self.block)
+                hp_damage_taken = hp_damage_taken + (damage - self.block) 
+                self.block = 0
+                took_hp_damage = True
+                
+            else:
+                self.block = self.block - damage
+
+        else:
+            self.current_hp = self.current_hp - damage
+            hp_damage_taken = damage
+            took_hp_damage = True
+
+        if took_hp_damage:
+            try:
+                index = [i.power_name for i in self.powers].index("Plated Armor")
+                if (self.powers[index].amount > 0):
+                    self.powers[index].amount = self.powers[index].amount - 1
+
+            except ValueError:
+                pass
+
+            bfbs = [i for i in [item for sublist in [game_state.discard_pile,game_state.hand,game_state.draw_pile ] for item in sublist] if i.name == "Blood for Blood" or i.name == "Blood for Blood+"]
+            for i in bfbs:
+                i.cost = i.cost - 1
+
+
+            try:
+                index = [i.power_name for i in self.powers].index("Angry")
+                try:
+                    index2 = [i.power_name for i in self.powers].index("Strength")
+                    self.powers[index2].amount = self.powers[index2].amount + self.powers[index].amount
+
+                except ValueError:
+                    self.powers.append(Power("Strength","Strength",self.powers[index].amount ))
+
+            except ValueError:
+                pass
+
+            try:
+                index = [i.power_name for i in self.powers].index("Curl Up")
+
+                self.block = self.block + self.powers[index].amount
+                del self.powers[index]
+
+            except ValueError:
+                pass
+
+            try:
+                index = [i.power_name for i in self.powers].index("Malleable")
+
+                self.block = self.block + self.powers[index].amount
+                self.powers[index].amount = self.powers[index].amount + 1
+                
+            except ValueError:
+                pass
+
+            try:
+                index = [i.power_name for i in self.powers].index("Mode Shift")
+
+                self.powers[index].amount = self.powers[index].amount - hp_damage_taken
+                
+            except ValueError:
+                pass
 
 
 class Player(Character):
@@ -465,10 +547,10 @@ class Move:
         ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Bellow"]): (0, 6, 0, [("Strength", 3)], [], [], False, 0, False),
         ("Jaw Worm", Monster_Action.id_map["Jaw Worm"]["Thrash"]): (7, 5, 1, [], [], [], False, 0, False),
 
-        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Bite"]): ('d', 0, 1, [], [], [], False, 0, False),
+        ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Bite"]): (7, 0, 1, [], [], [], False, 0, False),
         ("FuzzyLouseNormal", Monster_Action.id_map["FuzzyLouseNormal"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
 
-        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Bite"]): ('d', 0, 1, [], [], [], False, 0, False),
+        ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Bite"]): (7, 0, 1, [], [], [], False, 0, False),
         ("FuzzyLouseDefensive", Monster_Action.id_map["FuzzyLouseDefensive"]["Spit Web"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
 
         ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], [], False, 0, False),
@@ -484,11 +566,11 @@ class Move:
         # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
 
 
-        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 1)], False, 0, False),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 1, [], [], [], False, 0, False),
 
-        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 1)], False, 0, False),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
         ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], [], False, 0, False),
 
         ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
@@ -527,6 +609,9 @@ class Move:
         ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Attack"]): (18, 0, 0, [], [], [], False, 0, False),
         ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Siphon Soul"]): (18, 0, 0, [], [("Dexterity", -1), ("Strength", -1)], [], False, 0, False),
 
+        # Playable Status Cards
+        ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),
+
         # Ironclad Cards
         ("Strike", 0): (6, 0, 1, [], [], [], False, 0, False),
         ("Defend", 0): (0, 5, 0, [], [], [], False, 0, False),
@@ -534,7 +619,7 @@ class Move:
         ("Anger", 0): (6, 0, 1, [], [], [("Anger", 2)], False, 0, False),
         # ("Armaments",0) : (0,0,0,[],[],[],True,0,False)
         # ("Body Slam",0) : (0,0,0,[],[],[],False,0,False)
-        # ("Clash",0) : (0,0,0,[],[],[],False,0,False)
+        ("Clash",0) : (0,0,0,[],[],[],False,0,False),
         ("Cleave",0) : (0,0,0,[],[],[],False,0,True),
         ("Clothesline", 0): (12, 0, 1, [], [("Weakness", 2)], [], False, 0, False),
         ("Flex", 0): (0, 0, 0, [("Strength", 2), ("Strength Down", 2)], [], [], False, 0, False),
@@ -555,7 +640,7 @@ class Move:
         # ("Blood for Blood",0):(18,0,1,[],[],[],False,0,False),
         # ("Bloodletting",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact",0):(0,0,0,[],[],[],False,2,False),
-        # ("Carnage",0) : (20,0,1,[],[],[],False,0,False),
+        ("Carnage",0) : (20,0,1,[],[],[],False,0,False),
         ("Combust", 0): (0, 0, 0, [("Combust", 5)], [], [], False, 0, False),
         ("Dark Embrace", 0): (0, 0, 0, [("Dark Embrace", 1)], [], [], False, 0, False),
         ("Disarm", 0): (0, 0, 0, [], [("Strength", -2)], [], False, 0, False),
@@ -610,7 +695,7 @@ class Move:
         ("Anger+", 0): (8, 0, 1, [], [], [("Anger", 2)], False, 0, False),
         # ("Armaments+",0) : (0,0,0,[],[],[],False,0,True),
         # ("Body Slam+",0) : (0,0,0,[],[],[],False,0,False),
-        # ("Clash+",0) : (0,0,0,[],[],[],False,0,False),
+        ("Clash+",0) : (0,0,0,[],[],[],False,0,False),
         ("Cleave+",0) : (0,0,0,[],[],[],False,0,True),
         ("Clothesline+", 0): (14, 0, 1, [], [("Weakness", 3)], [], False, 0, False),
         ("Flex+", 0): (0, 0, 0, [("Strength", 4), ("Strength Down", 4)], [], [], False, 0, False),
@@ -682,7 +767,7 @@ class Move:
     }
 
     added_card_data = {
-        "Slime": (-1, "Slime", "Status", "Common", 0, False, 1, -1, "", "", True, False),
+        "Slimed": (-1, "Slimed", "Status", "Common", 0, False, 1, -1, "", "", True, False),
         "Wound": (-1, "Wound", "Status", "Common", 0, False, 1, -1, "", "", False, False),
         "Dazed": (-1, "Dazed", "Status", "Common", 0, False, 1, -1, "", "", False, True),
         "Burn": (-1, "Burn", "Status", "Common", 0, False, 1, -1, "", "", False, False),
@@ -708,16 +793,13 @@ class Move:
         self.aoe = aoe
 
     def execute_move(self, game_state, actor: Character, target: Character, node = None, card_to_play = None):
+        
+        
         if (not target == None):
             for i in range(self.num_hits):
-                if target.block < actor.adjust_damage(self.damage, target.powers):
-                    target.current_hp = target.current_hp - \
-                        (actor.adjust_damage(self.damage, target.powers) - target.block)
-                    target.block = 0
-                else:
-                    target.block = target.block - \
-                        actor.adjust_damage(self.damage, target.powers)
+                target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
 
+                
             for power in self.target_powers:
                 try:
                     index = [i.power_name for i in target.powers].index(
@@ -730,14 +812,8 @@ class Move:
         if (self.aoe):
             for target in game_state.monsters:
                 for i in range(self.num_hits):
-                    if target.block < actor.adjust_damage(self.damage, target.powers):
-                        target.current_hp = target.current_hp - \
-                            (actor.adjust_damage(self.damage,
-                             target.powers) - target.block)
-                        target.block = 0
-                    else:
-                        target.block = target.block - \
-                            actor.adjust_damage(self.damage, target.powers)
+                    target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
+                    
 
                 for power in self.target_powers:
                     try:
@@ -760,15 +836,13 @@ class Move:
 
         for card in self.cards:
             if card[1] == 0:
-                game_state.draw_pile.append(
-                    Card(*Move.added_card_data(card[0])))
+                game_state.draw_pile.append(Card(*Move.added_card_data[card[0]]))
 
             if card[1] == 1:
-                game_state.hand.append(Card(*Move.added_card_data(card[0])))
+                game_state.hand.append(Card(*Move.added_card_data[card[0]]))
 
             if card[1] == 2:
-                game_state.discard_pile.append(
-                    Card(*Move.added_card_data(card[0])))
+                game_state.discard_pile.append(Card(*Move.added_card_data[card[0]]))
 
         actor.block = actor.block + self.block
 
@@ -784,4 +858,44 @@ class Move:
             
             node.expand_on_draw(self.draw_cards,game_state)
 
+        if not card_to_play is None:
+            if card_to_play.name == "Armaments" or card_to_play.name == "Armaments+":
+                pass
+            if card_to_play.name == "Body Slam" or card_to_play.name == "Body Slam+":
+                pass
+            if card_to_play.name == "Havoc" or card_to_play.name == "Havoc+":
+                pass
+            if card_to_play.name == "Headbutt" or card_to_play.name == "Headbutt+":
+                pass
+            if card_to_play.name == "Heavy Blade" or card_to_play.name == "Heavy Blade+":
+                pass   
+            if card_to_play.name == "Perfected Strike" or card_to_play.name == "Perfected Strike+":
+                pass
+            if card_to_play.name == "Sword Boomerang" or card_to_play.name == "Sword Boomerang+":
+                pass
+            if card_to_play.name == "True Grit" or card_to_play.name == "True Grit+":
+                pass
+            if card_to_play.name == "Warcry" or card_to_play.name == "Warcry+":
+                pass
+            if card_to_play.name == "Bloodletting" or card_to_play.name == "Bloodletting+":
+                pass
+            if card_to_play.name == "Burning Pact" or card_to_play.name == "Burning Pact+":
+                pass
+            if card_to_play.name == "Dropkick" or card_to_play.name == "Dropkick+":
+                pass
+            if card_to_play.name == "Dual Wield" or card_to_play.name == "Dual Wield+":
+                pass
+            if card_to_play.name == "Entrench" or card_to_play.name == "Entrench+":
+                pass
+            if card_to_play.name == "Hemokinesis" or card_to_play.name == "Hemokinesis+":
+                pass
+            if card_to_play.name == "Infernal Blade" or card_to_play.name == "Infernal Blade+":
+                pass
+            if card_to_play.name == "Intimidate" or card_to_play.name == "Intimidate+":
+                pass
+            if card_to_play.name == "Rampage" or card_to_play.name == "Rampage+":
+                pass
+            if card_to_play.name == "Searing Blow" or card_to_play.name == "Searing Blow+":
+                pass
+            
 
