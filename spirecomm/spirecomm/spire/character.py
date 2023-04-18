@@ -5,7 +5,7 @@ from spirecomm.spire.power import Power
 # from spirecomm.spire.game import Game
 from spirecomm.spire.card import Card
 
-
+import math
 class Intent(Enum):
     ATTACK = 1
     ATTACK_BUFF = 2
@@ -38,17 +38,17 @@ class Monster_Action:
         "FuzzyLouseDefensive": {"Bite": 3, "Spit Web": 4},
         "Cultist": {"Incantation": 3, "Dark Strike": 1},
         "Acid Slime (M)": {"Corrosive Spit": 1, "Lick": 4, "Tackle": 2},
-        "Acid Slime (L)": {"Corrosive Spit": 1, "Lick": 4, "Tackle": 2, "Split": -1},
+        "Acid Slime (L)": {"Corrosive Spit": 1, "Lick": 4, "Tackle": 2, "Split": 3},
         "Spike Slime (M)": {"Flame Tackle": 1, "Lick": 4},
-        "Spike Slime (L)": {"Flame Tackle": 1, "Lick": 4, "Split": -1},
+        "Spike Slime (L)": {"Flame Tackle": 1, "Lick": 4, "Split": 3},
         "Acid Slime (S)": {"Lick": 1, "Tackle": 2},
         "Spike Slime (S)": {"Tackle": 1},
         "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
         "Fungi Beast": {"Bite": -1, "Grow": -1},
         "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
         "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slam": -1, "Split": -1},
-        "Gremlin Nob": {"Bellow": -1, "Rush": -1, "Skull Bash": -1},
-        "Sentry": {"Beam": -1, "Bolt": -1},
+        "Gremlin Nob": {"Bellow": 3, "Rush": -1, "Skull Bash": -1},
+        "Sentry": {"Beam": 4, "Bolt": 3},
         "Lagavulin": {"Attack": -1, "Siphon Soul": -1}
     }
 
@@ -93,15 +93,31 @@ class Character:
         self.block = block
         self.powers = []
 
-    def adjust_damage(self, base_power, target_powers):
+    def adjust_damage(self, base_power, target_powers, heavy_blade=1):
+        modified_power = 0
         try:
             index = [i.power_name for i in self.powers].index("Strength")
-            return base_power + self.powers[index].amount
+
+            modified_power = base_power + self.powers[index].amount*heavy_blade
         except ValueError:
-            return base_power
+            modified_power = base_power
 
+        try:
+            index = [i.power_name for i in self.powers].index("Weakness")
+
+            modified_power = math.floor(modified_power*0.75)
+        except ValueError:
+            pass
+
+        try:
+            index = [i.power_name for i in target_powers].index("Vulnerable")
+
+            modified_power = math.floor(modified_power*1.5)
+        except ValueError:
+            pass
+
+        return modified_power
     # def is_attacked(self):
-
 
     def recieve_damage(self, game_state, damage, can_be_blocked):
         try:
@@ -132,26 +148,30 @@ class Character:
 
         if took_hp_damage:
             try:
-                index = [i.power_name for i in self.powers].index("Plated Armor")
+                index = [i.power_name for i in self.powers].index(
+                    "Plated Armor")
                 if (self.powers[index].amount > 0):
                     self.powers[index].amount = self.powers[index].amount - 1
 
             except ValueError:
                 pass
 
-            bfbs = [i for i in [item for sublist in [game_state.discard_pile,game_state.hand,game_state.draw_pile ] for item in sublist] if i.name == "Blood for Blood" or i.name == "Blood for Blood+"]
+            bfbs = [i for i in [item for sublist in [game_state.discard_pile, game_state.hand, game_state.draw_pile]
+                                for item in sublist] if i.name == "Blood for Blood" or i.name == "Blood for Blood+"]
             for i in bfbs:
                 i.cost = i.cost - 1
-
 
             try:
                 index = [i.power_name for i in self.powers].index("Angry")
                 try:
-                    index2 = [i.power_name for i in self.powers].index("Strength")
-                    self.powers[index2].amount = self.powers[index2].amount + self.powers[index].amount
+                    index2 = [i.power_name for i in self.powers].index(
+                        "Strength")
+                    self.powers[index2].amount = self.powers[index2].amount + \
+                        self.powers[index].amount
 
                 except ValueError:
-                    self.powers.append(Power("Strength","Strength",self.powers[index].amount ))
+                    self.powers.append(
+                        Power("Strength", "Strength", self.powers[index].amount))
 
             except ValueError:
                 pass
@@ -177,7 +197,8 @@ class Character:
             try:
                 index = [i.power_name for i in self.powers].index("Mode Shift")
 
-                self.powers[index].amount = self.powers[index].amount - hp_damage_taken
+                self.powers[index].amount = self.powers[index].amount - \
+                    hp_damage_taken
 
             except ValueError:
                 pass
@@ -397,11 +418,12 @@ class Monster(Character):
 
         elif self.name == "Gremlin Nob":
             bellow = Monster_Action.id_map[self.name]["Bellow"]
-            bellow_damage = Move.monster_move_data[(self.name, "Bellow")][0]
+            bellow_damage = Move.monster_move_data[(self.name, bellow)][0]
             rush = Monster_Action.id_map[self.name]["Rush"]
-            rush_damage = Move.monster_move_data[(self.name, "Rush")][0]
+            rush_damage = Move.monster_move_data[(self.name, bellow)][0]
             skull_bash = Monster_Action.id_map[self.name]["Skull Bash"]
-            skull_bash_damage = Move.monster_move_data[(self.name, "Skull Bash")][0]
+            skull_bash_damage = Move.monster_move_data[(
+                self.name, skull_bash)][0]
 
             if game_state.turn == 1:
                 intents.append(Monster_Action(bellow, bellow_damage, 1))
@@ -409,13 +431,14 @@ class Monster(Character):
                 intents.append(Monster_Action(rush, rush_damage, 1))
             else:
                 intents.append(Monster_Action(rush, rush_damage, 2/3))
-                intents.append(Monster_Action(skull_bash, skull_bash_damage, 1/3))
+                intents.append(Monster_Action(
+                    skull_bash, skull_bash_damage, 1/3))
 
         elif self.name == "Sentry":
             beam = Monster_Action.id_map[self.name]["Beam"]
-            beam_damage = Move.monster_move_data[(self.name, "Beam")][0]
+            beam_damage = Move.monster_move_data[(self.name, beam)][0]
             bolt = Monster_Action.id_map[self.name]["Bolt"]
-            bolt_damage = Move.monster_move_data[(self.name, "Bolt")][0]
+            bolt_damage = Move.monster_move_data[(self.name, bolt)][0]
 
             if self.last_move_id == beam:
                 intents.append(Monster_Action(bolt, bolt_damage, 1))
@@ -431,12 +454,14 @@ class Monster(Character):
 
         elif self.name == "Lagavulin":
             attack = Monster_Action.id_map[self.name]["Attack"]
-            attack_damage = Move.monster_move_data[(self.name, "Attack")][0]
+            attack_damage = Move.monster_move_data[(self.name, attack)][0]
             siphon_soul = Monster_Action.id_map[self.name]["Siphon Soul"]
-            siphon_soul_damage = Move.monster_move_data[(self.name, "Siphon Soul")][0]
+            siphon_soul_damage = Move.monster_move_data[(
+                self.name, siphon_soul)][0]
 
             if self.second_last_move_id == attack and self.last_move_id == attack:
-                intents.append(Monster_Action(siphon_soul, siphon_soul_damage, 1))
+                intents.append(Monster_Action(
+                    siphon_soul, siphon_soul_damage, 1))
             elif game_state.turn > 4 and self.current_hp == self.max_hp:
                 intents.append(Monster_Action(None, 0, 1))
             else:
@@ -444,12 +469,12 @@ class Monster(Character):
 
         elif self.name == "Looter":
             mug = Monster_Action.id_map[self.name]["Mug"]
-            mug_damage = Move.monster_move_data[(self.name, "Mug")][0]
+            mug_damage = Move.monster_move_data[(self.name, mug)][0]
             lunge = Monster_Action.id_map[self.name]["Lunge"]
-            lunge_damage = Move.monster_move_data[(self.name, "Lunge")][0]
+            lunge_damage = Move.monster_move_data[(self.name, lunge)][0]
             smoke_bomb = Monster_Action.id_map[self.name]["Smoke Bomb"]
             smoke_bomb_damage = Move.monster_move_data[(
-                self.name, "Smoke Bomb")][0]
+                self.name, smoke_bomb)][0]
 
             if game_state.turn == 1 or game_state.turn == 2:
                 intents.append(Monster_Action(mug, mug_damage, 1))
@@ -463,9 +488,9 @@ class Monster(Character):
 
         elif self.name == "Fungi Beast":
             bite = Monster_Action.id_map[self.name]["Bite"]
-            bite_damage = Move.monster_move_data[(self.name, "Bite")][0]
+            bite_damage = Move.monster_move_data[(self.name, bite)][0]
             grow = Monster_Action.id_map[self.name]["Grow"]
-            grow_damage = Move.monster_move_data[(self.name, "Grow")][0]
+            grow_damage = Move.monster_move_data[(self.name, grow)][0]
 
             if self.second_last_move_id == bite and self.last_move_id == bite:
                 intents.append(Monster_Action(grow, grow_damage, 1))
@@ -480,16 +505,16 @@ class Monster(Character):
 
             activate = Monster_Action.id_map[self.name]["Activate"]
             divider = Monster_Action.id_map[self.name]["Divider"]
-            divider_damage = Move.monster_move_data[(self.name, "Divider")][0]
+            divider_damage = Move.monster_move_data[(self.name, divider)][0]
 
             sear = Monster_Action.id_map[self.name]["Sear"]
-            sear_damage = Move.monster_move_data[(self.name, "Sear")][0]
+            sear_damage = Move.monster_move_data[(self.name, sear)][0]
             tackle = Monster_Action.id_map[self.name]["Tackle"]
-            tackle_damage = Move.monster_move_data[(self.name, "Tackle")][0]
+            tackle_damage = Move.monster_move_data[(self.name, tackle)][0]
             inflame = Monster_Action.id_map[self.name]["Inflame"]
-            inflame_damage = Move.monster_move_data[(self.name, "Inflame")][0]
+            inflame_damage = Move.monster_move_data[(self.name, inflame)][0]
             inferno = Monster_Action.id_map[self.name]["Inferno"]
-            inferno_damage = Move.monster_move_data[(self.name, "Inferno")][0]
+            inferno_damage = Move.monster_move_data[(self.name, inflame)][0]
 
             if game_state.turn == 1:
                 intents.append(Monster_Action(activate, 0, 1))
@@ -510,10 +535,10 @@ class Monster(Character):
 
             goop_spray = Monster_Action.id_map[self.name]["Goop Spray"]
             goop_spray_damage = Move.monster_move_data[(
-                self.name, "Goop Spray")][0]
+                self.name, goop_spray)][0]
             preparing = Monster_Action.id_map[self.name]["Preparing"]
             slam = Monster_Action.id_map[self.name]["Slam"]
-            slam_damage = Move.monster_move_data[(self.name, "Slam")][0]
+            slam_damage = Move.monster_move_data[(self.name, slam)][0]
 
             if order == 0:
                 intents.Monster_Action(goop_spray, goop_spray_damage, 1)
@@ -559,11 +584,11 @@ class Move:
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Lick"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Tackle"]): (16, 0, 1, [], [], [], False, 0, False),
-        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
 
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Lick"]): (0, 0, 0, [], [("Frail", 2)], [], False, 0, False),
-        # ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
+        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
 
 
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
@@ -598,7 +623,7 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
-        # ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []), # TODO: ADD SPLIT
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []), # TODO: ADD SPLIT
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 0, [], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Skull Bash"]): (6, 0, 0, [], [("Vulnerable", 2)], [], False, 0, False),
@@ -618,44 +643,44 @@ class Move:
         ("Bash", 0): (8, 0, 1, [], [], [], False, 0, False),
         ("Anger", 0): (6, 0, 1, [], [], [("Anger", 2)], False, 0, False),
         # ("Armaments",0) : (0,0,0,[],[],[],True,0,False)
-        # ("Body Slam",0) : (0,0,0,[],[],[],False,0,False)
-        ("Clash",0) : (0,0,0,[],[],[],False,0,False),
-        ("Cleave",0) : (0,0,0,[],[],[],False,0,True),
+        ("Body Slam", 0): (0, 0, 0, [], [], [], False, 0, False),
+        ("Clash", 0): (0, 0, 0, [], [], [], False, 0, False),
+        ("Cleave", 0): (0, 0, 0, [], [], [], False, 0, True),
         ("Clothesline", 0): (12, 0, 1, [], [("Weakness", 2)], [], False, 0, False),
         ("Flex", 0): (0, 0, 0, [("Strength", 2), ("Strength Down", 2)], [], [], False, 0, False),
         # ("Havoc",0): (0,0,0,[],[],[],True,0,False),
         # ("Headbutt",0): (9,0,1,[],[],[],False,0,False),
-        # ("Heavy Blade",0): (14,0,1,[],[],[],False,0,False),
+        ("Heavy Blade", 0): (14, 0, 0, [], [], [], False, 0, False),
         ("Iron Wave", 0): (5, 5, 1, [], [], [], False, 0, False),
-        # ("Perfected Strike",0): (6,0,1,[],[],[],False,0,False,0,False),
-        ("Pommel Strike",0): (9,0,1,[],[],[],False,1,False),
-        ("Shrug It Off",0): (0,8,0,[],[],[],False,1,False),
+        ("Perfected Strike", 0): (6, 0, 0, [], [], [], False, 0, False),
+        ("Pommel Strike", 0): (9, 0, 1, [], [], [], False, 1, False),
+        ("Shrug It Off", 0): (0, 8, 0, [], [], [], False, 1, False),
         # ("Sword Boomerang",0): (3,0,3,[],[],[],False,0,False),
-        ("Thunderclap",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
+        ("Thunderclap", 0): (4, 0, 1, [], [("Vulnerable", 1)], [], False, 0, True),
         # ("True Grit",0): (0,7,0,[],[],[],False,0,False),
         ("Twin Strike", 0): (5, 0, 2, [], [], [], False, 0, False),
         # ("Warcry",0): (0,0,0,[],[],[],True,0,False),
         ("Wild Strike", 0): (12, 0, 1, [], [], [("Wound", 0)], False, 0, False),
-        ("Battle Trance",0):(0,0,0,[("No Draw",1)],[],[],False,3,False),
+        ("Battle Trance", 0): (0, 0, 0, [("No Draw", 1)], [], [], False, 3, False),
         # ("Blood for Blood",0):(18,0,1,[],[],[],False,0,False),
-        # ("Bloodletting",0):(0,0,0,[],[],[],False,0,False),
+        ("Bloodletting", 0): (0, 0, 0, [], [], [], False, 0, False),
         # ("Burning Pact",0):(0,0,0,[],[],[],False,2,False),
-        ("Carnage",0) : (20,0,1,[],[],[],False,0,False),
+        ("Carnage", 0): (20, 0, 1, [], [], [], False, 0, False),
         ("Combust", 0): (0, 0, 0, [("Combust", 5)], [], [], False, 0, False),
         ("Dark Embrace", 0): (0, 0, 0, [("Dark Embrace", 1)], [], [], False, 0, False),
-        ("Disarm", 0): (0, 0, 0, [], [("Strength", -2)], [], False, 0, False),
-        # ("Dropkick",0):(5,0,1,[],[],[],False,0,False),
+        ("Disarm", 0): (0, 0, 0, [], [("Strength", -2)], [], True, 0, False),
+        ("Dropkick", 0): (5, 0, 1, [], [], [], False, 0, False),
         # ("Dual Wield",0):(0,0,0,[],[],[],False,0,False),
-        # ("Entrench",0) : (0,0,0,[],[],[],False,0,False),
+        ("Entrench", 0): (0, 0, 0, [], [], [], False, 0, False),
         ("Evolve", 0): (0, 0, 0, [("Evolve", 1)], [], [], False, 0, False),
         ("Feel No Pain", 0): (0, 0, 0, [("Feel No Pain", 3)], [], [], False, 0, False),
         ("Fire Breathing", 0): (0, 0, 0, [("Fire Breathing", 6)], [], [], False, 0, False),
         ("Flame Barrier", 0): (0, 12, 0, [("Flame Barrier", 4)], [], [], False, 0, False),
         ("Ghostly Armor", 0): (0, 10, 0, [], [], [], False, 0, False),
-        # ("Hemokinesis", 0): (15, 0, 1, [], [], [],False,0,False),
+        ("Hemokinesis", 0): (15, 0, 1, [], [], [], False, 0, False),
         # ("Infernal Blade",0): (0,0,0,[],[],[],True,0,False),
         ("Inflame", 0): (0, 0, 0, [("Strength", 2)], [], [], False, 0, False),
-        # ("Intimidate",0):(0,0,0,[],[("Weakness",1)],[],True,0,True)
+        ("Intimidate", 0): (0, 0, 0, [], [("Weakness", 1)], [], True, 0, True),
         ("Metallicize", 0): (0, 0, 0, [("Metalicize", 3)], [], [], False, 0, False),
         ("Power Through", 0): (0, 15, 0, [], [], [("Wound", 1), ("Wound", 1)], False, 0, False),
         ("Pummel", 0): (2, 0, 4, [], [], [], False, 0, False),
@@ -671,7 +696,7 @@ class Move:
         # ("Shockwave",0) : (0,0,0,[],[("Weakness",3),("Vulnerable",3)],[],False,0,True),
         # ("Spot Weakness",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
         ("Uppercut", 0): (13, 0, 1, [], [("Weakness", 1), ("Vulnerable", 1)], [], False, 0, False),
-        # ("Whirlwind",0) : (5,0,X,[],[],[],False,0,True),
+        ("Whirlwind", 0): (5, 0, 0, [], [], [], False, 0, True),
         ("Barricade", 0): (0, 0, 0, [("Barricade", 1)], [], [], False, 0, False),
         ("Berserk", 0): (0, 0, 0, [("Vulnerable", 2), ("Berserk", 1)], [], [], False, 0, False),
         ("Bludgeon", 0): (32, 0, 1, [], [], [], False, 0, False),
@@ -683,7 +708,7 @@ class Move:
         # ("Feed",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
-        ("Impervious",0): (0,30,0,[],[],[],True,0,False),
+        ("Impervious", 0): (0, 30, 0, [], [], [], True, 0, False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         # ("Limit Break",0): (0,0,0,[],[],[],True,0,False),
         # ("Offering",0): (0,0,0,[],[],[],True,3,False),
@@ -693,45 +718,45 @@ class Move:
         ("Defend+", 0): (0, 8, 0, [], [], [], False, 0, False),
         ("Bash+", 0): (10, 0, 1, [], [("Vulnerable", 3)], [], False, 0, False),
         ("Anger+", 0): (8, 0, 1, [], [], [("Anger", 2)], False, 0, False),
-        # ("Armaments+",0) : (0,0,0,[],[],[],False,0,True),
+        ("Armaments+", 0): (0, 0, 0, [], [], [], False, 0, True),
         # ("Body Slam+",0) : (0,0,0,[],[],[],False,0,False),
-        ("Clash+",0) : (0,0,0,[],[],[],False,0,False),
-        ("Cleave+",0) : (0,0,0,[],[],[],False,0,True),
+        ("Clash+", 0): (0, 0, 0, [], [], [], False, 0, False),
+        ("Cleave+", 0): (0, 0, 0, [], [], [], False, 0, True),
         ("Clothesline+", 0): (14, 0, 1, [], [("Weakness", 3)], [], False, 0, False),
         ("Flex+", 0): (0, 0, 0, [("Strength", 4), ("Strength Down", 4)], [], [], False, 0, False),
         # ("Havoc+",0): (0,0,0,[],[],[],False,0,False),
         # ("Headbutt+",0): (9,0,1,[],[],[],False,0,False),
-        # ("Heavy Blade+",0): (14,0,1,[],[],[],False,0,False),
+        ("Heavy Blade+", 0): (14, 0, 0, [], [], [], False, 0, False),
         ("Iron Wave+", 0): (7, 7, 1, [], [], []),
-        # ("Perfected Strike+",0): (6,0,1,[],[],[],False,0,False),
-        ("Pommel Strike+",0): (9,0,1,[],[],[],False,2,False),
-        ("Shrug It Off+",0): (0,11,0,[],[],[],False,1,False),
+        ("Perfected Strike+", 0): (6, 0, 0, [], [], [], False, 0, False),
+        ("Pommel Strike+", 0): (9, 0, 1, [], [], [], False, 2, False),
+        ("Shrug It Off+", 0): (0, 11, 0, [], [], [], False, 1, False),
         # ("Sword Boomerang+",0): (3,0,3,[],[],[],False,0,False),
-        # ("Thunderclap+",0): (4,0,1,[],[("Vulnerable",1)],[],False,0,True),
+        ("Thunderclap+", 0): (4, 0, 1, [], [("Vulnerable", 1)], [], False, 0, True),
         # ("True Grit+",0): (0,7,0,[],[],[],False,0,False),
         ("Twin Strike+", 0): (7, 0, 2, [], [], [], False, 0, False),
         # ("Warcry+",0): (0,0,0,[],[],[],True,0,False),
         ("Wild Strike+", 0): (17, 0, 1, [], [], [("Wound", 0)], False, 0, False),
         # ("Battle Trance+",0):(0,0,0,[("No Draw",1)],[],[],False,4,False),
-        # ("Blood for Blood+",0):(22,0,1,[],[],[],False,0,False),
+        ("Blood for Blood+", 0): (22, 0, 1, [], [], [], False, 0, False),
         # ("Bloodletting+",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact+",0):(0,0,0,[],[],[],False,3,False),
         # ("Carnage+",0) : (28,0,1,[],[],[],False,0,False),
         ("Combust+", 0): (0, 0, 0, [("Combust", 7)], [], [], False, 0, False),
         ("Dark Embrace+", 0): (0, 0, 0, [("Dark Embrace", 2)], [], [], False, 0, False),
-        ("Disarm+", 0): (0, 0, 0, [], [("Strength", -3)], [], False, 0, False),
-        # ("Dropkick+",0):(8,0,1,[],[],[],False,0,False,False,0,False),
+        ("Disarm+", 0): (0, 0, 0, [], [("Strength", -3)], [], True, 0, False),
+        ("Dropkick+", 0): (8, 0, 1, [], [], [], False, 0, False, False, 0, False),
         # ("Dual Wield+",0):(0,0,0,[],[],[],False,0,False),
-        # ("Entrench+",0) : (0,0,0,[],[],[],False,0,False),
+        ("Entrench+", 0): (0, 0, 0, [], [], [], False, 0, False),
         ("Evolve+", 0): (0, 0, 0, [("Evolve", 2)], [], [], False, 0, False),
         ("Feel No Pain+", 0): (0, 0, 0, [("Feel No Pain", 4)], [], [], False, 0, False),
         ("Fire Breathing+", 0): (0, 0, 0, [("Fire Breathing", 10)], [], [], False, 0, False),
         ("Flame Barrier+", 0): (0, 16, 0, [("Flame Barrier", 6)], [], [], False, 0, False),
         ("Ghostly Armor+", 0): (0, 13, 0, [], [], [], False, 0, False),
-        # ("Hemokinesis+", 0): (20, 0, 1, [], [], [],False,0,False),
+        ("Hemokinesis+", 0): (20, 0, 1, [], [], [], False, 0, False),
         # ("Infernal Blade+",0): (0,0,0,[],[],[],True,0,False),
         ("Inflame+", 0): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
-        # ("Intimidate+",0):(0,0,0,[],[("Weakness",2)],[],True,0,True)
+        ("Intimidate+", 0): (0, 0, 0, [], [("Weakness", 2)], [], True, 0, True),
         ("Metallicize+", 0): (0, 0, 0, [("Metalicize", 4)], [], [], False, 0, False),
         ("Power Through+", 0): (0, 20, 0, [], [], [("Wound", 1), ("Wound", 1)], False, 0, False),
         ("Pummel+", 0): (2, 0, 5, [], [], [], False, 0, False),
@@ -739,7 +764,7 @@ class Move:
         # ("Rampage+") : (8,0,1,[],[],[],False,0,False)
         ("Reckless Charge+", 0): (10, 0, 1, [], [], [("Dazed", 0)], False, 0, False),
         ("Rupture+", 0): (0, 0, 0, [("Rupture", 2)], [], [], False, 0, False),
-        # ("Searing Blow+",0) : (12,0,0,[],[],[],False,0,False),
+        # ("Searing Blow+",0) : (16,0,0,[],[],[],False,0,False),
         # ("Second Wind+",0) : (0,5,0,[],[],[],False,0,False),
         # ("Searing Red+",0) : (0,0,0,[],[],[],True,0,False),
         ("Sentinel+", 0): (0, 8, 0, [], [], [], False, 0, False),
@@ -759,7 +784,7 @@ class Move:
         # ("Feed+",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
         # ("Immolate+",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
-        ("Impervious+",0): (0,40,0,[],[],[],True,0,False),
+        ("Impervious+", 0): (0, 40, 0, [], [], [], True, 0, False),
         ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False)
         # ("Limit Break+",0): (0,0,0,[],[],[],False,0,False),
         # ("Offering+",0): (0,0,0,[],[],[],False,5,False),
@@ -792,13 +817,11 @@ class Move:
         self.draw_cards = draw_cards
         self.aoe = aoe
 
-    def execute_move(self, game_state, actor: Character, target: Character, node = None, card_to_play = None):
-
+    def execute_move(self, game_state, actor: Character, target: Character, node=None, card_to_play=None):
 
         if (not target == None):
             for i in range(self.num_hits):
-                target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
-
+                target.recieve_damage(game_state, actor.adjust_damage(self.damage, target.powers), True)
 
             for power in self.target_powers:
                 try:
@@ -812,8 +835,8 @@ class Move:
         if (self.aoe):
             for target in game_state.monsters:
                 for i in range(self.num_hits):
-                    target.recieve_damage(game_state,actor.adjust_damage(self.damage, target.powers),True)
-
+                    target.recieve_damage(game_state, actor.adjust_damage(
+                        self.damage, target.powers), True)
 
                 for power in self.target_powers:
                     try:
@@ -836,13 +859,15 @@ class Move:
 
         for card in self.cards:
             if card[1] == 0:
-                game_state.draw_pile.append(Card(*Move.added_card_data[card[0]]))
+                game_state.draw_pile.append(
+                    Card(*Move.added_card_data[card[0]]))
 
             if card[1] == 1:
                 game_state.hand.append(Card(*Move.added_card_data[card[0]]))
 
             if card[1] == 2:
-                game_state.discard_pile.append(Card(*Move.added_card_data[card[0]]))
+                game_state.discard_pile.append(
+                    Card(*Move.added_card_data[card[0]]))
 
         actor.block = actor.block + self.block
 
@@ -856,68 +881,119 @@ class Move:
 
         if not node is None:
 
-            node.expand_on_draw(self.draw_cards,game_state)
+            node.expand_on_draw(self.draw_cards, game_state)
 
         if not card_to_play is None:
-            if card_to_play.name == "Armaments" or card_to_play.name == "Armaments+":
-                pass
+            if card_to_play.name == "Armaments":
+                pass  # TODO: fill this later
+            if card_to_play.name == "Armaments+":
+                for card in game_state.hand:
+                    if not "+" in card.name and not card.name == "Burn":
+                        card.name = card.name + "+"
+
             if card_to_play.name == "Body Slam" or card_to_play.name == "Body Slam+":
-                pass
+                target.recieve_damage(game_state, actor.adjust_damage(
+                    actor.block, target.powers), True)
+
             if card_to_play.name == "Havoc" or card_to_play.name == "Havoc+":
-                pass
+                pass  # TODO: fill this later
+
             if card_to_play.name == "Headbutt" or card_to_play.name == "Headbutt+":
-                pass
+                pass  # TODO: fill this later
+
             if card_to_play.name == "Heavy Blade" or card_to_play.name == "Heavy Blade+":
-                pass
+                upgrade = 3
+                if "+" in card_to_play.name:
+                    upgrade = 5
+                target.recieve_damage(game_state, actor.adjust_damage(
+                    self.damage, target.powers, heavy_blade=upgrade), True)
+
             if card_to_play.name == "Perfected Strike" or card_to_play.name == "Perfected Strike+":
-                pass
+                strikes = 0
+                for card in game_state.discard_pile:
+                    if "strike" in card.name:
+                        strikes = strikes + 1
+                    if "Strike" in card.name:
+                        strikes = strikes + 1
+
+                for card in game_state.draw_pile:
+                    if "strike" in card.name:
+                        strikes = strikes + 1
+                    if "Strike" in card.name:
+                        strikes = strikes + 1
+
+                for card in game_state.hand:
+                    if "strike" in card.name:
+                        strikes = strikes + 1
+                    if "Strike" in card.name:
+                        strikes = strikes + 1
+
+                mult = 2
+                if "+" in card_to_play.name:
+                    mult = 3
+
+                target.recieve_damage(game_state, actor.adjust_damage(
+                    self.damage + mult*strikes, target.powers), True)
+
             if card_to_play.name == "Sword Boomerang" or card_to_play.name == "Sword Boomerang+":
-                pass
-            if card_to_play.name == "True Grit" or card_to_play.name == "True Grit+":
-                pass
+                pass  # TODO: fill this later
+
+            if card_to_play.name == "True Grit":
+                pass  # TODO: fill this later
+
+            if card_to_play.name == "True Grit+":
+                pass  # TODO: fill this later
+
             if card_to_play.name == "Warcry" or card_to_play.name == "Warcry+":
-                pass
+                pass  # TODO: fill this later
+
             if card_to_play.name == "Bloodletting" or card_to_play.name == "Bloodletting+":
-                pass
+                energy_gained = 2
+                if "+" in card_to_play.name:
+                    energy_gained = 3
+
+                actor.energy = actor.energy + energy_gained
+
+                target.recieve_damage(game_state, 3, False)
             if card_to_play.name == "Burning Pact" or card_to_play.name == "Burning Pact+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Dropkick" or card_to_play.name == "Dropkick+":
-                pass
+                try:
+                    index = [i.power_name for i in actor.powers].index(
+                        "Vulnerable")
+
+                    actor.energy = actor.energy + 1
+                    node.expand_on_draw(1, game_state)
+                except ValueError:
+                    pass
+
             if card_to_play.name == "Dual Wield" or card_to_play.name == "Dual Wield+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Entrench" or card_to_play.name == "Entrench+":
-                pass
+                actor.block = actor.block*2
             if card_to_play.name == "Hemokinesis" or card_to_play.name == "Hemokinesis+":
-                pass
+                target.recieve_damage(game_state, 2, False)
             if card_to_play.name == "Infernal Blade" or card_to_play.name == "Infernal Blade+":
-                pass
-            if card_to_play.name == "Intimidate" or card_to_play.name == "Intimidate+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Rampage" or card_to_play.name == "Rampage+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Searing Blow" or card_to_play.name == "Searing Blow+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Second Wind" or card_to_play.name == "Second Wind+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Searing Red" or card_to_play.name == "Searing Red+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Sever Soul" or card_to_play.name == "Sever Soul+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Shockwave" or card_to_play.name == "Shockwave+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Spot Weakness" or card_to_play.name == "Spot Weakness+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Whirlwind" or card_to_play.name == "Whirlwind+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Exhume" or card_to_play.name == "Exhume+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Feed" or card_to_play.name == "Feed+":
-                pass
+                pass  # TODO: fill this later
             if card_to_play.name == "Fiend Fire" or card_to_play.name == "Fiend Fire+":
-                pass
-            if card_to_play.name == "Immolate" or card_to_play.name == "Immolate+":
-                pass
-
-
-
-
+                pass  # TODO: fill this later

@@ -209,6 +209,7 @@ class Coordinator:
         while not self.game_is_ready:
             self.receive_game_state_update(block=True, perform_callbacks=False)
         if not self.in_game:
+            
             StartGameAction(player_class, ascension_level, seed).execute(self)
             self.receive_game_state_update(block=True)
         while self.in_game:

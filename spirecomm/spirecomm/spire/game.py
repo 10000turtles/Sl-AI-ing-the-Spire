@@ -226,7 +226,7 @@ class Game:
         player_move.execute_move(new_game, new_game.player, target, node, card)
         new_game.update()
 
-        return new_game 
+        return new_game
 
     def predict_states_turn_end(self):
 
@@ -264,7 +264,7 @@ class Game:
 
             for hand in possible_hands:
                 hand = list(hand)
-                
+
                 original_hand = copy.deepcopy(temp_game.hand)
                 count = count + 1
 
@@ -288,7 +288,8 @@ class Game:
                 temp_game.player.energy = 3
                 temp_game.update()
 
-                new_games.append((temp_game, math.prod([i.probability for i in combo])))
+                new_games.append(
+                    (temp_game, math.prod([i.probability for i in combo])))
 
                 temp_game.hand = original_hand
 
@@ -304,13 +305,14 @@ class Game:
         # Calculate Probabilities (And set non-deterministic)
         return new_games
 
-    def predict_card_draw(self,cards):
+    def predict_card_draw(self, cards):
         new_games = []
 
         new_game_template = copy.deepcopy(self)
 
         if (len(new_game_template.draw_pile) >= cards):
-            possible_hands = it.combinations(new_game_template.draw_pile, cards)
+            possible_hands = it.combinations(
+                new_game_template.draw_pile, cards)
         else:
             new_cards_to_draw = cards - len(new_game_template.draw_pile)
             new_game_template.hand.extend(new_game_template.draw_pile)
@@ -318,7 +320,7 @@ class Game:
             new_game_template.discard_pile = []
 
             possible_hands = it.combinations(self.draw_pile, new_cards_to_draw)
-        
+
         count = 0
         for hand in possible_hands:
             count = count + 1
@@ -330,7 +332,7 @@ class Game:
             for i in hand:
                 temp_game.draw_pile.remove(i)
 
-            new_games.append((temp_game,1))
+            new_games.append((temp_game, 1))
 
         for i in range(len(new_games)):
             new_games[i] = (new_games[i][0], new_games[i][1]*(1/count))
