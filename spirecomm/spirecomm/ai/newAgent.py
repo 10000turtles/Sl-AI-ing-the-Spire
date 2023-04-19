@@ -48,9 +48,8 @@ class Node:
         self.static_value = game.evaluate_state()
     
     def expand(self, turn_stop):
-
-        playable_cards = [card for card in self.game.hand if card.is_playable]
-
+        
+        playable_cards = [card for card in self.game.hand if card.is_playable and not card.name in ["Dazed","Wound","Burn","Burn+"]]   
         playable_cards_no_repeats = []
         for p_card in playable_cards:
             append_card = True

@@ -152,6 +152,18 @@ class Game:
         game.cancel_available = "cancel" in available_commands or "leave" in available_commands \
                                 or "return" in available_commands or "skip" in available_commands
 
+        try:
+            for monster in game.monsters:
+                with open(f"json_fight_data/monster_move_ids","a") as f_write:
+                    with open(f"json_fight_data/monster_move_ids","r") as f_read:
+                        if not f"{monster.name}: {monster.intent}" in f_read.read().rstrip():
+                            f_write.write(f"{monster.name}: {monster.intent} has id of {monster.move_id}\n")
+        except:
+            for monster in game.monsters:
+                with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids","a") as f_write:
+                    with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids","r") as f_read:
+                        if not f"{monster.name}: {monster.intent} with damage {monster.move_base_damage}" in f_read.read().rstrip():
+                            f_write.write(f"{monster.name}: {monster.intent} with damage {monster.move_base_damage} has id of {monster.move_id}\n")
         # try:
         #   with open(f"json_fight_data/floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
         #     Game.global_json_counter = Game.global_json_counter + 1

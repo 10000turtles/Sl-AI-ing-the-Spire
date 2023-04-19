@@ -15,7 +15,7 @@ import glob
 if __name__ == "__main__":
 
 
-    agent = CoolRadicalAgent()
+    agent = SimpleAgent()
     coordinator = Coordinator()
     # files = glob.glob('json_fight_data\\*.json')
    
@@ -28,5 +28,5 @@ if __name__ == "__main__":
     coordinator.register_out_of_game_callback(agent.get_next_action_out_of_game)
 
 
-
-    result = coordinator.play_one_game(PlayerClass.IRONCLAD)
+    for i in range(100):
+        result = coordinator.play_one_game(PlayerClass.IRONCLAD)

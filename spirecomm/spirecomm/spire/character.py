@@ -6,6 +6,8 @@ from spirecomm.spire.power import Power
 from spirecomm.spire.card import Card
 
 import math
+
+
 class Intent(Enum):
     ATTACK = 1
     ATTACK_BUFF = 2
@@ -43,13 +45,33 @@ class Monster_Action:
         "Spike Slime (L)": {"Flame Tackle": 1, "Lick": 4, "Split": 3},
         "Acid Slime (S)": {"Lick": 1, "Tackle": 2},
         "Spike Slime (S)": {"Tackle": 1},
-        "Looter": {"Mug": -1,  "Lunge": -1, "Smoke Bomb": -1, "Escape": -1},
-        "Fungi Beast": {"Bite": -1, "Grow": -1},
-        "Hexaghost": {"Activate": -1, "Divider": -1, "Inferno": -1, "Sear": -1, "Tackle": -1, "Inflame": -1},
-        "Slime Boss": {"Goop Spray": -1, "Preparing": -1, "Slam": -1, "Split": -1},
-        "Gremlin Nob": {"Bellow": 3, "Rush": -1, "Skull Bash": -1},
+        "Looter": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
+        "Fungi Beast": {"Bite": 1, "Grow": 2},
+        "Hexaghost": {"Activate": 5, "Divider": 1, "Inferno": 6, "Sear": 4, "Tackle": 2, "Inflame": 3},
+        "Slime Boss": {"Goop Spray": 4, "Preparing": 2, "Slam": 1, "Split": -1},
+        "Gremlin Nob": {"Bellow": 3, "Rush": 1, "Skull Bash": 2},
         "Sentry": {"Beam": 4, "Bolt": 3},
-        "Lagavulin": {"Attack": -1, "Siphon Soul": -1}
+        "Lagavulin": {"Sleep": 5, "Stun": 4, "Attack": 3, "Siphon Soul": 1},
+        "Blue Slaver": {"Stab": 1, "Rake": 4},
+        "Red Slaver": {"Stab": 1, "Scrape": 3, "Entangle": 2},
+        "Fat Gremlin": {"Smash": 2},
+        "Mad Gremlin": {"Scratch": 1},
+        "Shield Gremlin": {"Protect": 1, "Shield Bash": -1},
+        "Sneaky Gremlin": {"Puncture": 1},
+        "Gremlin Wizard": {"Charging": 2, "Ultimate Blast": 1},
+
+        "Shelled Parasite": {"Double Strike": 2, "Suck": 3, "Fell": 1},
+        "Spheric Guardian": {"Slam": 1, "Activate": 2, "Harden": 3, "Attack/Debuff": 4},
+        "Centurion": {"Slash": 1, "Fury": 3, "Defend": 2},
+        "Mystic": {"Heal": -1, "Buff": -1, "Attack/Debuff": 1},
+        "Snake Plant": {"Chomp": 1, "Enfeebling Spores": 2},
+        "Snecko": {"Perplexing Glare": 1, "Tail Whip": 3, "Bite": 2},
+        "Byrd": {"Caw": 6, "Peck": 1, "Swoop": 3, "Fly": -1, "Headbutt": 5},
+        "Chosen": {"Poke": 5, "Zap": 1, "Debilitate": 3, "Drain": 2, "Hex": 4},
+        "Mugger": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
+        "Book of Stabbing": {}
+
+
     }
 
     def __init__(self, intent, power, probability):
@@ -238,7 +260,9 @@ class Monster(Character):
         self.move_adjusted_damage = move_adjusted_damage
         self.move_hits = move_hits
         self.monster_index = 0
-        if (self.name == "Louse"):
+        if (True):
+            self.move = None
+        elif (self.name == "Louse"):
             self.move = Move(
                 *Move.monster_move_data[(self.monster_id, self.move_id)])
         else:
@@ -584,11 +608,11 @@ class Move:
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Lick"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Tackle"]): (16, 0, 1, [], [], [], False, 0, False),
-        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Lick"]): (0, 0, 0, [], [("Frail", 2)], [], False, 0, False),
-        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Split"]): (0, 0, 0, [], [], [],False,0,False),
+        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
 
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
@@ -623,7 +647,8 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
-        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []), # TODO: ADD SPLIT
+        # TODO: ADD SPLIT
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 0, [], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Skull Bash"]): (6, 0, 0, [], [("Vulnerable", 2)], [], False, 0, False),
@@ -821,7 +846,8 @@ class Move:
 
         if (not target == None):
             for i in range(self.num_hits):
-                target.recieve_damage(game_state, actor.adjust_damage(self.damage, target.powers), True)
+                target.recieve_damage(game_state, actor.adjust_damage(
+                    self.damage, target.powers), True)
 
             for power in self.target_powers:
                 try:

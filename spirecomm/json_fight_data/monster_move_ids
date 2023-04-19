@@ -1,0 +1,187 @@
+Acid Slime (L): Intent.ATTACK with damage 16 has id of 2
+Acid Slime (L): Intent.ATTACK_DEBUFF with damage 11 has id of 1
+Acid Slime (L): Intent.DEBUFF with damage -1 has id of 4
+Acid Slime (L): Intent.UNKNOWN with damage -1 has id of 3
+Acid Slime (M): Intent.ATTACK with damage 10 has id of 2
+Acid Slime (M): Intent.ATTACK_DEBUFF with damage 7 has id of 1
+Acid Slime (M): Intent.DEBUFF with damage -1 has id of 4
+Acid Slime (S): Intent.ATTACK with damage 3 has id of 1
+Acid Slime (S): Intent.DEBUFF with damage -1 has id of 2
+Awakened One: Intent.ATTACK with damage 10 has id of 8
+Awakened One: Intent.ATTACK with damage 20 has id of 1
+Awakened One: Intent.ATTACK with damage 40 has id of 5
+Awakened One: Intent.ATTACK with damage 6 has id of 2
+Awakened One: Intent.ATTACK_DEBUFF with damage 18 has id of 6
+Awakened One: Intent.UNKNOWN with damage -1 has id of 3
+Bear: Intent.ATTACK with damage 18 has id of 1
+Bear: Intent.ATTACK_DEFEND with damage 9 has id of 3
+Bear: Intent.STRONG_DEBUFF with damage -1 has id of 2
+Book of Stabbing: Intent.ATTACK with damage 21 has id of 2
+Book of Stabbing: Intent.ATTACK with damage 6 has id of 1
+Bronze Automaton: Intent.ATTACK with damage 45 has id of 2
+Bronze Automaton: Intent.ATTACK with damage 7 has id of 1
+Bronze Automaton: Intent.DEFEND_BUFF with damage -1 has id of 5
+Bronze Automaton: Intent.STUN with damage -1 has id of 3
+Bronze Automaton: Intent.UNKNOWN with damage -1 has id of 4
+Byrd: Intent.ATTACK with damage 1 has id of 1
+Byrd: Intent.ATTACK with damage 12 has id of 3
+Byrd: Intent.ATTACK with damage 3 has id of 5
+Byrd: Intent.BUFF with damage -1 has id of 6
+Byrd: Intent.STUN with damage -1 has id of 4
+Centurion: Intent.ATTACK with damage 12 has id of 1
+Centurion: Intent.ATTACK with damage 6 has id of 3
+Centurion: Intent.DEFEND with damage -1 has id of 2
+Chosen: Intent.ATTACK with damage 18 has id of 1
+Chosen: Intent.ATTACK with damage 5 has id of 5
+Chosen: Intent.ATTACK_DEBUFF with damage 10 has id of 3
+Chosen: Intent.DEBUFF with damage -1 has id of 2
+Chosen: Intent.STRONG_DEBUFF with damage -1 has id of 4
+Cultist: Intent.ATTACK with damage 6 has id of 1
+Cultist: Intent.BUFF with damage -1 has id of 3
+Dagger: Intent.ATTACK_DEBUFF with damage 9 has id of 1
+Darkling: Intent.ATTACK with damage 10 has id of 3
+Darkling: Intent.ATTACK with damage 11 has id of 3
+Darkling: Intent.ATTACK with damage 7 has id of 3
+Darkling: Intent.ATTACK with damage 8 has id of 3
+Darkling: Intent.ATTACK with damage 9 has id of 3
+Darkling: Intent.BUFF with damage -1 has id of 5
+Darkling: Intent.DEFEND with damage -1 has id of 2
+Darkling: Intent.UNKNOWN with damage -1 has id of 4
+Deca: Intent.ATTACK_DEBUFF with damage 10 has id of 0
+Deca: Intent.DEFEND with damage -1 has id of 2
+Donu: Intent.ATTACK with damage 10 has id of 0
+Donu: Intent.BUFF with damage -1 has id of 2
+Exploder: Intent.ATTACK with damage 9 has id of 1
+Exploder: Intent.UNKNOWN with damage -1 has id of 2
+Fat Gremlin: Intent.ATTACK_DEBUFF with damage 4 has id of 2
+Fungi Beast: Intent.ATTACK with damage 6 has id of 1
+Fungi Beast: Intent.BUFF with damage -1 has id of 2
+Giant Head: Intent.ATTACK with damage 13 has id of 3
+Giant Head: Intent.ATTACK with damage 30 has id of 2
+Giant Head: Intent.ATTACK with damage 35 has id of 2
+Giant Head: Intent.ATTACK with damage 40 has id of 2
+Giant Head: Intent.ATTACK with damage 45 has id of 2
+Giant Head: Intent.ATTACK with damage 50 has id of 2
+Giant Head: Intent.ATTACK with damage 55 has id of 2
+Giant Head: Intent.DEBUFF with damage -1 has id of 1
+Gremlin Leader: Intent.ATTACK with damage 6 has id of 4
+Gremlin Leader: Intent.DEFEND_BUFF with damage -1 has id of 3
+Gremlin Leader: Intent.UNKNOWN with damage -1 has id of 2
+Gremlin Nob: Intent.ATTACK with damage 14 has id of 1
+Gremlin Nob: Intent.ATTACK_DEBUFF with damage 6 has id of 2
+Gremlin Nob: Intent.BUFF with damage -1 has id of 3
+Gremlin Wizard: Intent.ATTACK with damage 25 has id of 1
+Gremlin Wizard: Intent.UNKNOWN with damage -1 has id of 2
+Hexaghost: Intent.ATTACK with damage 13 has id of 1
+Hexaghost: Intent.ATTACK with damage 5 has id of 2
+Hexaghost: Intent.ATTACK with damage 6 has id of 1
+Hexaghost: Intent.ATTACK with damage 8 has id of 1
+Hexaghost: Intent.ATTACK_DEBUFF with damage 2 has id of 6
+Hexaghost: Intent.ATTACK_DEBUFF with damage 6 has id of 4
+Hexaghost: Intent.DEFEND_BUFF with damage -1 has id of 3
+Hexaghost: Intent.UNKNOWN with damage -1 has id of 5
+Jaw Worm: Intent.ATTACK with damage 11 has id of 1
+Jaw Worm: Intent.ATTACK_DEFEND with damage 7 has id of 3
+Jaw Worm: Intent.DEFEND_BUFF with damage -1 has id of 2
+Lagavulin: Intent.ATTACK with damage 18 has id of 3
+Lagavulin: Intent.SLEEP with damage -1 has id of 5
+Lagavulin: Intent.STRONG_DEBUFF with damage -1 has id of 1
+Lagavulin: Intent.STUN with damage -1 has id of 4
+Looter: Intent.ATTACK with damage 10 has id of 1
+Looter: Intent.ATTACK with damage 12 has id of 4
+Looter: Intent.DEFEND with damage -1 has id of 2
+Louse: Intent.ATTACK with damage 5 has id of 3
+Louse: Intent.ATTACK with damage 6 has id of 3
+Louse: Intent.ATTACK with damage 7 has id of 3
+Louse: Intent.BUFF with damage -1 has id of 4
+Louse: Intent.DEBUFF with damage -1 has id of 4
+Mad Gremlin: Intent.ATTACK with damage 4 has id of 1
+Mugger: Intent.ATTACK with damage 10 has id of 1
+Mugger: Intent.ATTACK with damage 16 has id of 4
+Mugger: Intent.DEFEND with damage -1 has id of 2
+Mugger: Intent.ESCAPE with damage -1 has id of 3
+Mystic: Intent.ATTACK_DEBUFF with damage 8 has id of 1
+Mystic: Intent.BUFF with damage -1 has id of 2
+Orb Walker: Intent.ATTACK with damage 15 has id of 2
+Orb Walker: Intent.ATTACK_DEBUFF with damage 10 has id of 1
+Orb: Intent.ATTACK with damage 8 has id of 1
+Orb: Intent.DEFEND with damage -1 has id of 2
+Orb: Intent.STRONG_DEBUFF with damage -1 has id of 3
+Pointy: Intent.ATTACK with damage 5 has id of 1
+Reptomancer: Intent.ATTACK with damage 30 has id of 3
+Reptomancer: Intent.ATTACK_DEBUFF with damage 13 has id of 1
+Reptomancer: Intent.UNKNOWN with damage -1 has id of 2
+Repulsor: Intent.ATTACK with damage 11 has id of 2
+Repulsor: Intent.DEBUFF with damage -1 has id of 1
+Romeo: Intent.ATTACK with damage 15 has id of 1
+Romeo: Intent.ATTACK_DEBUFF with damage 10 has id of 3
+Romeo: Intent.UNKNOWN with damage -1 has id of 2
+Sentry: Intent.ATTACK with damage 9 has id of 4
+Sentry: Intent.DEBUFF with damage -1 has id of 3
+Shelled Parasite: Intent.ATTACK with damage 6 has id of 2
+Shelled Parasite: Intent.ATTACK_BUFF with damage 10 has id of 3
+Shelled Parasite: Intent.ATTACK_DEBUFF with damage 18 has id of 1
+Shield Gremlin: Intent.DEFEND with damage -1 has id of 1
+Slaver: Intent.ATTACK with damage 12 has id of 1
+Slaver: Intent.ATTACK with damage 13 has id of 1
+Slaver: Intent.ATTACK_DEBUFF with damage 7 has id of 4
+Slaver: Intent.ATTACK_DEBUFF with damage 8 has id of 3
+Slaver: Intent.STRONG_DEBUFF with damage -1 has id of 2
+Slime Boss: Intent.ATTACK with damage 35 has id of 1
+Slime Boss: Intent.STRONG_DEBUFF with damage -1 has id of 4
+Slime Boss: Intent.UNKNOWN with damage -1 has id of 2
+Snake Plant: Intent.ATTACK with damage 7 has id of 1
+Snake Plant: Intent.STRONG_DEBUFF with damage -1 has id of 2
+Sneaky Gremlin: Intent.ATTACK with damage 9 has id of 1
+Snecko: Intent.ATTACK with damage 15 has id of 2
+Snecko: Intent.ATTACK_DEBUFF with damage 8 has id of 3
+Snecko: Intent.STRONG_DEBUFF with damage -1 has id of 1
+Spheric Guardian: Intent.ATTACK with damage 10 has id of 1
+Spheric Guardian: Intent.ATTACK_DEBUFF with damage 10 has id of 4
+Spheric Guardian: Intent.ATTACK_DEFEND with damage 10 has id of 3
+Spheric Guardian: Intent.DEFEND with damage -1 has id of 2
+Spike Slime (L): Intent.DEBUFF with damage -1 has id of 4
+Spike Slime (L): Intent.UNKNOWN with damage -1 has id of 3
+Spike Slime (M): Intent.ATTACK_DEBUFF with damage 8 has id of 1
+Spike Slime (M): Intent.DEBUFF with damage -1 has id of 4
+Spike Slime (S): Intent.ATTACK with damage 5 has id of 1
+Spiker: Intent.ATTACK with damage 7 has id of 1
+Spiker: Intent.BUFF with damage -1 has id of 2
+Spire Growth: Intent.ATTACK with damage 16 has id of 1
+Spire Growth: Intent.ATTACK with damage 22 has id of 3
+Spire Growth: Intent.STRONG_DEBUFF with damage -1 has id of 2
+Taskmaster: Intent.ATTACK_DEBUFF with damage 7 has id of 2
+The Champ: Intent.ATTACK with damage 10 has id of 3
+The Champ: Intent.ATTACK with damage 16 has id of 1
+The Champ: Intent.ATTACK_DEBUFF with damage 12 has id of 4
+The Champ: Intent.BUFF with damage -1 has id of 7
+The Champ: Intent.DEBUFF with damage -1 has id of 6
+The Champ: Intent.DEFEND_BUFF with damage -1 has id of 2
+The Collector: Intent.ATTACK with damage 18 has id of 2
+The Collector: Intent.DEFEND_BUFF with damage -1 has id of 3
+The Collector: Intent.STRONG_DEBUFF with damage -1 has id of 4
+The Collector: Intent.UNKNOWN with damage -1 has id of 1
+The Guardian: Intent.ATTACK with damage 5 has id of 5
+The Guardian: Intent.ATTACK with damage 9 has id of 3
+The Guardian: Intent.ATTACK_BUFF with damage 8 has id of 4
+The Guardian: Intent.BUFF with damage -1 has id of 1
+The Guardian: Intent.DEFEND with damage -1 has id of 6
+The Maw: Intent.ATTACK with damage 25 has id of 3
+The Maw: Intent.ATTACK with damage 5 has id of 5
+The Maw: Intent.BUFF with damage -1 has id of 4
+The Maw: Intent.STRONG_DEBUFF with damage -1 has id of 2
+Time Eater: Intent.ATTACK with damage 7 has id of 2
+Time Eater: Intent.ATTACK_DEBUFF with damage 26 has id of 4
+Time Eater: Intent.BUFF with damage -1 has id of 5
+Time Eater: Intent.DEFEND_DEBUFF with damage -1 has id of 3
+Torch Head: Intent.ATTACK with damage 7 has id of 1
+Transient: Intent.ATTACK with damage 30 has id of 1
+Transient: Intent.ATTACK with damage 40 has id of 1
+Transient: Intent.ATTACK with damage 50 has id of 1
+Transient: Intent.ATTACK with damage 60 has id of 1
+Transient: Intent.ATTACK with damage 70 has id of 1
+Writhing Mass: Intent.ATTACK with damage 32 has id of 0
+Writhing Mass: Intent.ATTACK with damage 7 has id of 1
+Writhing Mass: Intent.ATTACK_DEBUFF with damage 10 has id of 3
+Writhing Mass: Intent.ATTACK_DEFEND with damage 15 has id of 2
+Writhing Mass: Intent.STRONG_DEBUFF with damage -1 has id of 4
