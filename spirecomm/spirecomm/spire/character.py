@@ -52,8 +52,8 @@ class Monster_Action:
         "Gremlin Nob": {"Bellow": 3, "Rush": 1, "Skull Bash": 2},
         "Sentry": {"Beam": 4, "Bolt": 3},
         "Lagavulin": {"Sleep": 5, "Stun": 4, "Attack": 3, "Siphon Soul": 1},
-        "Blue Slaver": {"Stab": 1, "Rake": 4},
-        "Red Slaver": {"Stab": 1, "Scrape": 3, "Entangle": 2},
+        "SlaverBlue": {"Stab": 1, "Rake": 4},
+        "SlaverRed": {"Stab": 1, "Scrape": 3, "Entangle": 2},
         "Fat Gremlin": {"Smash": 2},
         "Mad Gremlin": {"Scratch": 1},
         "Shield Gremlin": {"Protect": 1, "Shield Bash": -1},
@@ -86,7 +86,7 @@ class Monster_Action:
         "Transient": {"Attack": 1},
         "Writhing Mass": {"Implant": 4, "Flail": 2, "Wither": 3, "Multi-Strike": 1, "Strong Strike": 0},
         "Giant Head": {"Count": 3, "Glare": 1, "It Is Time": 2},
-        "Nemesis": {"Debuff": -1, "Attack": -1, "Scythe": -1},
+        "Nemesis": {"Debuff": 4, "Attack": 2, "Scythe": 3},
         "Reptomancer": {"Summon": 2, "Snake Strike": 1, "Big Bite": 3},
         "Awakened One": {"Slash": 1, "Soul Strike": 2, "Rebirth": 3, "Dark Echo": 5, "Sludge": 6, "Tackle": 8},
         "Donu": {"Circle of Power": 2, "Beam": 0},
@@ -280,9 +280,7 @@ class Monster(Character):
         self.move_adjusted_damage = move_adjusted_damage
         self.move_hits = move_hits
         self.monster_index = 0
-        if (True):
-            self.move = None
-        elif (self.name == "Louse"):
+        if (self.name == "Louse" or self.name == "Slaver"):
             self.move = Move(
                 *Move.monster_move_data[(self.monster_id, self.move_id)])
         else:
@@ -403,6 +401,7 @@ class Monster(Character):
             else:
                 intents.append(Monster_Action(flame_tackle, 7, 7/10))
                 intents.append(Monster_Action(lick, 11, 3/10))
+
         elif self.name == "Spike Slime (S)":
             tackle = Monster_Action.id_map[self.name]["Tackle"]
             intents.append(Monster_Action(tackle, 3, 1))
@@ -499,15 +498,23 @@ class Monster(Character):
         elif self.name == "Lagavulin":
             attack = Monster_Action.id_map[self.name]["Attack"]
             attack_damage = Move.monster_move_data[(self.name, attack)][0]
+
             siphon_soul = Monster_Action.id_map[self.name]["Siphon Soul"]
             siphon_soul_damage = Move.monster_move_data[(
                 self.name, siphon_soul)][0]
 
-            if self.second_last_move_id == attack and self.last_move_id == attack:
+            sleep = Monster_Action.id_map[self.name]["Sleep"]
+            sleep_damage = Move.monster_move_data[(self.name, sleep)][0]
+
+            stun = Monster_Action.id_map[self.name]["Stun"]
+            stun_damage = Move.monster_move_data[(self.name, stun)][0]
+
+            if game_state.turn < 4 and self.current_hp == self.max_hp:
+                intents.append(Monster_Action(sleep, sleep_damage, 1))
+
+            elif self.second_last_move_id == attack and self.last_move_id == attack:
                 intents.append(Monster_Action(
                     siphon_soul, siphon_soul_damage, 1))
-            elif game_state.turn > 4 and self.current_hp == self.max_hp:
-                intents.append(Monster_Action(None, 0, 1))
             else:
                 intents.append(Monster_Action(attack, attack_damage, 1))
 
@@ -522,7 +529,7 @@ class Monster(Character):
 
             if game_state.turn == 1 or game_state.turn == 2:
                 intents.append(Monster_Action(mug, mug_damage, 1))
-            elif self.turn == 3:
+            elif game_state.turn == 3:
                 intents.append(Monster_Action(
                     smoke_bomb, smoke_bomb_damage, 1/2))
                 intents.append(Monster_Action(lunge, lunge_damage, 1/2))
@@ -591,8 +598,84 @@ class Monster(Character):
             elif order == 2:
                 intents.Monster_Action(slam, slam_damage, 1)
 
-        elif self.name == "":
-            pass
+        elif self.name == "Blue Slaver":
+            stab = Monster_Action.id_map[self.name]["Stab"]
+            stab_damage = Move.monster_move_data[(self.name, stab)][0]
+
+            rake = Monster_Action.id_map[self.name]["Rake"]
+            rake_damage = Move.monster_move_data[(self.name, rake)][0]
+
+            if self.last_move_id == stab and self.second_last_move_id == stab:
+                intents.append(Monster_Action(rake, rake_damage, 1))
+
+            if self.last_move_id == rake and self.second_last_move_id == rake:
+                intents.append(Monster_Action(stab, stab_damage, 1))
+
+            else:
+                intents.append(Monster_Action(rake, rake_damage, 2/5))
+                intents.append(Monster_Action(stab, stab_damage, 3/5))
+        elif self.name == "Red Slaver":
+            has_been_entangeled = False
+
+            stab = Monster_Action.id_map[self.name]["Stab"]
+            stab_damage = Move.monster_move_data[(self.name, stab)][0]
+
+            scrape = Monster_Action.id_map[self.name]["Scrape"]
+            scrape_damage = Move.monster_move_data[(self.name, rake)][0]
+
+            entangle = Monster_Action.id_map[self.name]["Entangle"]
+            entangle_damage = Move.monster_move_data[(self.name, rake)][0]
+
+            # if has_been_entangeled:
+
+            # else:
+
+        elif self.name == "Fat Gremlin":
+            smash = Monster_Action.id_map[self.name]["Smash"]
+            smash_damage = Move.monster_move_data[(self.name, smash)][0]
+
+            intents.append(Monster_Action(smash, smash_damage, 1))
+
+        elif self.name == "Mad Gremlin":
+            scratch = Monster_Action.id_map[self.name]["Scratch"]
+            scratch_damage = Move.monster_move_data[(self.name, scratch)][0]
+
+            intents.append(Monster_Action(scratch, scratch_damage, 1))
+
+        elif self.name == "Shield Gremlin":
+            protect = Monster_Action.id_map[self.name]["Protect"]
+            protect_damage = Move.monster_move_data[(self.name, protect)][0]
+
+            shield_bash = Monster_Action.id_map[self.name]["Shield Bash"]
+            shield_bash_damage = Move.monster_move_data[(
+                self.name, shield_bash)][0]
+
+            if len(game_state.monsters) > 1:
+                intents.append(Monster_Action(protect, protect_damage, 1))
+
+            else:
+                intents.append(Monster_Action(
+                    shield_bash, shield_bash_damage, 1))
+
+        elif self.name == "Sneaky Gremlin":
+            puncture = Monster_Action.id_map[self.name]["Puncture"]
+            puncture_damage = Move.monster_move_data[(self.name, puncture)][0]
+
+            intents.append(Monster_Action(puncture, puncture_damage, 1))
+
+        elif self.name == "Gremlin Wizard":
+            charging = Monster_Action.id_map[self.name]["Charging"]
+            charging_damage = Move.monster_move_data[(self.name, stab)][0]
+
+            ultimate_blast = Monster_Action.id_map[self.name]["Ultimate Blast"]
+            ultimate_blast_damage = Move.monster_move_data[(
+                self.name, stab)][0]
+
+            if game_state.turn % 4 == 3:
+                intents.append(Monster_Action(
+                    ultimate_blast, ultimate_blast_damage, 1))
+            else:
+                intents.append(Monster_Action(charging, charging_damage, 1))
 
         return intents
 
@@ -669,15 +752,37 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
         # TODO: ADD SPLIT
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []),
-        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
-        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 0, [], [], [], False, 0, False),
-        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Skull Bash"]): (6, 0, 0, [], [("Vulnerable", 2)], [], False, 0, False),
 
-        ("Sentry", Monster_Action.id_map["Sentry"]["Beam"]): (9, 0, 0, [], [], [], False, 0, False),
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 1, [], [], [], False, 0, False),
+        ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Skull Bash"]): (6, 0, 1, [], [("Vulnerable", 2)], [], False, 0, False),
+
+        ("Sentry", Monster_Action.id_map["Sentry"]["Beam"]): (9, 0, 1, [], [], [], False, 0, False),
         ("Sentry", Monster_Action.id_map["Sentry"]["Bolt"]): (0, 0, 0, [], [], [("Dazed", 2)], False, 0, False),
 
-        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Attack"]): (18, 0, 0, [], [], [], False, 0, False),
-        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Siphon Soul"]): (18, 0, 0, [], [("Dexterity", -1), ("Strength", -1)], [], False, 0, False),
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Attack"]): (18, 0, 1, [], [], [], False, 0, False),
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Siphon Soul"]): (0, 0, 0, [], [("Dexterity", -1), ("Strength", -1)], [], False, 0, False),
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Sleep"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Lagavulin", Monster_Action.id_map["Lagavulin"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Fat Gremlin", Monster_Action.id_map["Fat Gremlin"]["Smash"]): (4, 0, 1, [("Weakness", 1)], [], [], False, 0, False),
+
+        ("Mad Gremlin", Monster_Action.id_map["Mad Gremlin"]["Scratch"]): (4, 0, 1, [], [], [], False, 0, False),
+
+        ("Shield Gremlin", Monster_Action.id_map["Shield Gremlin"]["Protect"]): (0, 7, 0, [], [], [], False, 0, False),
+        ("Shield Gremlin", Monster_Action.id_map["Shield Gremlin"]["Shield Bash"]): (6, 0, 1, [], [], [], False, 0, False),
+
+        ("Sneaky Gremlin", Monster_Action.id_map["Sneaky Gremlin"]["Puncture"]): (9, 0, 1, [], [], [], False, 0, False),
+
+        ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Charging"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Ultimate Blast"]): (25, 0, 1, [], [], [], False, 0, False),
+
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Stab"]): (),
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Rake"]): (),
+
+        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Stab"]): (),
+        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Scrape"]): (),
+        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Entangle"]): (),
 
         # Playable Status Cards
         ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),

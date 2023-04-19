@@ -12,19 +12,19 @@ import copy
 import itertools as it
 import threading
 
+
 class Node:
     global_nodes = 0
 
-    def __init__(self, prob, deter, card, target,game = None):
+    def __init__(self, prob, deter, card, target, game=None):
         self.game = game
-        
+
         self.probability = prob
         self.children = []
         self.total_nodes = 0
 
         self.id = Node.global_nodes
         Node.global_nodes = Node.global_nodes + 1
-
 
         self.has_children = False
         self.deterministic = deter  # 0 for deterministic, 1 for non-deterministic
@@ -42,14 +42,16 @@ class Node:
         self.card_to_play = card
         self.card_target = target
 
-    def update_with_game(self,game):
+    def update_with_game(self, game):
         self.game = game
         self.done = not game.in_combat
         self.static_value = game.evaluate_state()
-    
+
     def expand(self, turn_stop):
-        
-        playable_cards = [card for card in self.game.hand if card.is_playable and not card.name in ["Dazed","Wound","Burn","Burn+"]]   
+        self.game.update()
+
+        playable_cards = [card for card in self.game.hand if card.is_playable and not card.name in [
+            "Dazed", "Wound", "Burn", "Burn+"]]
         playable_cards_no_repeats = []
         for p_card in playable_cards:
             append_card = True
@@ -74,10 +76,11 @@ class Node:
 
             for i in possible_options:
                 # I like jerry :D
-                # jerry is my child 
+                # jerry is my child
                 jerry = Node(self.probability, 0, i[0], i[1])
                 self.children.append(jerry)
-                jerry.update_with_game(self.game.predict_state(i[0], i[1], jerry))
+                jerry.update_with_game(
+                    self.game.predict_state(i[0], i[1], jerry))
 
         else:
             if turn_stop == self.game.turn:
@@ -86,8 +89,8 @@ class Node:
                 self.has_children = True
                 self.deterministic = 1
                 for state, prob in self.game.predict_states_turn_end():
-                    self.children.append(Node(self.probability*prob, 0, None, None,state))
- 
+                    self.children.append(
+                        Node(self.probability*prob, 0, None, None, state))
 
         for i in self.children:
             if not i.game.in_combat:
@@ -97,15 +100,16 @@ class Node:
 
     def expand_on_draw(self, cards, game_state):
         self.update_with_game(game_state)
-        
+
         if cards == 0:
             return
-        
+
         self.has_children = True
         self.deterministic = 1
-        
+
         for state, prob in self.game.predict_card_draw(cards):
-            self.children.append(Node(self.probability*prob, 0, None, None,state))
+            self.children.append(
+                Node(self.probability*prob, 0, None, None, state))
 
         for i in self.children:
             if not i.game.in_combat:
@@ -222,13 +226,13 @@ class CoolRadicalAgent:
 
         if self.game.choice_available:
             return self.handle_screen()
-        
+
         if self.game.proceed_available:
             return ProceedAction()
-        
+
         if self.game.play_available:
             return self.get_play_card_action(debug_mode)
-        
+
         if self.game.cancel_available:
             return CancelAction()
 
@@ -284,16 +288,16 @@ class CoolRadicalAgent:
     def get_play_card_action(self, debug_mode=False):
         Node.global_nodes = 0
 
-        self.headNode = Node( 1, 0, None, None,copy.deepcopy(self.game))
+        self.headNode = Node(1, 0, None, None, copy.deepcopy(self.game))
         turn_stop = self.headNode.game.turn + 1
 
         activeNodes = [self.headNode]
 
-
         max_threads = 8
 
         # Only expands nodes that are either this turn or next turn.
-        while len(activeNodes) >= 1 and Node.global_nodes < 20000:  # len(activeNodes) >= 1: Node.global_nodes < 4000 and
+        # len(activeNodes) >= 1: Node.global_nodes < 4000 and
+        while len(activeNodes) >= 1 and Node.global_nodes < 20000:
             # if len(activeNodes) > 1:
             #     current_nodes = []
             #     count = 0
@@ -317,8 +321,8 @@ class CoolRadicalAgent:
             #                 activeNodes.append(child)
             #             if not child.done and child.has_children: # This happens on card draw
             #                 activeNodes.extend(child.children)
-                
-            # else:     
+
+            # else:
             current = activeNodes.pop(0)
 
             current.expand(turn_stop)
@@ -326,7 +330,7 @@ class CoolRadicalAgent:
                 self.headNode.total_nodes = self.headNode.total_nodes + 1
                 if not child.done and not child.has_children:
                     activeNodes.append(child)
-                if not child.done and child.has_children: # This happens on card draw
+                if not child.done and child.has_children:  # This happens on card draw
                     activeNodes.extend(child.children)
 
         self.headNode.get_deep_evaluation()
@@ -467,7 +471,7 @@ class CoolRadicalAgent:
                 card, self.count_copies_in_deck(card))]
         else:
             pickable_cards = reward_cards
-        
+
         if len(pickable_cards) > 0:
             potential_pick = self.priorities.get_best_card(pickable_cards)
 

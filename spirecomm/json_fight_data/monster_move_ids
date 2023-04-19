@@ -1,3 +1,4 @@
+
 Acid Slime (L): Intent.ATTACK with damage 16 has id of 2
 Acid Slime (L): Intent.ATTACK_DEBUFF with damage 11 has id of 1
 Acid Slime (L): Intent.DEBUFF with damage -1 has id of 4
@@ -39,6 +40,7 @@ Chosen: Intent.STRONG_DEBUFF with damage -1 has id of 4
 Cultist: Intent.ATTACK with damage 6 has id of 1
 Cultist: Intent.BUFF with damage -1 has id of 3
 Dagger: Intent.ATTACK_DEBUFF with damage 9 has id of 1
+Darkling: Intent.ATTACK with damage -1 has id of 2
 Darkling: Intent.ATTACK with damage 10 has id of 3
 Darkling: Intent.ATTACK with damage 11 has id of 3
 Darkling: Intent.ATTACK with damage 7 has id of 3
@@ -76,6 +78,7 @@ Hexaghost: Intent.ATTACK with damage 13 has id of 1
 Hexaghost: Intent.ATTACK with damage 5 has id of 2
 Hexaghost: Intent.ATTACK with damage 6 has id of 1
 Hexaghost: Intent.ATTACK with damage 8 has id of 1
+Hexaghost: Intent.ATTACK with damage 9 has id of 1
 Hexaghost: Intent.ATTACK_DEBUFF with damage 2 has id of 6
 Hexaghost: Intent.ATTACK_DEBUFF with damage 6 has id of 4
 Hexaghost: Intent.DEFEND_BUFF with damage -1 has id of 3
@@ -102,6 +105,9 @@ Mugger: Intent.DEFEND with damage -1 has id of 2
 Mugger: Intent.ESCAPE with damage -1 has id of 3
 Mystic: Intent.ATTACK_DEBUFF with damage 8 has id of 1
 Mystic: Intent.BUFF with damage -1 has id of 2
+Nemesis: Intent.ATTACK with damage 45 has id of 3
+Nemesis: Intent.ATTACK with damage 6 has id of 2
+Nemesis: Intent.DEBUFF with damage -1 has id of 4
 Orb Walker: Intent.ATTACK with damage 15 has id of 2
 Orb Walker: Intent.ATTACK_DEBUFF with damage 10 has id of 1
 Orb: Intent.ATTACK with damage 8 has id of 1
@@ -140,6 +146,7 @@ Spheric Guardian: Intent.ATTACK with damage 10 has id of 1
 Spheric Guardian: Intent.ATTACK_DEBUFF with damage 10 has id of 4
 Spheric Guardian: Intent.ATTACK_DEFEND with damage 10 has id of 3
 Spheric Guardian: Intent.DEFEND with damage -1 has id of 2
+Spike Slime (L): Intent.ATTACK_DEBUFF with damage 16 has id of 1
 Spike Slime (L): Intent.DEBUFF with damage -1 has id of 4
 Spike Slime (L): Intent.UNKNOWN with damage -1 has id of 3
 Spike Slime (M): Intent.ATTACK_DEBUFF with damage 8 has id of 1
@@ -185,5 +192,4 @@ Writhing Mass: Intent.ATTACK with damage 7 has id of 1
 Writhing Mass: Intent.ATTACK_DEBUFF with damage 10 has id of 3
 Writhing Mass: Intent.ATTACK_DEFEND with damage 15 has id of 2
 Writhing Mass: Intent.STRONG_DEBUFF with damage -1 has id of 4
-
-
+Looter: Intent.ESCAPE with damage -1 has id of 3

@@ -14,8 +14,7 @@ import glob
 
 if __name__ == "__main__":
 
-
-    agent = SimpleAgent()
+    agent = CoolRadicalAgent()
     coordinator = Coordinator()
     # files = glob.glob('json_fight_data\\*.json')
    
