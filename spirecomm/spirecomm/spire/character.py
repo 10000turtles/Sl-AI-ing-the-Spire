@@ -69,9 +69,29 @@ class Monster_Action:
         "Byrd": {"Caw": 6, "Peck": 1, "Swoop": 3, "Fly": -1, "Headbutt": 5},
         "Chosen": {"Poke": 5, "Zap": 1, "Debilitate": 3, "Drain": 2, "Hex": 4},
         "Mugger": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
-        "Book of Stabbing": {}
+        "Book of Stabbing": {"Multi-Stab": 1, "Single Stab": 2},
+        "Gremlin Leader": {"Encourage": 3, "Rally!": 2, "Stab": 4},
+        "Taskmaster": {"Scouring Whip": 2},
+        "Bronze Automaton": {"Spawn Orbs": 4, "Boost": 5, "Flail": 1, "HYPER BEAM": 2, "Stun": 3},
+        "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": -1, "Anger": -1},
+        "The Collecter": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
 
-
+        "Darkling": {"Nip": 3, "Chomp": 1, "Harden": 2, "Reincarnate": 5, "Regrow": 4},
+        "Orb Walker": {"Laser": 1, "Claw": 2},
+        "Spiker": {"Cut": 1, "Spike": 2},
+        "Exploder": {"Slam": 1, "Explode": 2},
+        "Repulsor": {"Bash": 2, "Repulse": 1},
+        "The Maw": {"Roar": 2, "Drool": 4, "Slam": 3, "Nom": 5},
+        "Spire Growth": {"Quick Tackle": 1, "Smash": 3, "Constrict": 2},
+        "Transient": {"Attack": 1},
+        "Writhing Mass": {"Implant": 4, "Flail": 2, "Wither": 3, "Multi-Strike": 1, "Strong Strike": 0},
+        "Giant Head": {"Count": 3, "Glare": 1, "It Is Time": 2},
+        "Nemesis": {"Debuff": -1, "Attack": -1, "Scythe": -1},
+        "Reptomancer": {"Summon": 2, "Snake Strike": 1, "Big Bite": 3},
+        "Awakened One": {"Slash": 1, "Soul Strike": 2, "Rebirth": 3, "Dark Echo": 5, "Sludge": 6, "Tackle": 8},
+        "Donu": {"Circle of Power": 2, "Beam": 0},
+        "Deca": {"Square of Protection": 2, "Beam": 0},
+        "Time Eater": {"Reverberate": 2, "Head Slam": 4, "Ripple": 3, "Haste": 5}
     }
 
     def __init__(self, intent, power, probability):
