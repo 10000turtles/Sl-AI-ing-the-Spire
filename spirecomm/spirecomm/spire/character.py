@@ -578,7 +578,6 @@ class Monster(Character):
             elif order == 4:
                 intents.append(Monster_Action(inflame, inflame_damage, 1))
             elif order == 6:
-                # TODO: IMPLEMENT ALL UPGRADES OF BURNS
                 intents.append(Monster_Action(inferno, inferno_damage, 1))
 
         elif self.name == "Slime Boss":
@@ -614,6 +613,7 @@ class Monster(Character):
             else:
                 intents.append(Monster_Action(rake, rake_damage, 2/5))
                 intents.append(Monster_Action(stab, stab_damage, 3/5))
+
         elif self.name == "Red Slaver":
             has_been_entangeled = False
 
@@ -741,7 +741,6 @@ class Move:
 
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], [], False, 0, False),
-        # TODO: UPGRADE BURNS
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], [], False, 0, False),
@@ -982,6 +981,50 @@ class Move:
 
                 except ValueError:
                     target.powers.append(Power(power[0], power[0], power[1]))
+
+
+        if isinstance(actor, Monster):
+
+            if actor.name == "Hexaghost" and Monster_Action.id_map["Hexaghost"]["Inferno"] == actor.move_id:
+                for card in game_state.draw_pile:
+                    if card.name == "Burn":
+                        card.name = "Burn+"
+                for card in game_state.discard_pile:
+                    if card.name == "Burn":
+                        card.name = "Burn+"
+                for card in game_state.hand:
+                    if card.name == "Burn":
+                        card.name = "Burn+"
+
+            elif actor.name == "Slime Boss" and actor.current_hp <= actor.max_hp / 2:
+                
+                acid_slime = Monster("Acid Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                spike_slime = Monster("Spike Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                game_state.monsters.append(acid_slime)
+                game_state.monsters.append(spike_slime)
+
+                actor.current_hp = 0
+                game_state.update()
+
+            elif actor.name == "Acid Slime (L)" and actor.current_hp <= actor.max_hp / 2:
+
+                new_slime = Monster("Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                game_state.monsters.append(new_slime)
+                game_state.monsters.append(new_slime)
+
+                actor.current_hp = 0
+                game_state.update()
+
+            elif actor.name == "Spike Slime (L)" and actor.current_hp <= actor.max_hp / 2:
+
+                new_slime = Monster("Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                game_state.monsters.append(new_slime)
+                game_state.monsters.append(new_slime)
+
+                actor.current_hp = 0
+                game_state.update()
+
+            
 
         if (self.aoe):
             for target in game_state.monsters:
