@@ -50,6 +50,7 @@ class Monster_Action:
         "Fungi Beast": {"Bite": 1, "Grow": 2},
         "Hexaghost": {"Activate": 5, "Divider": 1, "Inferno": 6, "Sear": 4, "Tackle": 2, "Inflame": 3},
         "Slime Boss": {"Goop Spray": 4, "Preparing": 2, "Slam": 1, "Split": 3},
+        "Guardian": {"Charging Up": -1, "Fierce Bash": -1, "Vent Steam": -1, "Whirlwind": -1, "Defensive Mode": -1, "Roll Attack": -1, "Twin Strike": -1},
         "Gremlin Nob": {"Bellow": 3, "Rush": 1, "Skull Bash": 2},
         "Sentry": {"Beam": 4, "Bolt": 3},
         "Lagavulin": {"Sleep": 5, "Stun": 4, "Attack": 3, "Siphon Soul": 1},
@@ -284,6 +285,8 @@ class Monster(Character):
         if (self.name == "Louse" or self.name == "Slaver"):
             self.move = Move(
                 *Move.monster_move_data[(self.monster_id, self.move_id)])
+        elif self.name == "Guardian":
+            self.powers.append(("Mode Shift", 30))
         else:
             self.move = Move(
                 *Move.monster_move_data[(self.name, self.move_id)])
@@ -557,7 +560,8 @@ class Monster(Character):
 
             activate = Monster_Action.id_map[self.name]["Activate"]
             divider = Monster_Action.id_map[self.name]["Divider"]
-            divider_damage = Move.monster_move_data[(self.name, divider)][0]
+            # Move.monster_move_data[(self.name, divider)][0]
+            divider_damage = game_state.current_hp / 12 + 1
 
             sear = Monster_Action.id_map[self.name]["Sear"]
             sear_damage = Move.monster_move_data[(self.name, sear)][0]
@@ -679,6 +683,71 @@ class Monster(Character):
             else:
                 intents.append(Monster_Action(charging, charging_damage, 1))
 
+        elif self.name == "Guardian":
+            charging_up = Monster_Action.id_map[self.name]["Charging Up"]
+            charging_up_damage = Move.monster_move_data[(
+                self.name, charging_up)][0]
+
+            fierce_bash = Monster_Action.id_map[self.name]["Fierce Bash"]
+            fierce_bash_damage = Move.monster_move_data[(
+                self.name, fierce_bash)][0]
+
+            vent_steam = Monster_Action.id_map[self.name]["Vent Steam"]
+            vent_steam_damage = Move.monster_move_data[(
+                self.name, vent_steam)][0]
+
+            whirlwind = Monster_Action.id_map[self.name]["Whirlwind"]
+            whirlwind_damage = Move.monster_move_data[(
+                self.name, whirlwind)][0]
+
+            defensive_mode = Monster_Action.id_map[self.name]["Defensive Mode"]
+            defensive_mode_damage = Move.monster_move_data[(
+                self.name, defensive_mode)][0]
+
+            roll_attack = Monster_Action.id_map[self.name]["Roll Attack"]
+            roll_attack_damage = Move.monster_move_data[(
+                self.name, roll_attack)][0]
+
+            twin_slam = Monster_Action.id_map[self.name]["Twin Slam"]
+            twin_slam_damage = Move.monster_move_data[(
+                self.name, twin_slam)][0]
+
+            mode_shift = 1
+            sharp_hide = 3
+            try:
+                index = [i.power_name for i in self.powers].index("Mode Shift")
+                mode_shift = self.powers[index]
+            except ValueError:
+                mode_shift = 0
+            try:
+                index = [i.power_name for i in self.powers].index("Sharp Hide")
+                sharp_hide = self.powers[index]
+            except ValueError:
+                sharp_hide = 0
+
+            if (mode_shift <= 0 and sharp_hide == 0):
+                intents.append(Monster_Action(
+                    defensive_mode, defensive_mode_damage, 1))
+
+            elif game_state.turn == 1 or self.last_move_id == whirlwind \
+                    or self.last_move_id == twin_slam:
+                intents.append(Monster_Action(
+                    charging_up, charging_up_damage, 1))
+            elif self.last_move_id == charging_up:
+                intents.append(Monster_Action(
+                    fierce_bash, fierce_bash_damage, 1))
+            elif self.last_move_id == fierce_bash:
+                intents.append(Monster_Action(
+                    vent_steam, vent_steam_damage, 1))
+            elif self.last_move_id == vent_steam:
+                intents.append(Monster_Action(whirlwind, whirlwind_damage, 1))
+
+            elif self.last_move_id == defensive_mode:
+                intents.append(Monster_Action(
+                    roll_attack, roll_attack_damage, 1))
+            elif self.last_move_id == roll_attack:
+                intents.append(Monster_Action(twin_slam, twin_slam_damage, 1))
+
         return intents
 
     def __eq__(self, other):
@@ -742,7 +811,7 @@ class Move:
         ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
 
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], [], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): (0, 0, 6, [], [], [], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], [], False, 0, False),
@@ -752,6 +821,16 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Guardian", Monster_Action.id_map["Guardian"]["Charging Up"]): (0, 9, 0, [], [], [], False, 0, False),
+        ("Guardian", Monster_Action.id_map["Guardian"]["Fierce Bash"]): (32, 0, 1, [], [], [], False, 0, False),
+        ("Guardian", Monster_Action.id_map["Guardian"]["Vent Steam"]): (0, 0, 0, [], [("Vulnerable", 2), ("Weak", 2)], [], False, 0, False),
+        ("Guardian", Monster_Action.id_map["Guardian"]["Whirlwind"]): (5, 0, 4, [], [], [], False, 0, False),
+
+        ("Guardian", Monster_Action.id_map["Guardian"]["Defensive Mode"]): (0, 0, 0, [("Sharp Hide", 3)], [], [], False, 0, False),
+        ("Guardian", Monster_Action.id_map["Guardian"]["Roll Attack"]): (9, 0, 1, [], [], [], False, 0, False),
+        # NOTE: Mode shift goes up by 10 each time, but this is an estimation, right.....?
+        ("Guardian", Monster_Action.id_map["Guardian"]["Twin Strike"]): (8, 0, 2, [("Sharp Hide", -3), ("Mode Shift", 40)], [], [], False, 0, False),
 
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 1, [], [], [], False, 0, False),
@@ -974,6 +1053,18 @@ class Move:
                 target.recieve_damage(game_state, actor.adjust_damage(
                     self.damage, target.powers), True)
 
+                if isinstance(target, Monster) and target.name == "Guardian":
+                    try:
+                        mode_shift_index = [
+                            i.power_name for i in target.powers].index("Mode Shift")
+                        target.powers[mode_shift_index].amount = target.powers[mode_shift_index].amount - \
+                            actor.adjust_damage(self.damage, target.powers)
+                        if target.power[mode_shift_index].amount <= 0:
+                            target.block = 20
+                            target.move_id = Monster_Action.id_map[target.name]["Defensive Mode"]
+                    except ValueError:
+                        continue
+
             for power in self.target_powers:
                 try:
                     index = [i.power_name for i in target.powers].index(
@@ -994,6 +1085,9 @@ class Move:
                 for card in game_state.hand:
                     if card.name == "Burn":
                         card.name = "Burn+"
+
+            elif actor.name == "Hexaghost" and Monster_Action.id_map["Hexaghost"]["Divider"] == actor.move_id:
+                self.damage = int(game_state.current_hp / 12) + 1
 
             elif actor.name == "Slime Boss" and actor.current_hp <= actor.max_hp / 2:
 
