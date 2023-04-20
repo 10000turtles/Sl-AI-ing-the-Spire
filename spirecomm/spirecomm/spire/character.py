@@ -591,11 +591,12 @@ class Monster(Character):
             slam_damage = Move.monster_move_data[(self.name, slam)][0]
 
             if order == 0:
-                intents.Monster_Action(goop_spray, goop_spray_damage, 1)
+                intents.append(Monster_Action(
+                    goop_spray, goop_spray_damage, 1))
             elif order == 1:
-                intents.Monster_Action(preparing, 0, 1)
+                intents.append(Monster_Action(preparing, 0, 1))
             elif order == 2:
-                intents.Monster_Action(slam, slam_damage, 1)
+                intents.append(Monster_Action(slam, slam_damage, 1))
 
         elif self.name == "Blue Slaver":
             stab = Monster_Action.id_map[self.name]["Stab"]
@@ -982,9 +983,7 @@ class Move:
                 except ValueError:
                     target.powers.append(Power(power[0], power[0], power[1]))
 
-
         if isinstance(actor, Monster):
-
             if actor.name == "Hexaghost" and Monster_Action.id_map["Hexaghost"]["Inferno"] == actor.move_id:
                 for card in game_state.draw_pile:
                     if card.name == "Burn":
@@ -997,9 +996,11 @@ class Move:
                         card.name = "Burn+"
 
             elif actor.name == "Slime Boss" and actor.current_hp <= actor.max_hp / 2:
-                
-                acid_slime = Monster("Acid Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
-                spike_slime = Monster("Spike Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+
+                acid_slime = Monster(
+                    "Acid Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                spike_slime = Monster(
+                    "Spike Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(acid_slime)
                 game_state.monsters.append(spike_slime)
 
@@ -1008,7 +1009,8 @@ class Move:
 
             elif actor.name == "Acid Slime (L)" and actor.current_hp <= actor.max_hp / 2:
 
-                new_slime = Monster("Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                new_slime = Monster(
+                    "Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
                 game_state.monsters.append(new_slime)
 
@@ -1017,14 +1019,13 @@ class Move:
 
             elif actor.name == "Spike Slime (L)" and actor.current_hp <= actor.max_hp / 2:
 
-                new_slime = Monster("Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                new_slime = Monster(
+                    "Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
                 game_state.monsters.append(new_slime)
 
                 actor.current_hp = 0
                 game_state.update()
-
-            
 
         if (self.aoe):
             for target in game_state.monsters:
