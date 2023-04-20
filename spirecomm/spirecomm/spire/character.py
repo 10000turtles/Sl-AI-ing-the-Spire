@@ -49,7 +49,7 @@ class Monster_Action:
         "Looter": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
         "Fungi Beast": {"Bite": 1, "Grow": 2},
         "Hexaghost": {"Activate": 5, "Divider": 1, "Inferno": 6, "Sear": 4, "Tackle": 2, "Inflame": 3},
-        "Slime Boss": {"Goop Spray": 4, "Preparing": 2, "Slam": 1, "Split": -1},
+        "Slime Boss": {"Goop Spray": 4, "Preparing": 2, "Slam": 1, "Split": 3},
         "Gremlin Nob": {"Bellow": 3, "Rush": 1, "Skull Bash": 2},
         "Sentry": {"Beam": 4, "Bolt": 3},
         "Lagavulin": {"Sleep": 5, "Stun": 4, "Attack": 3, "Siphon Soul": 1},
@@ -667,11 +667,11 @@ class Monster(Character):
 
         elif self.name == "Gremlin Wizard":
             charging = Monster_Action.id_map[self.name]["Charging"]
-            charging_damage = Move.monster_move_data[(self.name, stab)][0]
+            charging_damage = Move.monster_move_data[(self.name, charging)][0]
 
             ultimate_blast = Monster_Action.id_map[self.name]["Ultimate Blast"]
             ultimate_blast_damage = Move.monster_move_data[(
-                self.name, stab)][0]
+                self.name, ultimate_blast)][0]
 
             if game_state.turn % 4 == 3:
                 intents.append(Monster_Action(
@@ -751,8 +751,7 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Goop Spray"]): (0, 0, 0, [], [], [("Slimed", 3)], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Preparing"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
-        # TODO: ADD SPLIT
-        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], []),
+        ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 1, [], [], [], False, 0, False),
@@ -844,7 +843,7 @@ class Move:
         # ("Searing Red",0) : (0,0,0,[],[],[],True,0,False),
         ("Sentinel", 0): (0, 5, 0, [], [], [], False, 0, False),
         # ("Sever Soul",0) : (16,0,1,[],[],[],False,0,False),
-        # ("Shockwave",0) : (0,0,0,[],[("Weakness",3),("Vulnerable",3)],[],False,0,True),
+        ("Shockwave", 0): (0, 0, 0, [], [("Weakness", 3), ("Vulnerable", 3)], [], False, 0, True),
         # ("Spot Weakness",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
         ("Uppercut", 0): (13, 0, 1, [], [("Weakness", 1), ("Vulnerable", 1)], [], False, 0, False),
         ("Whirlwind", 0): (5, 0, 0, [], [], [], False, 0, True),
@@ -858,7 +857,7 @@ class Move:
         # ("Exhume",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire",0):(7,0,X,[],[],[],True,0,False),
-        # ("Immolate",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
+        ("Immolate", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious", 0): (0, 30, 0, [], [], [], True, 0, False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         # ("Limit Break",0): (0,0,0,[],[],[],True,0,False),
@@ -888,7 +887,7 @@ class Move:
         ("Twin Strike+", 0): (7, 0, 2, [], [], [], False, 0, False),
         # ("Warcry+",0): (0,0,0,[],[],[],True,0,False),
         ("Wild Strike+", 0): (17, 0, 1, [], [], [("Wound", 0)], False, 0, False),
-        # ("Battle Trance+",0):(0,0,0,[("No Draw",1)],[],[],False,4,False),
+        ("Battle Trance+", 0): (0, 0, 0, [("No Draw", 1)], [], [], False, 4, False),
         ("Blood for Blood+", 0): (22, 0, 1, [], [], [], False, 0, False),
         # ("Bloodletting+",0):(0,0,0,[],[],[],False,0,False),
         # ("Burning Pact+",0):(0,0,0,[],[],[],False,3,False),
@@ -920,7 +919,7 @@ class Move:
         # ("Searing Red+",0) : (0,0,0,[],[],[],True,0,False),
         ("Sentinel+", 0): (0, 8, 0, [], [], [], False, 0, False),
         # ("Sever Soul+",0) : (16,0,1,[],[],[],False,0,False),
-        # ("Shockwave+",0) : (0,0,0,[],[("Weakness",5),("Vulnerable",5)],[],False,0,True),
+        ("Shockwave+", 0): (0, 0, 0, [], [("Weakness", 5), ("Vulnerable", 5)], [], False, 0, True),
         # ("Spot Weakness+",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
         ("Uppercut+", 0): (13, 0, 1, [], [("Weakness", 2), ("Vulnerable", 2)], [], False, 0, False),
         ("Whirlwind+", 0): (7, 0, 0, [], [], [], False, 0, True),
@@ -934,7 +933,7 @@ class Move:
         # ("Exhume+",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed+",0):(10,0,0,[],[],[],True,0,False),
         # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
-        # ("Immolate+",0) : (21,0,1,[],[],[("Burn",2)],False,0,True),
+        ("Immolate+", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious+", 0): (0, 40, 0, [], [], [], True, 0, False),
         ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False)
         # ("Limit Break+",0): (0,0,0,[],[],[],False,0,False),
@@ -999,9 +998,9 @@ class Move:
             elif actor.name == "Slime Boss" and actor.current_hp <= actor.max_hp / 2:
 
                 acid_slime = Monster(
-                    "Acid Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                    "Acid Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False, move_id=2)
                 spike_slime = Monster(
-                    "Spike Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                    "Spike Slime (L)", None, actor.current_hp, actor.current_hp, 0, None, False, False, move_id=1)
                 game_state.monsters.append(acid_slime)
                 game_state.monsters.append(spike_slime)
 
@@ -1011,9 +1010,9 @@ class Move:
             elif actor.name == "Acid Slime (L)" and actor.current_hp <= actor.max_hp / 2:
 
                 new_slime = Monster(
-                    "Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                    "Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False, move_id=2)
                 game_state.monsters.append(new_slime)
-                new_slime2 = copy.deep_copy(new_slime)
+                new_slime2 = copy.deepcopy(new_slime)
                 game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0
@@ -1022,9 +1021,9 @@ class Move:
             elif actor.name == "Spike Slime (L)" and actor.current_hp <= actor.max_hp / 2:
 
                 new_slime = Monster(
-                    "Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
+                    "Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False, move_id=1)
                 game_state.monsters.append(new_slime)
-                new_slime2 = copy.deep_copy(new_slime)
+                new_slime2 = copy.deepcopy(new_slime)
                 game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0

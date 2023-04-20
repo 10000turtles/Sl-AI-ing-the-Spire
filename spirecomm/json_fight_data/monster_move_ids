@@ -193,3 +193,4 @@ Writhing Mass: Intent.ATTACK_DEBUFF with damage 10 has id of 3
 Writhing Mass: Intent.ATTACK_DEFEND with damage 15 has id of 2
 Writhing Mass: Intent.STRONG_DEBUFF with damage -1 has id of 4
 Looter: Intent.ESCAPE with damage -1 has id of 3
+Hexaghost: Intent.ATTACK with damage 7 has id of 1

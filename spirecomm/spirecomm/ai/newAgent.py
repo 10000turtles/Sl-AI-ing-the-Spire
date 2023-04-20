@@ -11,6 +11,8 @@ from spirecomm.ai.priorities import *
 import copy
 import itertools as it
 import threading
+import multiprocessing as mp
+from time import sleep
 
 
 class Node:
@@ -48,7 +50,6 @@ class Node:
         self.static_value = game.evaluate_state()
 
     def expand(self, turn_stop):
-        self.game.update()
 
         playable_cards = [card for card in self.game.hand if card.is_playable and not card.name in [
             "Dazed", "Wound", "Burn", "Burn+"]]
@@ -62,6 +63,8 @@ class Node:
             if (append_card):
                 playable_cards_no_repeats.append(p_card)
 
+        self.game.update()
+
         if len(playable_cards_no_repeats) > 0:
             self.has_children = True
             possible_options = []
@@ -69,7 +72,8 @@ class Node:
             for card_to_play in playable_cards_no_repeats:
                 if card_to_play.has_target:
                     for target in self.game.monsters:
-                        possible_options.append((card_to_play, target))
+                        if not target.is_gone:
+                            possible_options.append((card_to_play, target))
 
                 else:
                     possible_options.append((card_to_play, None))
@@ -285,53 +289,62 @@ class CoolRadicalAgent:
                               0 and not monster.half_dead and not monster.is_gone]
         return len(available_monsters) > 1
 
+    def expand_tree(self, active_nodes, max_nodes, turn_stop):
+        tot_nodes = 0
+        while len(active_nodes) >= 1 and tot_nodes < max_nodes:
+            current = active_nodes.pop(0)
+
+            current.expand(turn_stop)
+            for child in current.children:
+                tot_nodes = tot_nodes + 1
+                if not child.done and not child.has_children:
+                    active_nodes.append(child)
+                if not child.done and child.has_children:  # This happens on card draw
+                    active_nodes.extend(child.children)
+
     def get_play_card_action(self, debug_mode=False):
         Node.global_nodes = 0
 
         self.headNode = Node(1, 0, None, None, copy.deepcopy(self.game))
-        turn_stop = self.headNode.game.turn + 1
+        turn_stop = self.headNode.game.turn
 
-        activeNodes = [self.headNode]
+        active_nodes = [self.headNode]
 
-        max_threads = 8
+        max_nodes = 5000
 
-        # Only expands nodes that are either this turn or next turn.
-        # len(activeNodes) >= 1: Node.global_nodes < 4000 and
-        while len(activeNodes) >= 1 and Node.global_nodes < 20000:
-            # if len(activeNodes) > 1:
-            #     current_nodes = []
-            #     count = 0
-            #     while len(activeNodes) > 0 and count < max_threads:
-            #         count = count + 1
-            #         current_nodes.append(activeNodes.pop(0))
+        while len(active_nodes) >= 1 and Node.global_nodes < max_nodes:
 
-            #     threads = []
-
-            #     for node in current_nodes:
-            #         new_thread = threading.Thread(target = node.expand,args=(turn_stop,))
-            #         new_thread.start()
-            #         threads.append(new_thread)
-
-            #     for t in threads:
-            #         t.join()
-            #     for curr in current_nodes:
-            #         for child in curr.children:
-            #             self.headNode.total_nodes = self.headNode.total_nodes + 1
-            #             if not child.done and not child.has_children:
-            #                 activeNodes.append(child)
-            #             if not child.done and child.has_children: # This happens on card draw
-            #                 activeNodes.extend(child.children)
-
-            # else:
-            current = activeNodes.pop(0)
+            current = active_nodes.pop(0)
 
             current.expand(turn_stop)
             for child in current.children:
                 self.headNode.total_nodes = self.headNode.total_nodes + 1
                 if not child.done and not child.has_children:
-                    activeNodes.append(child)
+                    active_nodes.append(child)
                 if not child.done and child.has_children:  # This happens on card draw
-                    activeNodes.extend(child.children)
+                    active_nodes.extend(child.children)
+
+        # threads = []
+        # new_active_nodes = []
+
+        # for threads_left in range(max_threads, 0, -1):
+        #     new_active_nodes.append([])
+        #     nodes_to_pop = math.ceil(len(active_nodes)/threads_left)
+
+        #     for node in range(nodes_to_pop):
+        #         new_active_nodes[max_threads -
+        #                          threads_left].append(active_nodes.pop(0))
+
+        # mp.set_start_method('spawn')
+        # for act in new_active_nodes:
+        #     p = mp.Process(target=CoolRadicalAgent.expand_tree, args=(self,
+        #                                                               act, 20, turn_stop))
+        #     p.start()
+        #     print("Started Process", flush=True)
+        #     threads.append(p)
+
+        # for thread in threads:
+        #     thread.join()
 
         self.headNode.get_deep_evaluation()
         if (debug_mode):

@@ -154,16 +154,18 @@ class Game:
 
         try:
             for monster in game.monsters:
-                with open(f"json_fight_data/monster_move_ids","a") as f_write:
-                    with open(f"json_fight_data/monster_move_ids","r") as f_read:
+                with open(f"json_fight_data/monster_move_ids", "a") as f_write:
+                    with open(f"json_fight_data/monster_move_ids", "r") as f_read:
                         if not f"{monster.name}: {monster.intent}" in f_read.read().rstrip():
-                            f_write.write(f"{monster.name}: {monster.intent} has id of {monster.move_id}\n")
+                            f_write.write(
+                                f"{monster.name}: {monster.intent} has id of {monster.move_id}\n")
         except:
             for monster in game.monsters:
-                with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids","a") as f_write:
-                    with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids","r") as f_read:
+                with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids", "a") as f_write:
+                    with open(f"C:\\Users\\TheFifthTurtle\\Documents\\GitHub\\Sl-AI-ing-the-Spire\\spirecomm\\json_fight_data\\monster_move_ids", "r") as f_read:
                         if not f"{monster.name}: {monster.intent} with damage {monster.move_base_damage}" in f_read.read().rstrip():
-                            f_write.write(f"{monster.name}: {monster.intent} with damage {monster.move_base_damage} has id of {monster.move_id}\n")
+                            f_write.write(
+                                f"{monster.name}: {monster.intent} with damage {monster.move_base_damage} has id of {monster.move_id}\n")
         # try:
         #   with open(f"json_fight_data/floor_{str(game.floor)}_turn_{str(game.turn)}_action_{str(Game.global_json_counter)}.json", 'w') as f:
         #     Game.global_json_counter = Game.global_json_counter + 1
@@ -201,6 +203,7 @@ class Game:
     def update_monsters(self):
         for target in self.monsters:
             if (target.current_hp <= 0):
+                target.is_gone = True
                 self.monsters.remove(target)
 
             if (len(self.monsters) == 0):
@@ -251,12 +254,11 @@ class Game:
         new_game_template.hand = []
 
         new_game_template.execute_monster_attacks()
-
         new_game_template.player.block = 0
 
         possible_monster_intents = []
 
-        for monster in self.monsters:
+        for monster in new_game_template.monsters:
             possible_monster_intents.append(
                 monster.possible_intents(new_game_template))
 
@@ -305,7 +307,7 @@ class Game:
 
                 temp_game.hand = original_hand
 
-        max_game_sample = 70000
+        max_game_sample = 60000
         if len(new_games) > max_game_sample:
             count = max_game_sample
             new_games = random.sample(new_games, max_game_sample)
@@ -353,13 +355,15 @@ class Game:
 
     def evaluate_state(self):
 
+        game_state = copy.deepcopy(self)
+        game_state.execute_monster_attacks()
+
         value = 0
 
-        # value = value - 2*max(self.get_incoming_damage()-self.player.block, 0)
-        value = value + 3*self.player.current_hp
-        value = value - sum([i.current_hp for i in self.monsters])
+        value = value + 3*game_state.player.current_hp
+        value = value - sum([i.current_hp for i in game_state.monsters])
 
-        if (self.player.current_hp <= 0):
+        if (game_state.player.current_hp <= 0):
             value = -999  # Might need to change to a lower number.
 
         # We still need to add more evaluation here (potions, max hp, status effects, etc)
