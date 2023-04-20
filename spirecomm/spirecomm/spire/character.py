@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import copy
 
 from spirecomm.spire.power import Power
 # from spirecomm.spire.game import Game
@@ -591,11 +592,11 @@ class Monster(Character):
             slam_damage = Move.monster_move_data[(self.name, slam)][0]
 
             if order == 0:
-                intents.Monster_Action(goop_spray, goop_spray_damage, 1)
+                intents.append(Monster_Action(goop_spray, goop_spray_damage, 1))
             elif order == 1:
-                intents.Monster_Action(preparing, 0, 1)
+                intents.append(Monster_Action(preparing, 0, 1))
             elif order == 2:
-                intents.Monster_Action(slam, slam_damage, 1)
+                intents.append(Monster_Action(slam, slam_damage, 1))
 
         elif self.name == "Blue Slaver":
             stab = Monster_Action.id_map[self.name]["Stab"]
@@ -984,7 +985,6 @@ class Move:
 
 
         if isinstance(actor, Monster):
-
             if actor.name == "Hexaghost" and Monster_Action.id_map["Hexaghost"]["Inferno"] == actor.move_id:
                 for card in game_state.draw_pile:
                     if card.name == "Burn":
@@ -1010,7 +1010,8 @@ class Move:
 
                 new_slime = Monster("Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
-                game_state.monsters.append(new_slime)
+                new_slime2 = copy.deep_copy(new_slime)
+                game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0
                 game_state.update()
@@ -1019,7 +1020,8 @@ class Move:
 
                 new_slime = Monster("Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
-                game_state.monsters.append(new_slime)
+                new_slime2 = copy.deep_copy(new_slime)
+                game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0
                 game_state.update()
