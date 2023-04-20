@@ -557,7 +557,7 @@ class Monster(Character):
 
             activate = Monster_Action.id_map[self.name]["Activate"]
             divider = Monster_Action.id_map[self.name]["Divider"]
-            divider_damage = Move.monster_move_data[(self.name, divider)][0]
+            divider_damage = game_state.current_hp / 12 + 1 # Move.monster_move_data[(self.name, divider)][0]
 
             sear = Monster_Action.id_map[self.name]["Sear"]
             sear_damage = Move.monster_move_data[(self.name, sear)][0]
@@ -742,7 +742,7 @@ class Move:
         ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Grow"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
 
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Activate"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): ('h', 0, 6, [], [], [], False, 0, False),
+        ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Divider"]): (0, 0, 6, [], [], [], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Inferno"]): (2, 0, 6, [], [], [("Burn", 3)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Sear"]): (6, 0, 1, [], [], [("Burn", 1)], False, 0, False),
         ("Hexaghost", Monster_Action.id_map["Hexaghost"]["Tackle"]): (5, 0, 2, [], [], [], False, 0, False),
@@ -995,6 +995,9 @@ class Move:
                 for card in game_state.hand:
                     if card.name == "Burn":
                         card.name = "Burn+"
+
+            elif actor.name == "Hexaghost" and Monster_Action.id_map["Hexaghost"]["Divider"] == actor.move_id:
+                self.damage = int (game_state.current_hp / 12) + 1
 
             elif actor.name == "Slime Boss" and actor.current_hp <= actor.max_hp / 2:
 
