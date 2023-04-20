@@ -777,12 +777,12 @@ class Move:
         ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Charging"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Ultimate Blast"]): (25, 0, 1, [], [], [], False, 0, False),
 
-        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Stab"]): (),
-        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Rake"]): (),
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Stab"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Rake"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Stab"]): (),
-        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Scrape"]): (),
-        ("SlaverRed", Monster_Action.id_map["SlaverBlue"]["Entangle"]): (),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Stab"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Scrape"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Entangle"]): (0, 0, 0, [], [], [], False, 0, False),
 
         # Playable Status Cards
         ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),
@@ -922,7 +922,7 @@ class Move:
         # ("Shockwave+",0) : (0,0,0,[],[("Weakness",5),("Vulnerable",5)],[],False,0,True),
         # ("Spot Weakness+",0): (0,0,0,[("Strength",3)],[],[],False,0,False),
         ("Uppercut+", 0): (13, 0, 1, [], [("Weakness", 2), ("Vulnerable", 2)], [], False, 0, False),
-        # ("Whirlwind+",0) : (7,0,X,[],[],[],False,0,True),
+        ("Whirlwind+", 0): (7, 0, 0, [], [], [], False, 0, True),
         ("Barricade+", 0): (0, 0, 0, [("Barricade", 1)], [], [], False, 0, False),
         ("Berserk+", 0): (0, 0, 0, [("Vulnerable", 1), ("Berserk", 1)], [], [], False, 0, False),
         ("Bludgeon+", 0): (42, 0, 1, [], [], [], False, 0, False),
@@ -1141,7 +1141,11 @@ class Move:
             if card_to_play.name == "Spot Weakness" or card_to_play.name == "Spot Weakness+":
                 pass  # TODO: fill this later
             if card_to_play.name == "Whirlwind" or card_to_play.name == "Whirlwind+":
-                pass  # TODO: fill this later
+                for target in game_state.monsters:
+                    for i in range(actor.energy):
+                        target.recieve_damage(game_state, actor.adjust_damage(
+                            self.damage, target.powers), True)
+                actor.energy = 0
             if card_to_play.name == "Exhume" or card_to_play.name == "Exhume+":
                 pass  # TODO: fill this later
             if card_to_play.name == "Feed" or card_to_play.name == "Feed+":
