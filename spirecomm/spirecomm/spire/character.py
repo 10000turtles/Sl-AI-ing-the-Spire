@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import copy
 
 from spirecomm.spire.power import Power
 # from spirecomm.spire.game import Game
@@ -1012,7 +1013,8 @@ class Move:
                 new_slime = Monster(
                     "Acid Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
-                game_state.monsters.append(new_slime)
+                new_slime2 = copy.deep_copy(new_slime)
+                game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0
                 game_state.update()
@@ -1022,7 +1024,8 @@ class Move:
                 new_slime = Monster(
                     "Spike Slime (M)", None, actor.current_hp, actor.current_hp, 0, None, False, False)
                 game_state.monsters.append(new_slime)
-                game_state.monsters.append(new_slime)
+                new_slime2 = copy.deep_copy(new_slime)
+                game_state.monsters.append(new_slime2)
 
                 actor.current_hp = 0
                 game_state.update()
