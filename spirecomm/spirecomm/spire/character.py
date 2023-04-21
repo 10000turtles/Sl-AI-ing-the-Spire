@@ -50,7 +50,7 @@ class Monster_Action:
         "Fungi Beast": {"Bite": 1, "Grow": 2},
         "Hexaghost": {"Activate": 5, "Divider": 1, "Inferno": 6, "Sear": 4, "Tackle": 2, "Inflame": 3},
         "Slime Boss": {"Goop Spray": 4, "Preparing": 2, "Slam": 1, "Split": 3},
-        "Guardian": {"Charging Up": -1, "Fierce Bash": -1, "Vent Steam": -1, "Whirlwind": -1, "Defensive Mode": -1, "Roll Attack": -1, "Twin Strike": -1},
+        "The Guardian": {"Charging Up": 6, "Fierce Bash": 2, "Vent Steam": 7, "Whirlwind": 5, "Defensive Mode": 1, "Roll Attack": 3, "Twin Slam": 4},
         "Gremlin Nob": {"Bellow": 3, "Rush": 1, "Skull Bash": 2},
         "Sentry": {"Beam": 4, "Bolt": 3},
         "Lagavulin": {"Sleep": 5, "Stun": 4, "Attack": 3, "Siphon Soul": 1},
@@ -267,6 +267,7 @@ class Player(Character):
 
 
 class Monster(Character):
+    guardian_shifts = 0
 
     def __init__(self, name, monster_id, max_hp, current_hp, block, intent, half_dead, is_gone, move_id=-1, last_move_id=None, second_last_move_id=None, move_base_damage=0, move_adjusted_damage=0, move_hits=0):
         super().__init__(max_hp, current_hp, block)
@@ -285,8 +286,6 @@ class Monster(Character):
         if (self.name == "Louse" or self.name == "Slaver"):
             self.move = Move(
                 *Move.monster_move_data[(self.monster_id, self.move_id)])
-        elif self.name == "Guardian":
-            self.powers.append(("Mode Shift", 30))
         else:
             self.move = Move(
                 *Move.monster_move_data[(self.name, self.move_id)])
@@ -683,7 +682,7 @@ class Monster(Character):
             else:
                 intents.append(Monster_Action(charging, charging_damage, 1))
 
-        elif self.name == "Guardian":
+        elif self.name == "The Guardian":
             charging_up = Monster_Action.id_map[self.name]["Charging Up"]
             charging_up_damage = Move.monster_move_data[(
                 self.name, charging_up)][0]
@@ -822,15 +821,15 @@ class Move:
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Slam"]): (35, 0, 1, [], [], [], False, 0, False),
         ("Slime Boss", Monster_Action.id_map["Slime Boss"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        ("Guardian", Monster_Action.id_map["Guardian"]["Charging Up"]): (0, 9, 0, [], [], [], False, 0, False),
-        ("Guardian", Monster_Action.id_map["Guardian"]["Fierce Bash"]): (32, 0, 1, [], [], [], False, 0, False),
-        ("Guardian", Monster_Action.id_map["Guardian"]["Vent Steam"]): (0, 0, 0, [], [("Vulnerable", 2), ("Weak", 2)], [], False, 0, False),
-        ("Guardian", Monster_Action.id_map["Guardian"]["Whirlwind"]): (5, 0, 4, [], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Charging Up"]): (0, 9, 0, [], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Fierce Bash"]): (32, 0, 1, [], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Vent Steam"]): (0, 0, 0, [], [("Vulnerable", 2), ("Weak", 2)], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Whirlwind"]): (5, 0, 4, [], [], [], False, 0, False),
 
-        ("Guardian", Monster_Action.id_map["Guardian"]["Defensive Mode"]): (0, 0, 0, [("Sharp Hide", 3)], [], [], False, 0, False),
-        ("Guardian", Monster_Action.id_map["Guardian"]["Roll Attack"]): (9, 0, 1, [], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Defensive Mode"]): (0, 0, 0, [("Sharp Hide", 3)], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Roll Attack"]): (9, 0, 1, [], [], [], False, 0, False),
         # NOTE: Mode shift goes up by 10 each time, but this is an estimation, right.....?
-        ("Guardian", Monster_Action.id_map["Guardian"]["Twin Strike"]): (8, 0, 2, [("Sharp Hide", -3), ("Mode Shift", 40)], [], [], False, 0, False),
+        ("The Guardian", Monster_Action.id_map["The Guardian"]["Twin Slam"]): (8, 0, 2, [("Sharp Hide", -3), ("Mode Shift", 40)], [], [], False, 0, False),
 
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Bellow"]): (0, 0, 0, [("Enrage", 2)], [], [], False, 0, False),
         ("Gremlin Nob", Monster_Action.id_map["Gremlin Nob"]["Rush"]): (14, 0, 1, [], [], [], False, 0, False),
@@ -939,7 +938,7 @@ class Move:
         ("Immolate", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious", 0): (0, 30, 0, [], [], [], True, 0, False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
-        # ("Limit Break",0): (0,0,0,[],[],[],True,0,False),
+        ("Limit Break", 0): (0, 0, 0, [], [], [], True, 0, False),
         # ("Offering",0): (0,0,0,[],[],[],True,3,False),
         # ("Reaper",0): (4,0,0,[],[],[],True,0,True),
 
@@ -1014,8 +1013,8 @@ class Move:
         # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
         ("Immolate+", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious+", 0): (0, 40, 0, [], [], [], True, 0, False),
-        ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False)
-        # ("Limit Break+",0): (0,0,0,[],[],[],False,0,False),
+        ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False),
+        ("Limit Break+", 0): (0, 0, 0, [], [], [], False, 0, False)
         # ("Offering+",0): (0,0,0,[],[],[],False,5,False),
         # ("Reaper+",0): (4,0,0,[],[],[],True,0,True)
     }
@@ -1053,13 +1052,11 @@ class Move:
                 target.recieve_damage(game_state, actor.adjust_damage(
                     self.damage, target.powers), True)
 
-                if isinstance(target, Monster) and target.name == "Guardian":
+                if isinstance(target, Monster) and target.name == "The Guardian":
                     try:
                         mode_shift_index = [
                             i.power_name for i in target.powers].index("Mode Shift")
-                        target.powers[mode_shift_index].amount = target.powers[mode_shift_index].amount - \
-                            actor.adjust_damage(self.damage, target.powers)
-                        if target.power[mode_shift_index].amount <= 0:
+                        if target.powers[mode_shift_index].amount <= 0:
                             target.block = 20
                             target.move_id = Monster_Action.id_map[target.name]["Defensive Mode"]
                     except ValueError:
@@ -1292,3 +1289,11 @@ class Move:
                 pass  # TODO: fill this later
             if card_to_play.name == "Fiend Fire" or card_to_play.name == "Fiend Fire+":
                 pass  # TODO: fill this later
+            if card_to_play.name == "Limit Break" or card_to_play.name == "Limit Break+":
+                try:
+                    index = [i.power_name for i in actor.powers].index(
+                        "Strength")
+
+                    actor.powers[index].amount = actor.powers[index].amount * 2
+                except:
+                    pass
