@@ -75,8 +75,10 @@ class Monster_Action:
         "Gremlin Leader": {"Encourage": 3, "Rally!": 2, "Stab": 4},
         "Taskmaster": {"Scouring Whip": 2},
         "Bronze Automaton": {"Spawn Orbs": 4, "Boost": 5, "Flail": 1, "HYPER BEAM": 2, "Stun": 3},
+        "Bronze Orb": {"Stasis": -1, "Beam": -1, "Support Beam": -1},
         "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": -1, "Anger": -1},
         "The Collecter": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
+        "Torch Head": {"Tackle": -1},
 
         "Darkling": {"Nip": 3, "Chomp": 1, "Harden": 2, "Reincarnate": 5, "Regrow": 4},
         "Orb Walker": {"Laser": 1, "Claw": 2},
@@ -861,6 +863,95 @@ class Move:
         ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Stab"]): (0, 0, 0, [], [], [], False, 0, False),
         ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Scrape"]): (0, 0, 0, [], [], [], False, 0, False),
         ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Entangle"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        # TODO: Add gain HP for daamge unblocked
+        ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Double Strike"]): (8, 0, 2, [], [], [], False, 0, False),
+        ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Suck"]): (10, 0, 1, [], [], [], False, 0, False),
+        ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Fell"]): (16, 0, 1, [], [("Frail", 2)], [], False, 0, False),
+
+        ("Spheric Guardian", Monster_Action.id_map["Spheric Guardian"]["Slam"]): (10, 0, 2, [], [], [], False, 0, False),
+        ("Spheric Guardian", Monster_Action.id_map["Spheric Guardian"]["Activate"]): (0, 25, 0, [], [], [], False, 0, False),
+        ("Spheric Guardian", Monster_Action.id_map["Spheric Guardian"]["Harden"]): (10, 15, 1, [], [], [], False, 0, False),
+        ("Spheric Guardian", Monster_Action.id_map["Spheric Guardian"]["Attack/Debuff"]): (10, 0, 0, [], [("Frail", 5)], [], False, 0, False),
+
+
+        ("Centurion", Monster_Action.id_map["Centurion"]["Slash"]): (12, 0, 1, [], [], [], False, 0, False),
+        ("Centurion", Monster_Action.id_map["Centurion"]["Fury"]): (6, 0, 3, [], [], [], False, 0, False),
+        # TODO: GIVE 15 block to ally
+        ("Centurion", Monster_Action.id_map["Centurion"]["Defend"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        # TODO: heal enemies for 16
+        ("Mystic", Monster_Action.id_map["Mystic"]["Heal"]): (0, 0, 0, [], [], [], False, 0, False),
+        # TODO: gain 2 strength for all enemies
+        ("Mystic", Monster_Action.id_map["Mystic"]["Buff"]): (0, 0, 0, [("Strength", 2)], [], [], False, 0, False),
+        ("Mystic", Monster_Action.id_map["Mystic"]["Attack/Debuff"]): (8, 0, 1, [], [("Frail", 2)], [], False, 0, False),
+
+        ("Snake Plant", Monster_Action.id_map["Snake Plant"]["Chomp"]): (7, 0, 3, [], [], [], False, 0, False),
+        ("Snake Plant", Monster_Action.id_map["Snake Plant"]["Enfeebling Spores"]): (0, 0, 0, [], [("Frail", 2), ("Weak", 2)], [], False, 0, False),
+
+        ("Snecko", Monster_Action.id_map["Snecko"]["Perplexing Glare"]): (0, 0, 0, [], [("Confused", 1)], [], False, 0, False),
+        ("Snecko", Monster_Action.id_map["Snecko"]["Tail Whip"]): (8, 0, 1, [], [("Vulnerable", 2)], [], False, 0, False),
+        ("Snecko", Monster_Action.id_map["Snecko"]["Bite"]): (15, 0, 1, [], [], [], False, 0, False),
+
+        ("Byrd", Monster_Action.id_map["Byrd"]["Caw"]): (0, 0, 0, [("Strength", 1)], [], [], False, 0, False),
+        ("Byrd", Monster_Action.id_map["Byrd"]["Peck"]): (1, 0, 5, [], [], [], False, 0, False),
+        ("Byrd", Monster_Action.id_map["Byrd"]["Swoop"]): (12, 0, 1, [], [], [], False, 0, False),
+        ("Byrd", Monster_Action.id_map["Byrd"]["Fly"]): (0, 0, 0, [("Flying", 3)], [], [], False, 0, False),
+        ("Byrd", Monster_Action.id_map["Byrd"]["Headbutt"]): (3, 0, 1, [], [], [], False, 0, False),
+
+        # TODO: Implement confused, flying, hex
+        ("Chosen", Monster_Action.id_map["Chosen"]["Poke"]): (5, 0, 2, [], [], [], False, 0, False),
+        ("Chosen", Monster_Action.id_map["Chosen"]["Zap"]): (18, 0, 1, [], [], [], False, 0, False),
+        ("Chosen", Monster_Action.id_map["Chosen"]["Debilitate"]): (10, 0, 1, [], [("Vulnerable", 2)], [], False, 0, False),
+        ("Chosen", Monster_Action.id_map["Chosen"]["Drain"]): (0, 0, 0, [("Strength", 3)], [("Weak", 3)], [], False, 0, False),
+        ("Chosen", Monster_Action.id_map["Chosen"]["Hex"]): (0, 0, 0, [], [("Hex", 1)], [], False, 0, False),
+
+        ("Mugger", Monster_Action.id_map["Mugger"]["Mug"]): (10, 0, 1, [], [], [], False, 0, False),
+        ("Mugger", Monster_Action.id_map["Mugger"]["Lunge"]): (16, 0, 1, [], [], [], False, 0, False),
+        ("Mugger", Monster_Action.id_map["Mugger"]["Smoke Bomb"]): (0, 11, 0, [], [], [], False, 0, False),
+        ("Mugger", Monster_Action.id_map["Mugger"]["Escape"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        # TODO: Deal with the variability about number of multi-stab hits
+        ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Multi-Stab"]): (6, 0, 1, [], [], [], False, 0, False),
+        ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Single Stab"]): (21, 0, 1, [], [], [], False, 0, False),
+
+        # TODO: Add block to all MINIONS, and summoning of minions
+        ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Encourage"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Rally!"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Stab"]): (6, 0, 3, [], [], [], False, 0, False),
+
+        ("Taskmaster", Monster_Action.id_map["Taskmaster"]["Scouring Whip"]): (7, 0, 1, [], [], [("Wound", 1)], False, 0, False),
+
+        # TODO: Spawn Bronze orbs
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Spawn Orbs"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Boost"]): (0, 9, 0, [("Strnegth", 3)], [], [], False, 0, False),
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Flail"]): (7, 0, 2, [], [], [], False, 0, False),
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["HYPER BEAM"]): (45, 0, 1, [], [], [], False, 0, False),
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        # TODO: steal "rarest" card
+        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Stasis"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Beam"]): (8, 0, 1, [], [], [], False, 0, False),
+        # TODO: give bronze automaton 12 block
+        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Support Beam"]): (0, 0, 0, [], [], [], False, 0, False),
+
+
+        ("The Champ", Monster_Action.id_map["The Champ"]["Execute"]): (10, 0, 2, [], [], [], False, 0, False),
+        ("The Champ", Monster_Action.id_map["The Champ"]["Heavy Slash"]): (16, 0, 1, [], [], [], False, 0, False),
+        ("The Champ", Monster_Action.id_map["The Champ"]["Defensive Stance"]): (0, 15, 0, [("Metallicize", 5)], [], [], False, 0, False),
+        ("The Champ", Monster_Action.id_map["The Champ"]["Face Slap"]): (12, 0, 1, [], [("Frail", 2), ("Vulnerable", 2)], [], False, 0, False),
+        ("The Champ", Monster_Action.id_map["The Champ"]["Taunt"]): (0, 0, 0, [], [("Weak", 2), ("Vulnerable", 2)], [], False, 0, False),
+        ("The Champ", Monster_Action.id_map["The Champ"]["Gloat"]): (0, 0, 0, [("Strength", 2)], [], [], False, 0, False),
+        # TODO: remove all debuffs
+        ("The Champ", Monster_Action.id_map["The Champ"]["Anger"]): (0, 0, 0, [("Strength", 6)], [], [], False, 0, False),
+
+        # TODO: Spawn 2 Torch Head, add strength to ALL enemies
+        ("The Collector", Monster_Action.id_map["The Collector"]["Buff"]): (0, 15, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("The Collector", Monster_Action.id_map["The Collector"]["Fireball"]): (18, 0, 1, [], [], [], False, 0, False),
+        ("The Collector", Monster_Action.id_map["The Collector"]["Mega Debuff"]): (0, 0, 0, [], [("Weak", 3), ("Vulnerable", 3), ("Frail", 3)], [], False, 0, False),
+        ("The Collector", Monster_Action.id_map["The Collector"]["Spawn"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Torch Head", Monster_Action.id_map["Torch Head"]["Tackle"]): (7, 0, 1, [], [], [], False, 0, False),
 
         # Playable Status Cards
         ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),
