@@ -782,6 +782,8 @@ class IroncladPriority(Priority):
         "Thunderclap": 1,
         "Shockwave": 1,
         "Uppercut": 1,
+        "Carnage": 1,
+        "Feel No Pain": 1,
         # "J.A.X.": 1,
         # "PanicButton": 1,
         "Twin Strike": 5,
@@ -789,20 +791,19 @@ class IroncladPriority(Priority):
         "Wild Strike": 3,
         "Hemokinesis": 1,
         "Metallicize": 3,
+        "Reaper": 4,
     }
 
     BOSS_RELIC_PRIORITY_LIST = [
-        "Sozu",
         "Snecko Eye",
+        "Sozu",
         "Philosopher's Stone",
-        "Runic Dome",
+        "Black Star",
         "Cursed Key",
         "Fusion Hammer",
         "Velvet Choker",
-        "Ectoplasm",
         "Mark of Pain",
         "Busted Crown",
-        "Empty Cage",
         "Astrolabe",
         "Runic Pyramid",
         "Lizard Tail",
@@ -810,12 +811,14 @@ class IroncladPriority(Priority):
         "Coffee Dripper",
         "Black Blood",
         "Tiny House",
-        "Black Star",
         "Orrery",
         "Runic Cube",
         "Pandora's Box",
         "White Beast Statue",
+        "Ectoplasm",
         "Calling Bell",
+        "Runic Dome",
+        "Empty Cage",
     ]
 
 

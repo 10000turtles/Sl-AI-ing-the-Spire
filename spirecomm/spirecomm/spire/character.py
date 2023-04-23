@@ -65,23 +65,23 @@ class Monster_Action:
         "Shelled Parasite": {"Double Strike": 2, "Suck": 3, "Fell": 1},
         "Spheric Guardian": {"Slam": 1, "Activate": 2, "Harden": 3, "Attack/Debuff": 4},
         "Centurion": {"Slash": 1, "Fury": 3, "Defend": 2},
-        "Mystic": {"Heal": -1, "Buff": -1, "Attack/Debuff": 1},
+        "Mystic": {"Heal": 2, "Buff": 3, "Attack/Debuff": 1},
         "Snake Plant": {"Chomp": 1, "Enfeebling Spores": 2},
         "Snecko": {"Perplexing Glare": 1, "Tail Whip": 3, "Bite": 2},
-        "Byrd": {"Caw": 6, "Peck": 1, "Swoop": 3, "Fly": -1, "Headbutt": 5},
+        "Byrd": {"Caw": 6, "Stun": 4, "Peck": 1, "Swoop": 3, "Fly": -1, "Headbutt": 5},
         "Chosen": {"Poke": 5, "Zap": 1, "Debilitate": 3, "Drain": 2, "Hex": 4},
         "Mugger": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
         "Book of Stabbing": {"Multi-Stab": 1, "Single Stab": 2},
         "Pointy": {"Attack": 1},
-        "Romeo": {"Mock": 2, "Agonizing Slash": 3, "Cross Slash": -1},
-        "Bear": {"Bear Hug": 2, "Lunge": 3, "Maul": -1},
+        "Romeo": {"Mock": 2, "Agonizing Slash": 3, "Cross Slash": 1},
+        "Bear": {"Bear Hug": 2, "Lunge": 3, "Maul": 1},
         "Gremlin Leader": {"Encourage": 3, "Rally!": 2, "Stab": 4},
         "Taskmaster": {"Scouring Whip": 2},
         "Bronze Automaton": {"Spawn Orbs": 4, "Boost": 5, "Flail": 1, "HYPER BEAM": 2, "Stun": 3},
-        "Bronze Orb": {"Stasis": -1, "Beam": -1, "Support Beam": -1},
+        "Orb": {"Stasis": 3, "Beam": 1, "Support Beam": 2},
         "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": 7, "Anger": 5},
         "The Collector": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
-        "Torch Head": {"Tackle": -1},
+        "Torch Head": {"Tackle": 1},
 
         "Darkling": {"Nip": 3, "Chomp": 1, "Harden": 2, "Reincarnate": 5, "Regrow": 4},
         "Orb Walker": {"Laser": 1, "Claw": 2},
@@ -144,6 +144,7 @@ class Character:
 
     def adjust_damage(self, base_power, target_powers, heavy_blade=1):
         modified_power = 0
+
         try:
             index = [i.power_name for i in self.powers].index("Strength")
 
@@ -156,14 +157,13 @@ class Character:
 
             modified_power = math.floor(modified_power*0.75)
         except ValueError:
-            pass
+            modified_power = modified_power
 
         try:
             index = [i.power_name for i in target_powers].index("Vulnerable")
-
             modified_power = math.floor(modified_power*1.5)
         except ValueError:
-            pass
+            modified_power = modified_power
 
         return modified_power
     # def is_attacked(self):
@@ -868,12 +868,12 @@ class Move:
         ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Charging"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Gremlin Wizard", Monster_Action.id_map["Gremlin Wizard"]["Ultimate Blast"]): (25, 0, 1, [], [], [], False, 0, False),
 
-        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Stab"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Rake"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Stab"]): (12, 0, 1, [], [], [], False, 0, False),
+        ("SlaverBlue", Monster_Action.id_map["SlaverBlue"]["Rake"]): (7, 0, 1, [], [("Weakness", 1)], [], False, 0, False),
 
-        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Stab"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Scrape"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Entangle"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Stab"]): (13, 0, 1, [], [], [], False, 0, False),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Scrape"]): (8, 0, 1, [], [("Vulnerable", 1)], [], False, 0, False),
+        ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Entangle"]): (0, 0, 0, [], [("Entangled", 1)], [], False, 0, False),
 
         ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Double Strike"]): (8, 0, 2, [], [], [], False, 0, False),
         ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Suck"]): (10, 0, 1, [], [], [], False, 0, False),
@@ -905,6 +905,7 @@ class Move:
         ("Byrd", Monster_Action.id_map["Byrd"]["Swoop"]): (12, 0, 1, [], [], [], False, 0, False),
         ("Byrd", Monster_Action.id_map["Byrd"]["Fly"]): (0, 0, 0, [("Flying", 3)], [], [], False, 0, False),
         ("Byrd", Monster_Action.id_map["Byrd"]["Headbutt"]): (3, 0, 1, [], [], [], False, 0, False),
+        ("Byrd", Monster_Action.id_map["Byrd"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
 
         # TODO: Implement confused, flying, hex
         ("Chosen", Monster_Action.id_map["Chosen"]["Poke"]): (5, 0, 2, [], [], [], False, 0, False),
@@ -947,10 +948,10 @@ class Move:
         ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
 
         # TODO: steal "rarest" card
-        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Stasis"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Beam"]): (8, 0, 1, [], [], [], False, 0, False),
+        ("Orb", Monster_Action.id_map["Orb"]["Stasis"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Orb", Monster_Action.id_map["Orb"]["Beam"]): (8, 0, 1, [], [], [], False, 0, False),
         # TODO: give bronze automaton 12 block
-        ("Bronze Orb", Monster_Action.id_map["Bronze Orb"]["Support Beam"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Orb", Monster_Action.id_map["Orb"]["Support Beam"]): (0, 0, 0, [], [], [], False, 0, False),
 
 
         ("The Champ", Monster_Action.id_map["The Champ"]["Execute"]): (10, 0, 2, [], [], [], False, 0, False),
@@ -1522,3 +1523,12 @@ class Move:
                     actor.powers[index].amount = actor.powers[index].amount * 2
                 except:
                     pass
+            if card_to_play.name == "Reaper" or card_to_play.name == "Reaper+":
+                monster_hp = sum(
+                    [monster.current_hp for monster in game_state.monsters])
+                for target in game_state.monsters:
+                    target.recieve_damage(game_state, actor.adjust_damage(
+                        self.damage, target.powers), True)
+                changed_hp = monster_hp - \
+                    sum([monster.current_hp for monster in game_state.monsters])
+                actor.current_hp = actor.current_hp + changed_hp
