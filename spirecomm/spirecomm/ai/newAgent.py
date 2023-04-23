@@ -375,6 +375,8 @@ class CoolRadicalAgent:
         if best_child.deep_evaluation < 0:
             if self.game.potion_available:
                 pot = self.game.get_real_potions()[0]
+                if pot.name == "Smoke Bomb":
+                    return PotionAction(False, potion=pot)
                 if pot.requires_target:
                     return PotionAction(True, potion=pot, target_monster=self.get_low_hp_target())
                 else:

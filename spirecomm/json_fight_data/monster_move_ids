@@ -203,3 +203,5 @@ Acid Slime (M): Intent.ATTACK_DEBUFF with damage 10 has id of 2
 Gremlin Wizard: Intent.UNKNOWN with damage 25 has id of 1
 Hexaghost: Intent.ATTACK with damage 4 has id of 1
 Acid Slime (M): Intent.ATTACK with damage 7 has id of 1
+Byrd: Intent.UNKNOWN with damage -1 has id of 2
+Spike Slime (L): Intent.ATTACK_DEBUFF with damage -1 has id of 4

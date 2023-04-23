@@ -68,7 +68,7 @@ class Monster_Action:
         "Mystic": {"Heal": 2, "Buff": 3, "Attack/Debuff": 1},
         "Snake Plant": {"Chomp": 1, "Enfeebling Spores": 2},
         "Snecko": {"Perplexing Glare": 1, "Tail Whip": 3, "Bite": 2},
-        "Byrd": {"Caw": 6, "Stun": 4, "Peck": 1, "Swoop": 3, "Fly": -1, "Headbutt": 5},
+        "Byrd": {"Caw": 6, "Stun": 4, "Peck": 1, "Swoop": 3, "Fly": 2, "Headbutt": 5},
         "Chosen": {"Poke": 5, "Zap": 1, "Debilitate": 3, "Drain": 2, "Hex": 4},
         "Mugger": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
         "Book of Stabbing": {"Multi-Stab": 1, "Single Stab": 2},
@@ -182,7 +182,7 @@ class Character:
             if (self.powers[index].amount > 0):
                 damage = math.floor(damage/2)
             self.powers[index].amount = self.powers[index].amount - 1
-            
+
         except ValueError:
             pass
 
@@ -1237,11 +1237,13 @@ class Move:
 
                 if isinstance(actor, Monster):
                     if actor.name == "Shelled Parasite" and Monster_Action.id_map["Shelled Parasite"]["Suck"] == actor.move_id:
-                        unblocked_damage = actor.adjust_damage(self.damage, target.powers) - target.block
+                        unblocked_damage = actor.adjust_damage(
+                            self.damage, target.powers) - target.block
                         if unblocked_damage > 0:
                             actor.current_hp += unblocked_damage
-                            
-                target.recieve_damage(game_state, actor.adjust_damage(self.damage, target.powers), True)
+
+                target.recieve_damage(game_state, actor.adjust_damage(
+                    self.damage, target.powers), True)
 
                 if isinstance(target, Monster):
                     if target.name == "The Guardian":
@@ -1253,8 +1255,6 @@ class Move:
                                 target.move_id = Monster_Action.id_map[target.name]["Defensive Mode"]
                         except ValueError:
                             continue
-                                        
-
 
             for power in self.target_powers:
                 try:
@@ -1326,15 +1326,16 @@ class Move:
                             monster.current_hp = monster.max_hp
                         else:
                             monster.current_hp += 16
-                
+
                 if Monster_Action.id_map["Mystic"]["Buff"] == actor.move_id:
                     for monster in game_state.monsters:
                         try:
-                            strength = [m.power_name for m in monster.powers].index("Strength")
+                            strength = [m.power_name for m in monster.powers].index(
+                                "Strength")
                             monster.powers[strength].amount += 2
                         except ValueError:
-                            monster.powers.append(Power("Strength", "Strength", 2))
-        
+                            monster.powers.append(
+                                Power("Strength", "Strength", 2))
 
         if (self.aoe):
             for target in game_state.monsters:
