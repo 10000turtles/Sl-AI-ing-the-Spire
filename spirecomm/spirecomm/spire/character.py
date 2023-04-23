@@ -966,36 +966,81 @@ class Move:
 
         ("Torch Head", Monster_Action.id_map["Torch Head"]["Tackle"]): (7, 0, 1, [], [], [], False, 0, False),
 
-        ("Darkling", Monster_Action.id_map["Darkling"]["Nip"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Darkling", Monster_Action.id_map["Darkling"]["Chomp"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Darkling", Monster_Action.id_map["Darkling"]["Harden"]): (0, 0, 0, [], [], [], False, 0, False),
+        # TODO: Darkling Reincarnate
+        ("Darkling", Monster_Action.id_map["Darkling"]["Nip"]): (11, 0, 1, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Chomp"]): (8, 0, 2, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Harden"]): (0, 12, 0, [], [], [], False, 0, False),
         ("Darkling", Monster_Action.id_map["Darkling"]["Reincarnate"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Darkling", Monster_Action.id_map["Darkling"]["Regrow"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Laser"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Claw"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Laser"]): (10, 0, 1, [], [], [("Burn", 0), ("Burn", 2)], False, 0, False),
+        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Claw"]): (15, 0, 1, [], [], [], False, 0, False),
 
-        ("Spiker", Monster_Action.id_map["Spiker"]["Cut"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Spiker", Monster_Action.id_map["Spiker"]["Spike"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Spiker", Monster_Action.id_map["Spiker"]["Cut"]): (7, 0, 1, [], [], [], False, 0, False),
+        ("Spiker", Monster_Action.id_map["Spiker"]["Spike"]): (0, 0, 0, [("Thorns", 2)], [], [], False, 0, False),
 
-        ("Exploder", Monster_Action.id_map["Exploder"]["Slam"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Exploder", Monster_Action.id_map["Exploder"]["Explode"]): (0, 0, 0, [], [], [], False, 0, False),
+        # TODO: Exploder Explode Kills Exploder
+        ("Exploder", Monster_Action.id_map["Exploder"]["Slam"]): (9, 0, 1, [], [], [], False, 0, False),
+        ("Exploder", Monster_Action.id_map["Exploder"]["Explode"]): (30, 0, 1, [], [], [], False, 0, False),
 
-        ("Repulsor", Monster_Action.id_map["Repulsor"]["Bash"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Repulsor", Monster_Action.id_map["Repulsor"]["Repulse"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Repulsor", Monster_Action.id_map["Repulsor"]["Bash"]): (11, 0, 1, [], [], [], False, 0, False),
+        ("Repulsor", Monster_Action.id_map["Repulsor"]["Repulse"]): (0, 0, 0, [], [], [("Dazed", 0), ("Dazed", 0)], False, 0, False),
 
-        ("The Maw", Monster_Action.id_map["The Maw"]["Roar"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("The Maw", Monster_Action.id_map["The Maw"]["Drool"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("The Maw", Monster_Action.id_map["The Maw"]["Slam"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("The Maw", Monster_Action.id_map["The Maw"]["Nom"]): (0, 0, 0, [], [], [], False, 0, False),
+        # TODO: The Maw move Nom does 5 damage T times where T is ceil(total number of turns/2)
+        ("The Maw", Monster_Action.id_map["The Maw"]["Roar"]): (0, 0, 0, [], [("Weakness", 3), ("Frail", 3)], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Drool"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Slam"]): (25, 0, 1, [], [], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Nom"]): (5, 0, 1, [], [], [], False, 0, False),
 
-        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Quick Tackle"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Smash"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Constrict"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Quick Tackle"]): (16, 0, 1, [], [], [], False, 0, False),
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Smash"]): (22, 0, 1, [], [], [], False, 0, False),
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Constrict"]): (0, 0, 0, [], [("Constricted", 10)], [], False, 0, False),
 
-        ("Transient", Monster_Action.id_map["Transient"]["Attack"]): (0, 0, 0, [], [], [], False, 0, False),
+        # TODO: Transient deals an extra 10 damage per turn
+        ("Transient", Monster_Action.id_map["Transient"]["Attack"]): (30, 0, 1, [], [], [], False, 0, False),
 
+        # TODO: Implant adding a card to the deck (Not Nessecary)
+        ("Writhing Mass", Monster_Action.id_map["Writhing Mass"]["Implant"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Writhing Mass", Monster_Action.id_map["Writhing Mass"]["Flail"]): (15, 16, 1, [], [], [], False, 0, False),
+        ("Writhing Mass", Monster_Action.id_map["Writhing Mass"]["Wither"]): (10, 0, 1, [], [("Weakness", 2), ("Vulnerable", 2)], [], False, 0, False),
+        ("Writhing Mass", Monster_Action.id_map["Writhing Mass"]["Multi-Strike"]): (7, 0, 3, [], [], [], False, 0, False),
+        ("Writhing Mass", Monster_Action.id_map["Writhing Mass"]["Strong Strike"]): (32, 0, 1, [], [], [], False, 0, False),
 
+        # TODO: Giant Head does 5 more damage each time It Is time is used.
+        ("Giant Head", Monster_Action.id_map["Giant Head"]["Count"]): (13, 0, 1, [], [], [], False, 0, False),
+        ("Giant Head", Monster_Action.id_map["Giant Head"]["Glare"]): (0, 0, 0, [], [("Weakness", 1)], [], False, 0, False),
+        ("Giant Head", Monster_Action.id_map["Giant Head"]["It Is Time"]): (30, 0, 1, [], [], [], False, 0, False),
+
+        ("Nemesis", Monster_Action.id_map["Nemesis"]["Debuff"]): (0, 0, 0, [], [], [("Burn", 2), ("Burn", 2), ("Burn", 2)], False, 0, False),
+        ("Nemesis", Monster_Action.id_map["Nemesis"]["Attack"]): (6, 0, 3, [], [], [], False, 0, False),
+        ("Nemesis", Monster_Action.id_map["Nemesis"]["Scythe"]): (45, 0, 1, [], [], [], False, 0, False),
+
+        # TODO: Summon a Dagger
+        ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Summon"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Snake Strike"]): (13, 0, 2, [], [("Weakness", 1)], [], False, 0, False),
+        ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Big Bite"]): (30, 0, 1, [], [], [], False, 0, False),
+
+        # TODO: Rebirth removes all debuffs, and activates when Awakened One is at 0 (Maybe could be done by summoning a monster with 99999 hp that kills itself and summons phase 2 of awakened one)
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Slash"]): (20, 0, 1, [], [], [], False, 0, False),
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Soul Strike"]): (6, 0, 4, [], [], [], False, 0, False),
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Rebirth"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Dark Echo"]): (40, 0, 1, [], [], [], False, 0, False),
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Sludge"]): (18, 0, 1, [], [], [("Void", 0)], False, 0, False),
+        ("Awakened One", Monster_Action.id_map["Awakened One"]["Tackle"]): (10, 0, 3, [], [], [], False, 0, False),
+
+        # TODO: Donu Gives 3 strength to Deca with CoP
+        ("Donu", Monster_Action.id_map["Donu"]["Circle of Power"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("Donu", Monster_Action.id_map["Donu"]["Beam"]): (10, 0, 2, [], [], [], False, 0, False),
+
+        # TODO: Deca Gives 16 Bloc to Donu with SoP
+        ("Deca", Monster_Action.id_map["Deca"]["Square of Protection"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Deca", Monster_Action.id_map["Deca"]["Beam"]): (10, 0, 2, [], [], [("Dazed", 2), ("Dazed", 2)], False, 0, False),
+
+        # TODO: Time Eater Haste Heals back to 50% HP and loses all debuffs
+        ("Time Eater", Monster_Action.id_map["Time Eater"]["Reverberate"]): (7, 0, 3, [], [], [], False, 0, False),
+        ("Time Eater", Monster_Action.id_map["Time Eater"]["Head Slam"]): (26, 0, 1, [], [("Draw Reduction", 2)], [], False, 0, False),
+        ("Time Eater", Monster_Action.id_map["Time Eater"]["Ripple"]): (0, 20, 0, [], [], [], False, 0, False),
+        ("Time Eater", Monster_Action.id_map["Time Eater"]["Haste"]): (0, 0, 0, [], [], [], False, 0, False),
 
         # Playable Status Cards
         ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),
