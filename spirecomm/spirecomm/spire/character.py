@@ -177,6 +177,15 @@ class Character:
         except ValueError:
             pass
 
+        try:
+            index = [i.power_name for i in self.powers].index("Flying")
+            if (self.powers[index].amount > 0):
+                damage = math.floor(damage/2)
+            self.powers[index].amount = self.powers[index].amount - 1
+            
+        except ValueError:
+            pass
+
         took_hp_damage = False
         hp_damage_taken = 0
 
@@ -808,7 +817,6 @@ class Move:
         ("Looter", Monster_Action.id_map["Looter"]["Mug"]): (10, 0, 1, [], [], [], False, 0, False),
         ("Looter", Monster_Action.id_map["Looter"]["Lunge"]): (12, 0, 1, [], [], [], False, 0, False),
         ("Looter", Monster_Action.id_map["Looter"]["Smoke Bomb"]): (0, 6, 0, [], [], [], False, 0, False),
-        # TODO: IMPLEMENT EXIT COMBAT
         ("Looter", Monster_Action.id_map["Looter"]["Escape"]): (0, 0, 0, [], [], [], False, 0, False),
 
         ("Fungi Beast", Monster_Action.id_map["Fungi Beast"]["Bite"]): (6, 0, 1, [], [], [], False, 0, False),
@@ -867,7 +875,6 @@ class Move:
         ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Scrape"]): (0, 0, 0, [], [], [], False, 0, False),
         ("SlaverRed", Monster_Action.id_map["SlaverRed"]["Entangle"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        # TODO: Add gain HP for daamge unblocked
         ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Double Strike"]): (8, 0, 2, [], [], [], False, 0, False),
         ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Suck"]): (10, 0, 1, [], [], [], False, 0, False),
         ("Shelled Parasite", Monster_Action.id_map["Shelled Parasite"]["Fell"]): (16, 0, 1, [], [("Frail", 2)], [], False, 0, False),
@@ -880,12 +887,9 @@ class Move:
 
         ("Centurion", Monster_Action.id_map["Centurion"]["Slash"]): (12, 0, 1, [], [], [], False, 0, False),
         ("Centurion", Monster_Action.id_map["Centurion"]["Fury"]): (6, 0, 3, [], [], [], False, 0, False),
-        # TODO: GIVE 15 block to ally
         ("Centurion", Monster_Action.id_map["Centurion"]["Defend"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        # TODO: heal enemies for 16
         ("Mystic", Monster_Action.id_map["Mystic"]["Heal"]): (0, 0, 0, [], [], [], False, 0, False),
-        # TODO: gain 2 strength for all enemies
         ("Mystic", Monster_Action.id_map["Mystic"]["Buff"]): (0, 0, 0, [("Strength", 2)], [], [], False, 0, False),
         ("Mystic", Monster_Action.id_map["Mystic"]["Attack/Debuff"]): (8, 0, 1, [], [("Frail", 2)], [], False, 0, False),
 
@@ -1229,18 +1233,27 @@ class Move:
 
         if (not target == None):
             for i in range(self.num_hits):
-                target.recieve_damage(game_state, actor.adjust_damage(
-                    self.damage, target.powers), True)
 
-                if isinstance(target, Monster) and target.name == "The Guardian":
-                    try:
-                        mode_shift_index = [
-                            i.power_name for i in target.powers].index("Mode Shift")
-                        if target.powers[mode_shift_index].amount <= 0:
-                            target.block = 20
-                            target.move_id = Monster_Action.id_map[target.name]["Defensive Mode"]
-                    except ValueError:
-                        continue
+                if isinstance(actor, Monster):
+                    if actor.name == "Shelled Parasite" and Monster_Action.id_map["Shelled Parasite"]["Suck"] == actor.move_id:
+                        unblocked_damage = actor.adjust_damage(self.damage, target.powers) - target.block
+                        if unblocked_damage > 0:
+                            actor.current_hp += unblocked_damage
+                            
+                target.recieve_damage(game_state, actor.adjust_damage(self.damage, target.powers), True)
+
+                if isinstance(target, Monster):
+                    if target.name == "The Guardian":
+                        try:
+                            mode_shift_index = [
+                                i.power_name for i in target.powers].index("Mode Shift")
+                            if target.powers[mode_shift_index].amount <= 0:
+                                target.block = 20
+                                target.move_id = Monster_Action.id_map[target.name]["Defensive Mode"]
+                        except ValueError:
+                            continue
+                                        
+
 
             for power in self.target_powers:
                 try:
@@ -1299,6 +1312,28 @@ class Move:
 
                 actor.current_hp = 0
                 game_state.update()
+
+            elif actor.name == "Centurion" and Monster_Action.id_map["Centurion"]["Defend"] == actor.move_id:
+                for monster in game_state.monsters:
+                    if monster != actor:
+                        monster.block += 15
+
+            elif actor.name == "Mystic":
+                if Monster_Action.id_map["Mystic"]["Heal"] == actor.move_id:
+                    for monster in game_state.monsters:
+                        if monster.current_hp + 16 > monster.max_hp:
+                            monster.current_hp = monster.max_hp
+                        else:
+                            monster.current_hp += 16
+                
+                if Monster_Action.id_map["Mystic"]["Buff"] == actor.move_id:
+                    for monster in game_state.monsters:
+                        try:
+                            strength = [m.power_name for m in monster.powers].index("Strength")
+                            monster.powers[strength].amount += 2
+                        except ValueError:
+                            monster.powers.append(Power("Strength", "Strength", 2))
+        
 
         if (self.aoe):
             for target in game_state.monsters:
