@@ -357,11 +357,13 @@ class Game:
 
         game_state = copy.deepcopy(self)
         game_state.execute_monster_attacks()
-
         value = 0
 
         value = value + 3*game_state.player.current_hp
-        value = value - sum([i.current_hp for i in game_state.monsters])
+        if "Gremlin Nob" in [monster.name for monster in game_state.monsters]:
+            value = value - 10*sum([i.current_hp for i in game_state.monsters])
+        else:
+            value = value - sum([i.current_hp for i in game_state.monsters])
 
         if (game_state.player.current_hp <= 0):
             value = -999  # Might need to change to a lower number.
