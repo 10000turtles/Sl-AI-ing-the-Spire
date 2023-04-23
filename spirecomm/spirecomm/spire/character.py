@@ -966,6 +966,37 @@ class Move:
 
         ("Torch Head", Monster_Action.id_map["Torch Head"]["Tackle"]): (7, 0, 1, [], [], [], False, 0, False),
 
+        ("Darkling", Monster_Action.id_map["Darkling"]["Nip"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Chomp"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Harden"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Reincarnate"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Darkling", Monster_Action.id_map["Darkling"]["Regrow"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Laser"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Orb Walker", Monster_Action.id_map["Orb Walker"]["Claw"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Spiker", Monster_Action.id_map["Spiker"]["Cut"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Spiker", Monster_Action.id_map["Spiker"]["Spike"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Exploder", Monster_Action.id_map["Exploder"]["Slam"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Exploder", Monster_Action.id_map["Exploder"]["Explode"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Repulsor", Monster_Action.id_map["Repulsor"]["Bash"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Repulsor", Monster_Action.id_map["Repulsor"]["Repulse"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("The Maw", Monster_Action.id_map["The Maw"]["Roar"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Drool"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Slam"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("The Maw", Monster_Action.id_map["The Maw"]["Nom"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Quick Tackle"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Smash"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Constrict"]): (0, 0, 0, [], [], [], False, 0, False),
+
+        ("Transient", Monster_Action.id_map["Transient"]["Attack"]): (0, 0, 0, [], [], [], False, 0, False),
+
+
+
         # Playable Status Cards
         ("Slimed", 0): (0, 0, 0, [], [], [], True, 0, False),
 
