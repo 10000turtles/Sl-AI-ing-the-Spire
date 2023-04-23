@@ -72,12 +72,15 @@ class Monster_Action:
         "Chosen": {"Poke": 5, "Zap": 1, "Debilitate": 3, "Drain": 2, "Hex": 4},
         "Mugger": {"Mug": 1,  "Lunge": 4, "Smoke Bomb": 2, "Escape": 3},
         "Book of Stabbing": {"Multi-Stab": 1, "Single Stab": 2},
+        "Pointy": {"Attack": 1},
+        "Romeo": {"Mock": 2, "Agonizing Slash": 3, "Cross Slash": -1},
+        "Bear": {"Bear Hug": 2, "Lunge": 3, "Maul": -1},
         "Gremlin Leader": {"Encourage": 3, "Rally!": 2, "Stab": 4},
         "Taskmaster": {"Scouring Whip": 2},
         "Bronze Automaton": {"Spawn Orbs": 4, "Boost": 5, "Flail": 1, "HYPER BEAM": 2, "Stun": 3},
         "Bronze Orb": {"Stasis": -1, "Beam": -1, "Support Beam": -1},
-        "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": -1, "Anger": -1},
-        "The Collecter": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
+        "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": 7, "Anger": 5},
+        "The Collector": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
         "Torch Head": {"Tackle": -1},
 
         "Darkling": {"Nip": 3, "Chomp": 1, "Harden": 2, "Reincarnate": 5, "Regrow": 4},
@@ -911,6 +914,16 @@ class Move:
         ("Mugger", Monster_Action.id_map["Mugger"]["Smoke Bomb"]): (0, 11, 0, [], [], [], False, 0, False),
         ("Mugger", Monster_Action.id_map["Mugger"]["Escape"]): (0, 0, 0, [], [], [], False, 0, False),
 
+        ("Pointy",  Monster_Action.id_map["Pointy"]["Attack"]): (5, 0, 2, [], [], [], False, 0, False),
+
+        ("Romeo",  Monster_Action.id_map["Romeo"]["Mock"]): (6, 0, 2, [], [], [], False, 0, False),
+        ("Romeo",  Monster_Action.id_map["Romeo"]["Agonizing Slash"]): (10, 0, 1, [], [("Weakness", 2)], [], False, 0, False),
+        ("Romeo",  Monster_Action.id_map["Romeo"]["Cross Slash"]): (15, 0, 1, [], [], [], False, 0, False),
+
+        ("Bear",  Monster_Action.id_map["Bear"]["Bear Hug"]): (0, 0, 0, [], [("Dexterity", -2)], [], False, 0, False),
+        ("Bear",  Monster_Action.id_map["Bear"]["Lunge"]): (9, 9, 1, [], [], [], False, 0, False),
+        ("Bear",  Monster_Action.id_map["Bear"]["Maul"]): (18, 0, 1, [], [], [], False, 0, False),
+
         # TODO: Deal with the variability about number of multi-stab hits
         ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Multi-Stab"]): (6, 0, 1, [], [], [], False, 0, False),
         ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Single Stab"]): (21, 0, 1, [], [], [], False, 0, False),
@@ -1025,13 +1038,13 @@ class Move:
         ("Double Tap", 0): (0, 0, 0, [("Double Tap", 1)], [], [], False, 0, False),
         # ("Exhume",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed",0):(10,0,0,[],[],[],True,0,False),
-        # ("Fiend Fire",0):(7,0,X,[],[],[],True,0,False),
+        ("Fiend Fire", 0): (7, 0, 0, [], [], [], True, 0, False),
         ("Immolate", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious", 0): (0, 30, 0, [], [], [], True, 0, False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         ("Limit Break", 0): (0, 0, 0, [], [], [], True, 0, False),
-        # ("Offering",0): (0,0,0,[],[],[],True,3,False),
-        # ("Reaper",0): (4,0,0,[],[],[],True,0,True),
+        ("Offering", 0): (0, 0, 0, [], [], [], True, 3, False),
+        ("Reaper", 0): (4, 0, 0, [], [], [], True, 0, True),
 
         ("Strike+", 0): (9, 0, 1, [], [], [], False, 0, False),
         ("Defend+", 0): (0, 8, 0, [], [], [], False, 0, False),
@@ -1101,13 +1114,13 @@ class Move:
         ("Double Tap+", 0): (0, 0, 0, [("Double Tap", 2)], [], [], False, 0, False),
         # ("Exhume+",0):(0,0,0,[],[],[],True,0,False),
         # ("Feed+",0):(10,0,0,[],[],[],True,0,False),
-        # ("Fiend Fire+",0):(7,0,X,[],[],[],True,0,False),
+        ("Fiend Fire+", 0): (10, 0, 0, [], [], [], True, 0, False),
         ("Immolate+", 0): (21, 0, 1, [], [], [("Burn", 2)], False, 0, True),
         ("Impervious+", 0): (0, 40, 0, [], [], [], True, 0, False),
         ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False),
-        ("Limit Break+", 0): (0, 0, 0, [], [], [], False, 0, False)
-        # ("Offering+",0): (0,0,0,[],[],[],False,5,False),
-        # ("Reaper+",0): (4,0,0,[],[],[],True,0,True)
+        ("Limit Break+", 0): (0, 0, 0, [], [], [], False, 0, False),
+        ("Offering+", 0): (0, 0, 0, [], [], [], False, 5, False),
+        ("Reaper+", 0): (5, 0, 0, [], [], [], True, 0, True)
     }
 
     added_card_data = {
@@ -1375,11 +1388,21 @@ class Move:
                             self.damage, target.powers), True)
                 actor.energy = 0
             if card_to_play.name == "Exhume" or card_to_play.name == "Exhume+":
-                pass  # TODO: fill this later
+                pass
+
             if card_to_play.name == "Feed" or card_to_play.name == "Feed+":
                 pass  # TODO: fill this later
             if card_to_play.name == "Fiend Fire" or card_to_play.name == "Fiend Fire+":
-                pass  # TODO: fill this later
+                count = 0
+                for card in game_state.hand:
+                    game_state.exhaust_pile.append(card)
+                    conut = count + 1
+
+                game_state.hand.clear()
+                for i in range(count):
+                    target.recieve_damage(game_state, actor.adjust_damage(
+                        self.damage, target.powers), True)
+
             if card_to_play.name == "Limit Break" or card_to_play.name == "Limit Break+":
                 try:
                     index = [i.power_name for i in actor.powers].index(

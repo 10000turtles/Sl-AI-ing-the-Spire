@@ -197,3 +197,6 @@ Hexaghost: Intent.ATTACK with damage 7 has id of 1
 The Guardian: Intent.ATTACK with damage 32 has id of 2
 The Guardian: Intent.STRONG_DEBUFF with damage -1 has id of 7
 Spike Slime (M): Intent.ATTACK_DEBUFF with damage -1 has id of 4
+The Guardian: Intent.ATTACK_BUFF with damage 5 has id of 5
+The Guardian: Intent.ATTACK with damage -1 has id of 6
+Acid Slime (M): Intent.ATTACK_DEBUFF with damage 10 has id of 2

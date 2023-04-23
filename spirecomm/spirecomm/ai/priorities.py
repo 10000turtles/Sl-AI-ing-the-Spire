@@ -1,5 +1,6 @@
 import math
 
+
 class Priority:
 
     CARD_PRIORITY_LIST = []
@@ -14,11 +15,14 @@ class Priority:
 
     BOSS_RELIC_PRIORITY_LIST = []
 
-    MAP_NODE_PRIORITIES_1 = {'R': 1000, 'E': 10, '$': 100, '?': 100, 'M': 1, 'T': 0}
+    MAP_NODE_PRIORITIES_1 = {'R': 1000, 'E': 10,
+                             '$': 100, '?': 100, 'M': 1, 'T': 0}
 
-    MAP_NODE_PRIORITIES_2 = {'R': 1000, 'E': 100, '$': 10, '?': 10, 'M': 1, 'T': 0}
+    MAP_NODE_PRIORITIES_2 = {'R': 1000, 'E': 100,
+                             '$': 10, '?': 10, 'M': 1, 'T': 0}
 
-    MAP_NODE_PRIORITIES_3 = {'R': 1000, 'E': 1, '$': 100, '?': 100, 'M': 10, 'T': 0}
+    MAP_NODE_PRIORITIES_3 = {'R': 1000, 'E': 1,
+                             '$': 100, '?': 100, 'M': 10, 'T': 0}
 
     GOOD_CARD_ACTIONS = [
         "PutOnDeckAction",
@@ -39,9 +43,12 @@ class Priority:
     ]
 
     def __init__(self):
-        self.CARD_PRIORITIES = {self.CARD_PRIORITY_LIST[i]: i for i in range(len(self.CARD_PRIORITY_LIST))}
-        self.PLAY_PRIORITIES = {self.PLAY_PRIORITY_LIST[i]: i for i in range(len(self.PLAY_PRIORITY_LIST))}
-        self.BOSS_RELIC_PRIORITIES = {self.BOSS_RELIC_PRIORITY_LIST[i]: i for i in range(len(self.BOSS_RELIC_PRIORITY_LIST))}
+        self.CARD_PRIORITIES = {
+            self.CARD_PRIORITY_LIST[i]: i for i in range(len(self.CARD_PRIORITY_LIST))}
+        self.PLAY_PRIORITIES = {
+            self.PLAY_PRIORITY_LIST[i]: i for i in range(len(self.PLAY_PRIORITY_LIST))}
+        self.BOSS_RELIC_PRIORITIES = {self.BOSS_RELIC_PRIORITY_LIST[i]: i for i in range(
+            len(self.BOSS_RELIC_PRIORITY_LIST))}
         self.MAP_NODE_PRIORITIES = {
             1: self.MAP_NODE_PRIORITIES_1,
             2: self.MAP_NODE_PRIORITIES_2,
@@ -755,34 +762,33 @@ class IroncladPriority(Priority):
     ]
 
     MAX_COPIES = {
-        "Offering": 2,
+        # "Offering": 2,
         "Impervious": 99,
         "Apotheosis": 1,
-        "Ghostly": 99,
+        # "Ghostly": 99,
         "Perfected Strike": 99,
         "Whirlwind": 2,
         # "Battle Trance": 2,
-        "Demon Form": 1,
+        # "Demon Form": 1,
         "Immolate": 1,
         "Rage": 2,
         "Limit Break": 3,
         "Flame Barrier": 4,
         "Master of Strategy": 99,
         "Inflame": 1,
-        "Disarm": 3,
+        "Disarm": 4,
         "Shrug It Off": 3,
         "Double Tap": 1,
         "Thunderclap": 1,
-        "Metallicize": 1,
         "Shockwave": 1,
         "Uppercut": 1,
-        "J.A.X.": 1,
-        "PanicButton": 1,
+        # "J.A.X.": 1,
+        # "PanicButton": 1,
         "Twin Strike": 5,
         "Pommel Strike": 5,
-        "Wild Strike" : 3, 
-        "Hemokinesis" : 1,
-        "Metallicize" : 3,
+        "Wild Strike": 3,
+        "Hemokinesis": 1,
+        "Metallicize": 3,
     }
 
     BOSS_RELIC_PRIORITY_LIST = [
@@ -1181,8 +1187,11 @@ class DefectPowerPriority(Priority):
         "Normality",
     ]
 
-    MAP_NODE_PRIORITIES_1 = {'R': 1000, 'E': 100, '$': 10, '?': 10, 'M': 1, 'T': 0}
+    MAP_NODE_PRIORITIES_1 = {'R': 1000, 'E': 100,
+                             '$': 10, '?': 10, 'M': 1, 'T': 0}
 
-    MAP_NODE_PRIORITIES_2 = {'R': 100, 'E': -1000, '$': 10, '?': 10, 'M': 1, 'T': 0}
+    MAP_NODE_PRIORITIES_2 = {'R': 100, 'E': -
+                             1000, '$': 10, '?': 10, 'M': 1, 'T': 0}
 
-    MAP_NODE_PRIORITIES_3 = {'R': 1000, 'E': 10, '$': 100, '?': 100, 'M': 1, 'T': 0}
+    MAP_NODE_PRIORITIES_3 = {'R': 1000, 'E': 10,
+                             '$': 100, '?': 100, 'M': 1, 'T': 0}
