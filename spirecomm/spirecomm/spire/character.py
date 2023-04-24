@@ -95,6 +95,7 @@ class Monster_Action:
         "Giant Head": {"Count": 3, "Glare": 1, "It Is Time": 2},
         "Nemesis": {"Debuff": 4, "Attack": 2, "Scythe": 3},
         "Reptomancer": {"Summon": 2, "Snake Strike": 1, "Big Bite": 3},
+        "Dagger": {"Stab": -1, "Explode": -1},
         "Awakened One": {"Slash": 1, "Soul Strike": 2, "Rebirth": 3, "Dark Echo": 5, "Sludge": 6, "Tackle": 8},
         "Donu": {"Circle of Power": 2, "Beam": 0},
         "Deca": {"Square of Protection": 2, "Beam": 0},
@@ -792,21 +793,21 @@ class Move:
         ("Cultist", Monster_Action.id_map["Cultist"]["Incantation"]): (0, 0, 0, [("Ritual", 3)], [], [], False, 0, False),
         ("Cultist", Monster_Action.id_map["Cultist"]["Dark Strike"]): (6, 0, 1, [], [], [], False, 0, False),
 
-        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
+        ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Corrosive Spit"]): (11, 0, 1, [], [], [("Slimed", 2), ("Slimed", 2)], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Lick"]): (0, 0, 0, [], [("Weak", 2)], [], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Tackle"]): (16, 0, 1, [], [], [], False, 0, False),
         ("Acid Slime (L)", Monster_Action.id_map["Acid Slime (L)"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
+        ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Flame Tackle"]): (16, 0, 1, [], [], [("Slimed", 2), ("Slimed", 2)], False, 0, False),
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Lick"]): (0, 0, 0, [], [("Frail", 2)], [], False, 0, False),
         ("Spike Slime (L)", Monster_Action.id_map["Spike Slime (L)"]["Split"]): (0, 0, 0, [], [], [], False, 0, False),
 
 
-        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
+        ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Corrosive Spit"]): (7, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
         ("Acid Slime (M)", Monster_Action.id_map["Acid Slime (M)"]["Tackle"]): (10, 0, 1, [], [], [], False, 0, False),
 
-        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 0)], False, 0, False),
+        ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Flame Tackle"]): (8, 0, 1, [], [], [("Slimed", 2)], False, 0, False),
         ("Spike Slime (M)", Monster_Action.id_map["Spike Slime (M)"]["Lick"]): (0, 0, 0, [], [("Frail", 1)], [], False, 0, False),
 
         ("Acid Slime (S)", Monster_Action.id_map["Acid Slime (S)"]["Lick"]): (0, 0, 0, [], [("Weak", 1)], [], False, 0, False),
@@ -907,7 +908,7 @@ class Move:
         ("Byrd", Monster_Action.id_map["Byrd"]["Headbutt"]): (3, 0, 1, [], [], [], False, 0, False),
         ("Byrd", Monster_Action.id_map["Byrd"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        # TODO: Implement confused, flying, hex
+        # TODO: Implement confused
         ("Chosen", Monster_Action.id_map["Chosen"]["Poke"]): (5, 0, 2, [], [], [], False, 0, False),
         ("Chosen", Monster_Action.id_map["Chosen"]["Zap"]): (18, 0, 1, [], [], [], False, 0, False),
         ("Chosen", Monster_Action.id_map["Chosen"]["Debilitate"]): (10, 0, 1, [], [("Vulnerable", 2)], [], False, 0, False),
@@ -933,24 +934,21 @@ class Move:
         ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Multi-Stab"]): (6, 0, 1, [], [], [], False, 0, False),
         ("Book of Stabbing", Monster_Action.id_map["Book of Stabbing"]["Single Stab"]): (21, 0, 1, [], [], [], False, 0, False),
 
-        # TODO: Add block to all MINIONS, and summoning of minions
+        # TODO: add summoning of minions
         ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Encourage"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
         ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Rally!"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Gremlin Leader", Monster_Action.id_map["Gremlin Leader"]["Stab"]): (6, 0, 3, [], [], [], False, 0, False),
 
         ("Taskmaster", Monster_Action.id_map["Taskmaster"]["Scouring Whip"]): (7, 0, 1, [], [], [("Wound", 1)], False, 0, False),
 
-        # TODO: Spawn Bronze orbs
         ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Spawn Orbs"]): (0, 0, 0, [], [], [], False, 0, False),
-        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Boost"]): (0, 9, 0, [("Strnegth", 3)], [], [], False, 0, False),
+        ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Boost"]): (0, 9, 0, [("Strength", 3)], [], [], False, 0, False),
         ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Flail"]): (7, 0, 2, [], [], [], False, 0, False),
         ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["HYPER BEAM"]): (45, 0, 1, [], [], [], False, 0, False),
         ("Bronze Automaton", Monster_Action.id_map["Bronze Automaton"]["Stun"]): (0, 0, 0, [], [], [], False, 0, False),
 
-        # TODO: steal "rarest" card
         ("Orb", Monster_Action.id_map["Orb"]["Stasis"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Orb", Monster_Action.id_map["Orb"]["Beam"]): (8, 0, 1, [], [], [], False, 0, False),
-        # TODO: give bronze automaton 12 block
         ("Orb", Monster_Action.id_map["Orb"]["Support Beam"]): (0, 0, 0, [], [], [], False, 0, False),
 
 
@@ -963,8 +961,7 @@ class Move:
         # TODO: remove all debuffs
         ("The Champ", Monster_Action.id_map["The Champ"]["Anger"]): (0, 0, 0, [("Strength", 6)], [], [], False, 0, False),
 
-        # TODO: Spawn 2 Torch Head, add strength to ALL enemies
-        ("The Collector", Monster_Action.id_map["The Collector"]["Buff"]): (0, 15, 0, [("Strength", 3)], [], [], False, 0, False),
+        ("The Collector", Monster_Action.id_map["The Collector"]["Buff"]): (0, 15, 0, [], [], [], False, 0, False),
         ("The Collector", Monster_Action.id_map["The Collector"]["Fireball"]): (18, 0, 1, [], [], [], False, 0, False),
         ("The Collector", Monster_Action.id_map["The Collector"]["Mega Debuff"]): (0, 0, 0, [], [("Weak", 3), ("Vulnerable", 3), ("Frail", 3)], [], False, 0, False),
         ("The Collector", Monster_Action.id_map["The Collector"]["Spawn"]): (0, 0, 0, [], [], [], False, 0, False),
@@ -984,14 +981,12 @@ class Move:
         ("Spiker", Monster_Action.id_map["Spiker"]["Cut"]): (7, 0, 1, [], [], [], False, 0, False),
         ("Spiker", Monster_Action.id_map["Spiker"]["Spike"]): (0, 0, 0, [("Thorns", 2)], [], [], False, 0, False),
 
-        # TODO: Exploder Explode Kills Exploder
         ("Exploder", Monster_Action.id_map["Exploder"]["Slam"]): (9, 0, 1, [], [], [], False, 0, False),
         ("Exploder", Monster_Action.id_map["Exploder"]["Explode"]): (30, 0, 1, [], [], [], False, 0, False),
 
         ("Repulsor", Monster_Action.id_map["Repulsor"]["Bash"]): (11, 0, 1, [], [], [], False, 0, False),
         ("Repulsor", Monster_Action.id_map["Repulsor"]["Repulse"]): (0, 0, 0, [], [], [("Dazed", 0), ("Dazed", 0)], False, 0, False),
 
-        # TODO: The Maw move Nom does 5 damage T times where T is ceil(total number of turns/2)
         ("The Maw", Monster_Action.id_map["The Maw"]["Roar"]): (0, 0, 0, [], [("Weakness", 3), ("Frail", 3)], [], False, 0, False),
         ("The Maw", Monster_Action.id_map["The Maw"]["Drool"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
         ("The Maw", Monster_Action.id_map["The Maw"]["Slam"]): (25, 0, 1, [], [], [], False, 0, False),
@@ -1001,7 +996,6 @@ class Move:
         ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Smash"]): (22, 0, 1, [], [], [], False, 0, False),
         ("Spire Growth", Monster_Action.id_map["Spire Growth"]["Constrict"]): (0, 0, 0, [], [("Constricted", 10)], [], False, 0, False),
 
-        # TODO: Transient deals an extra 10 damage per turn
         ("Transient", Monster_Action.id_map["Transient"]["Attack"]): (30, 0, 1, [], [], [], False, 0, False),
 
         # TODO: Implant adding a card to the deck (Not Nessecary)
@@ -1020,10 +1014,13 @@ class Move:
         ("Nemesis", Monster_Action.id_map["Nemesis"]["Attack"]): (6, 0, 3, [], [], [], False, 0, False),
         ("Nemesis", Monster_Action.id_map["Nemesis"]["Scythe"]): (45, 0, 1, [], [], [], False, 0, False),
 
-        # TODO: Summon a Dagger
         ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Summon"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Snake Strike"]): (13, 0, 2, [], [("Weakness", 1)], [], False, 0, False),
         ("Reptomancer", Monster_Action.id_map["Reptomancer"]["Big Bite"]): (30, 0, 1, [], [], [], False, 0, False),
+
+        ("Dagger", Monster_Action.id_map["Dagger"]["Stab"]): (9, 0, 1, [], [], [("Wound", 2)], False, 0, False),
+        ("Dagger", Monster_Action.id_map["Dagger"]["Explode"]): (25, 0, 1, [], [], [], False, 0, False),
+
 
         # TODO: Rebirth removes all debuffs, and activates when Awakened One is at 0 (Maybe could be done by summoning a monster with 99999 hp that kills itself and summons phase 2 of awakened one)
         ("Awakened One", Monster_Action.id_map["Awakened One"]["Slash"]): (20, 0, 1, [], [], [], False, 0, False),
@@ -1033,11 +1030,9 @@ class Move:
         ("Awakened One", Monster_Action.id_map["Awakened One"]["Sludge"]): (18, 0, 1, [], [], [("Void", 0)], False, 0, False),
         ("Awakened One", Monster_Action.id_map["Awakened One"]["Tackle"]): (10, 0, 3, [], [], [], False, 0, False),
 
-        # TODO: Donu Gives 3 strength to Deca with CoP
         ("Donu", Monster_Action.id_map["Donu"]["Circle of Power"]): (0, 0, 0, [("Strength", 3)], [], [], False, 0, False),
         ("Donu", Monster_Action.id_map["Donu"]["Beam"]): (10, 0, 2, [], [], [], False, 0, False),
 
-        # TODO: Deca Gives 16 Bloc to Donu with SoP
         ("Deca", Monster_Action.id_map["Deca"]["Square of Protection"]): (0, 0, 0, [], [], [], False, 0, False),
         ("Deca", Monster_Action.id_map["Deca"]["Beam"]): (10, 0, 2, [], [], [("Dazed", 2), ("Dazed", 2)], False, 0, False),
 
@@ -1241,6 +1236,10 @@ class Move:
                             self.damage, target.powers) - target.block
                         if unblocked_damage > 0:
                             actor.current_hp += unblocked_damage
+                    if actor.name == "The Maw" and Monster_Action.id_map["The Maw"]["Nom"] == actor.move_id:
+                        self.damage = math.ceil(game_state.turn/2)
+                    if actor.name == "Transient" and Monster_Action.id_map["Transient"]["Attack"] == actor.move_id:
+                        self.damage = 30 + ((game_state.turn-1) * 10)
 
                 target.recieve_damage(game_state, actor.adjust_damage(
                     self.damage, target.powers), True)
@@ -1337,6 +1336,78 @@ class Move:
                             monster.powers.append(
                                 Power("Strength", "Strength", 2))
 
+            elif actor.name == "Gremlin Leader":
+                if Monster_Action.id_map["Gremlin Leader"]["Encourage"] == actor.move_id:
+                    for monster in game_state.monsters:
+                        if monster != actor:
+                            monster.block += 6
+
+                elif Monster_Action.id_map["Gremlin Leader"]["Encourage"] == actor.move_id:
+                    # SUMMON RANDOM GREMLINS
+                    pass
+
+            elif actor.name == "Bronze Automaton" and Monster_Action.id_map["Bronze Automaton"]["Spawn Orbs"] == actor.move_id:
+                bronze_orb = Monster("Orb", None, 58, 58,
+                                     0, None, False, False, move_id=3)
+                bronze_orb2 = copy.deepcopy(bronze_orb)
+                game_state.monsters.append(bronze_orb)
+                game_state.monsters.append(bronze_orb2)
+                game_state.update()
+
+            elif actor.name == "Orb" and Monster_Action.id_map["Orb"]["Support Beam"] == actor.move_id:
+                for monster in game_state.monsters:
+                    if monster.name == "Bronze Automaton":
+                        monster.block += 12
+
+            elif actor.name == "The Collector":
+                if Monster_Action.id_map["The Collector"]["Spawn"] == actor.move_id:
+                    torch_head = Monster(
+                        "Torch Head", None, 40, 40, 0, None, False, False, move_id=1)
+                    torch_head2 = copy.deepcopy(torch_head)
+                    game_state.monsters.append(torch_head)
+                    game_state.monsters.append(torch_head2)
+                    game_state.update()
+
+                elif Monster_Action.id_map["The Collector"]["Buff"] == actor.move_id:
+                    for monster in game_state.monsters:
+                        try:
+                            strength = [m.power_name for m in monster.powers].index(
+                                "Strength")
+                            monster.powers[strength].amount += 3
+                        except ValueError:
+                            monster.powers.append(
+                                Power("Strength", "Strength", 3))
+
+            elif actor.name == "The Exploder" and Monster_Action.id_map["Exploder"]["Explode"] == actor.move_id:
+                actor.current_hp = 0
+                game_state.update()
+
+            elif actor.name == "Reptomancer" and Monster_Action.id_map["Reptomancer"]["Summon"] == actor.move_id:
+                dagger = Monster("Dagger", None, 25, 25, 0, None, False,
+                                 False, move_id=Monster_Action.id_map["Dagger"]["Stab"])
+                game_state.monsters.append(dagger)
+                game_state.update()
+
+            elif actor.name == "Dagger" and Monster_Action.id_map["Dagger"]["Explode"] == actor.move_id:
+                actor.current_hp = 0
+                game_state.update()
+
+            elif actor.name == "Donu" and Monster_Action.id_map["Donu"]["Circle of Power"] == actor.move_id:
+                for monster in game_state.monsters:
+                    try:
+                        strength = [m.power_name for m in monster.powers].index(
+                            "Strength")
+                        monster.powers[strength].amount += 3
+                    except ValueError:
+                        monster.powers.append(Power("Strength", "Strength", 3))
+
+            elif actor.name == "Deca" and Monster_Action.id_map["Deca"]["Square of Protection"] == actor.move_id:
+                for monster in game_state.monsters:
+                    monster.block += 16
+
+                    monster.powers.append(
+                        Power("Strength", "Strength", 2))
+
         if (self.aoe):
             for target in game_state.monsters:
                 for i in range(self.num_hits):
@@ -1389,6 +1460,16 @@ class Move:
             node.expand_on_draw(self.draw_cards, game_state)
 
         if not card_to_play is None:
+
+            try:
+                index = [i.power_name for i in actor.powers].index("Hex")
+                for _ in actor.powers[index].amount:
+                    game_state.draw_pile.append(
+                        Card(*Move.added_card_data["Dazed"]))
+
+            except ValueError:
+                pass
+
             if card_to_play.name == "Armaments":
                 pass  # TODO: fill this later
             if card_to_play.name == "Armaments+":
