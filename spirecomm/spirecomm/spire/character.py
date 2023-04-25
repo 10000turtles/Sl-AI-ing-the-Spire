@@ -7,6 +7,7 @@ from spirecomm.spire.power import Power
 from spirecomm.spire.card import Card
 
 import math
+from spirecomm.spire.card import CardType
 
 
 class Intent(Enum):
@@ -58,7 +59,7 @@ class Monster_Action:
         "SlaverRed": {"Stab": 1, "Scrape": 3, "Entangle": 2},
         "Fat Gremlin": {"Smash": 2},
         "Mad Gremlin": {"Scratch": 1},
-        "Shield Gremlin": {"Protect": 1, "Shield Bash": -1},
+        "Shield Gremlin": {"Protect": 1, "Shield Bash": 2},
         "Sneaky Gremlin": {"Puncture": 1},
         "Gremlin Wizard": {"Charging": 2, "Ultimate Blast": 1},
 
@@ -80,7 +81,7 @@ class Monster_Action:
         "Bronze Automaton": {"Spawn Orbs": 4, "Boost": 5, "Flail": 1, "HYPER BEAM": 2, "Stun": 3},
         "Orb": {"Stasis": 3, "Beam": 1, "Support Beam": 2},
         "The Champ": {"Execute": 3, "Heavy Slash": 1, "Defensive Stance": 2, "Face Slap": 4, "Taunt": 6, "Gloat": 7, "Anger": 5},
-        "The Collector": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1},
+        "The Collector": {"Buff": 3, "Fireball": 2, "Mega Debuff": 4, "Spawn": 1, "Spawn": 5},
         "Torch Head": {"Tackle": 1},
 
         "Darkling": {"Nip": 3, "Chomp": 1, "Harden": 2, "Reincarnate": 5, "Regrow": 4},
@@ -95,7 +96,7 @@ class Monster_Action:
         "Giant Head": {"Count": 3, "Glare": 1, "It Is Time": 2},
         "Nemesis": {"Debuff": 4, "Attack": 2, "Scythe": 3},
         "Reptomancer": {"Summon": 2, "Snake Strike": 1, "Big Bite": 3},
-        "Dagger": {"Stab": -1, "Explode": -1},
+        "Dagger": {"Stab": 1, "Explode": 2},
         "Awakened One": {"Slash": 1, "Soul Strike": 2, "Rebirth": 3, "Dark Echo": 5, "Sludge": 6, "Tackle": 8},
         "Donu": {"Circle of Power": 2, "Beam": 0},
         "Deca": {"Square of Protection": 2, "Beam": 0},
@@ -174,6 +175,14 @@ class Character:
             index = [i.power_name for i in self.powers].index("Buffer")
             if (self.powers[index].amount > 0):
                 self.powers[index].amount = self.powers[index].amount - 1
+                return
+        except ValueError:
+            pass
+
+        try:
+            index = [i.power_name for i in self.powers].index("Intangible")
+            if (self.powers[index].amount > 0):
+                damage = 1
                 return
         except ValueError:
             pass
@@ -964,7 +973,8 @@ class Move:
         ("The Collector", Monster_Action.id_map["The Collector"]["Buff"]): (0, 15, 0, [], [], [], False, 0, False),
         ("The Collector", Monster_Action.id_map["The Collector"]["Fireball"]): (18, 0, 1, [], [], [], False, 0, False),
         ("The Collector", Monster_Action.id_map["The Collector"]["Mega Debuff"]): (0, 0, 0, [], [("Weak", 3), ("Vulnerable", 3), ("Frail", 3)], [], False, 0, False),
-        ("The Collector", Monster_Action.id_map["The Collector"]["Spawn"]): (0, 0, 0, [], [], [], False, 0, False),
+        ("The Collector", 1): (0, 0, 0, [], [], [], False, 0, False),
+        ("The Collector", 5): (0, 0, 0, [], [], [], False, 0, False),
 
         ("Torch Head", Monster_Action.id_map["Torch Head"]["Tackle"]): (7, 0, 1, [], [], [], False, 0, False),
 
@@ -1119,7 +1129,7 @@ class Move:
         ("Impervious", 0): (0, 30, 0, [], [], [], True, 0, False),
         ("Juggernaut", 0): (0, 0, 0, [("Juggernaut", 5)], [], [], True, 0, False),
         ("Limit Break", 0): (0, 0, 0, [], [], [], True, 0, False),
-        ("Offering", 0): (0, 0, 0, [], [], [], True, 3, False),
+        ("Offering", 0): (0, 0, 0, [], [], [], True, 1, False),
         ("Reaper", 0): (4, 0, 0, [], [], [], True, 0, True),
 
         ("Strike+", 0): (9, 0, 1, [], [], [], False, 0, False),
@@ -1195,8 +1205,11 @@ class Move:
         ("Impervious+", 0): (0, 40, 0, [], [], [], True, 0, False),
         ("Juggernaut+", 0): (0, 0, 0, [("Juggernaut", 7)], [], [], False, 0, False),
         ("Limit Break+", 0): (0, 0, 0, [], [], [], False, 0, False),
-        ("Offering+", 0): (0, 0, 0, [], [], [], False, 5, False),
-        ("Reaper+", 0): (5, 0, 0, [], [], [], True, 0, True)
+        ("Offering+", 0): (0, 0, 0, [], [], [], False, 1, False),
+        ("Reaper+", 0): (5, 0, 0, [], [], [], True, 0, True),
+
+        ("Apparition", 0): (0, 0, 0, [("Intangible", 1)], [], [], True, 0, False),
+        ("Madness", 0): (0, 0, 0, [], [], [], True, 0, False)
     }
 
     added_card_data = {
@@ -1225,7 +1238,26 @@ class Move:
         self.draw_cards = draw_cards
         self.aoe = aoe
 
-    def execute_move(self, game_state, actor: Character, target: Character, node=None, card_to_play=None):
+    def execute_move(self, game_state, actor: Character, target: Character, node=None, card_to_play=None, is_double_tapped=False):
+        if not card_to_play is None:
+            if card_to_play.type == CardType.ATTACK:
+                try:
+                    rage_index = [
+                        i.power_name for i in actor.powers].index("Rage")
+                    actor.block = actor.block + actor.powers[rage_index].amount
+                except:
+                    pass
+
+        if not is_double_tapped:
+            try:
+                double_tap_index = [
+                    i.power_name for i in actor.powers].index("Double Tap")
+                if (actor.powers[double_tap_index].amount > 0):
+                    actor.powers[double_tap_index].amount = actor.powers[double_tap_index].amount - 1
+                    self.execute_move(game_state, actor, target,
+                                      node, card_to_play, True)
+            except:
+                pass
 
         if (not target == None):
             for i in range(self.num_hits):
@@ -1360,7 +1392,7 @@ class Move:
                         monster.block += 12
 
             elif actor.name == "The Collector":
-                if Monster_Action.id_map["The Collector"]["Spawn"] == actor.move_id:
+                if 1 == actor.move_id or 5 == actor.move_id:
                     torch_head = Monster(
                         "Torch Head", None, 40, 40, 0, None, False, False, move_id=1)
                     torch_head2 = copy.deepcopy(torch_head)
@@ -1463,7 +1495,7 @@ class Move:
 
             try:
                 index = [i.power_name for i in actor.powers].index("Hex")
-                for _ in actor.powers[index].amount:
+                for _ in range(actor.powers[index].amount):
                     game_state.draw_pile.append(
                         Card(*Move.added_card_data["Dazed"]))
 

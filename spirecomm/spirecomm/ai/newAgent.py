@@ -377,7 +377,9 @@ class CoolRadicalAgent:
                 pot = self.game.get_real_potions()[0]
                 if pot.name == "Smoke Bomb":
                     return PotionAction(False, potion=pot)
-                if pot.requires_target:
+                if pot.name == "Fairy in a Bottle":
+                    pass
+                elif pot.requires_target:
                     return PotionAction(True, potion=pot, target_monster=self.get_low_hp_target())
                 else:
                     return PotionAction(True, potion=pot)
@@ -452,7 +454,7 @@ class CoolRadicalAgent:
 
     def handle_screen(self):
         if self.game.screen_type == ScreenType.EVENT:
-            if self.game.screen.event_id in ["Vampires", "Masked Bandits", "Knowing Skull", "Ghosts", "Liars Game", "Golden Idol", "Drug Dealer", "The Library"]:
+            if self.game.screen.event_id in ["Vampires", "Masked Bandits", "Knowing Skull", "Liars Game", "Golden Idol", "Drug Dealer", "The Library"]:
                 return ChooseAction(len(self.game.screen.options) - 1)
 
             elif self.game.screen.event_id == "Neow Event" and len(self.game.screen.options) == 1:

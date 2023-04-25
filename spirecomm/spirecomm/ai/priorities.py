@@ -81,7 +81,7 @@ class Priority:
         return self.MAX_COPIES.get(card.card_id, 0) > num_copies
 
     def get_best_boss_relic(self, relic_list):
-        return min(relic_list, key=lambda x: self.BOSS_RELIC_PRIORITIES.get(x.relic_id, 0))
+        return min(relic_list, key=lambda x: self.BOSS_RELIC_PRIORITIES.get(x.name, 0))
 
     def is_card_aoe(self, card):
         return card.card_id in self.AOE_CARDS
@@ -762,7 +762,7 @@ class IroncladPriority(Priority):
     ]
 
     MAX_COPIES = {
-        # "Offering": 2,
+        "Offering": 1,
         "Impervious": 99,
         "Apotheosis": 1,
         # "Ghostly": 99,
@@ -780,6 +780,7 @@ class IroncladPriority(Priority):
         "Shrug It Off": 3,
         "Double Tap": 1,
         "Thunderclap": 1,
+        "Fiend Fire": 2,
         "Shockwave": 1,
         "Uppercut": 1,
         "Carnage": 1,
@@ -792,33 +793,31 @@ class IroncladPriority(Priority):
         "Hemokinesis": 1,
         "Metallicize": 3,
         "Reaper": 4,
+        "Bludgeon": 2,
     }
 
     BOSS_RELIC_PRIORITY_LIST = [
         "Snecko Eye",
         "Sozu",
         "Philosopher's Stone",
+        "Runic Pyramid",
         "Black Star",
         "Cursed Key",
         "Fusion Hammer",
         "Velvet Choker",
-        "Mark of Pain",
         "Busted Crown",
-        "Astrolabe",
-        "Runic Pyramid",
-        "Lizard Tail",
-        "Eternal Feather",
+        "Mark of Pain",
         "Coffee Dripper",
         "Black Blood",
         "Tiny House",
-        "Orrery",
         "Runic Cube",
         "Pandora's Box",
-        "White Beast Statue",
-        "Ectoplasm",
         "Calling Bell",
-        "Runic Dome",
+        "Ectoplasm",
+        "Sacred Bark",
+        "Astrolabe",
         "Empty Cage",
+        "Runic Dome",
     ]
 
 

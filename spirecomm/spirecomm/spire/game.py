@@ -307,7 +307,7 @@ class Game:
 
                 temp_game.hand = original_hand
 
-        max_game_sample = 60000
+        max_game_sample = 400
         if len(new_games) > max_game_sample:
             count = max_game_sample
             new_games = random.sample(new_games, max_game_sample)

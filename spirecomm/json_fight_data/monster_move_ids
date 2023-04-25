@@ -205,3 +205,9 @@ Hexaghost: Intent.ATTACK with damage 4 has id of 1
 Acid Slime (M): Intent.ATTACK with damage 7 has id of 1
 Byrd: Intent.UNKNOWN with damage -1 has id of 2
 Spike Slime (L): Intent.ATTACK_DEBUFF with damage -1 has id of 4
+Deca: Intent.DEFEND with damage 10 has id of 0
+Slaver: Intent.ATTACK_DEBUFF with damage 12 has id of 1
+Spike Slime (M): Intent.DEBUG with damage -1 has id of 4
+Slaver: Intent.ATTACK with damage 7 has id of 4
+Spike Slime (M): Intent.DEBUG with damage 8 has id of 1
+Dagger: Intent.ATTACK with damage 25 has id of 2
